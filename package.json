@@ -1,0 +1,17 @@
+{
+  "name": "cloud-graph-sdk",
+  "version": "1.0.0",
+  "description": "SDK for cloud graph providers and cli",
+  "main": "dist/index.js",
+  "scripts": {
+    "prepublish": "tsc"
+  },
+  "author": "AutoCloud",
+  "license": "MIT",
+  "dependencies": {
+    "consola": "^2.15.3",
+    "pino": "^6.11.3",
+    "pino-pretty": "^5.1.0",
+    "typescript": "^4.3.5"
+  }
+}
