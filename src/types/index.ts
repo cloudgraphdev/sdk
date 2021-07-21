@@ -1,5 +1,6 @@
-import Logger from '../logger'
+import {Logger} from '../logger'
 
+// Deprecated
 export interface Opts {
   devMode: boolean;
   debug: boolean;
