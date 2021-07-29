@@ -1,10 +1,10 @@
 {
-  "name": "cloud-graph-sdk",
+  "name": "@cloudgraph/sdk",
   "version": "1.0.0",
   "description": "SDK for cloud graph providers and cli",
   "main": "dist/index.js",
   "scripts": {
-    "prepublish": "tsc",
+    "prepublish": "npx tsc",
     "lint": "eslint --config .eslintrc.json --ext .js,.ts ./",
     "lint:fix": "eslint --fix --config .eslintrc.json --ext .js,.ts ./"
   },
