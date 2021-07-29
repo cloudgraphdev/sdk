@@ -1,4 +1,4 @@
-const consola = require('consola')
+import consola from 'consola'
 
 // const consola = require('consola')
 
@@ -8,25 +8,30 @@ export class Logger {
   constructor(debug: string) {
     const levelRange = ['-1', '0', '1', '2', '3', '4', '5']
     this.logger = consola.create({
-      level: levelRange.indexOf(debug) > -1 ? Number(debug) : 3
+      level: levelRange.indexOf(debug) > -1 ? Number(debug) : 3,
     })
   }
 
   logger: typeof consola
+
   // Legacy log method
-  log(msg: string | Array<any> | Object, options: {verbose?: boolean; level?: string} = {}): void {
-    const {verbose, level = 'info'} = options
+  log(
+    msg: string | Array<any> | any,
+    options: { verbose?: boolean; level?: string } = {}
+  ): void {
+    const { verbose, level = 'info' } = options
     if (verbose) {
+      // TODO: Implement verbose loggeer
     } else {
       this.logger[level](msg)
     }
   }
 
-  info(msg: string | Array<any> | Object) {
+  info(msg: string | Array<any> | any) {
     this.logger.info(msg)
   }
 
-  error(msg: string | Array<any> | Object) {
+  error(msg: string | Array<any> | any) {
     this.logger.error(msg)
   }
 
@@ -34,11 +39,11 @@ export class Logger {
     this.logger.success(msg)
   }
 
-  warn(msg: string | Array<any> | Object) {
+  warn(msg: string | Array<any> | any) {
     this.logger.warn(msg)
   }
 
-  debug(msg: string | Array<any> | Object) {
+  debug(msg: string | Array<any> | any) {
     this.logger.debug(msg)
   }
 }
