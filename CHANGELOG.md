@@ -1,3 +1,10 @@
+## [0.1.1](https://gitlab.com/auto-cloud/cloudgraph/sdk/compare/0.1.0...0.1.1) (2021-08-12)
+
+
+### Bug Fixes
+
+* **tsconfig:** Fixed ECMAScript target version ([0a40e62](https://gitlab.com/auto-cloud/cloudgraph/sdk/commit/0a40e62aee82b706dbddbda750829f106117a7c9))
+
 # [0.1.0](https://gitlab.com/auto-cloud/cloudgraph/sdk/compare/0.0.1...0.1.0) (2021-08-11)
 
 
