@@ -15,7 +15,7 @@
     "lint:fix": "eslint --fix --config .eslintrc.json --ext .js,.ts ./"
   },
   "author": "AutoCloud",
-  "license": "MIT",
+  "license": "MPL-2.0",
   "dependencies": {
     "@types/node": "^16.4.12",
     "consola": "^2.15.3",
