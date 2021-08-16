@@ -1,3 +1,10 @@
+# [0.2.0](https://gitlab.com/auto-cloud/cloudgraph/sdk/compare/0.1.1...0.2.0) (2021-08-16)
+
+
+### Features
+
+* **LICENSE:** update license to MPL 2.0 ([2e534c6](https://gitlab.com/auto-cloud/cloudgraph/sdk/commit/2e534c6fbe4420de430ddf17398c471005435e81))
+
 ## [0.1.1](https://gitlab.com/auto-cloud/cloudgraph/sdk/compare/0.1.0...0.1.1) (2021-08-12)
 
 
