@@ -4,6 +4,7 @@
   "description": "SDK for cloud graph providers and cli",
   "main": "dist/index.js",
   "scripts": {
+    "build": "yarn prepublish",
     "prepublish": "npx tsc",
     "lint": "eslint --config .eslintrc.json --ext .js,.ts ./",
     "lint:fix": "eslint --fix --config .eslintrc.json --ext .js,.ts ./"

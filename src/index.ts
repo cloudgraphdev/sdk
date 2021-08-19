@@ -1,9 +1,9 @@
-import logger, {Logger} from './logger'
+import logger, { Logger } from './logger'
 import Client from './client'
-import {Opts, Service, ServiceConnection} from './types'
+import { Opts, Service, ServiceConnection, ProviderData } from './types'
 
-export type { Opts, Service, ServiceConnection, Logger, Client }
+export type { Opts, Service, ServiceConnection, Logger, Client, ProviderData }
 export default {
   logger,
-  Client
+  Client,
 }
