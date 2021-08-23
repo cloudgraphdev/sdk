@@ -10,6 +10,7 @@
     "access": "public"
   },
   "scripts": {
+    "build": "yarn prepublish",
     "prepublish": "npx tsc",
     "lint": "eslint --config .eslintrc.json --ext .js,.ts ./",
     "lint:fix": "eslint --fix --config .eslintrc.json --ext .js,.ts ./"

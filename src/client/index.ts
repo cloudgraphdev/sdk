@@ -1,7 +1,7 @@
 import inquirer from 'inquirer'
 
 import { Logger } from '../logger'
-import { Opts, Service } from '../types'
+import { Opts, ProviderData } from '../types'
 
 export default abstract class Provider {
   constructor(config: any) {
@@ -16,7 +16,7 @@ export default abstract class Provider {
   config: any
 
   // eslint-disable-next-line
-  async configure(flags: any): Promise<any> {
+  async configure(flags: any): Promise<{[key: string]: any}> {
     throw new Error('Function configure has not been defined')
   }
 
@@ -25,12 +25,7 @@ export default abstract class Provider {
   }
 
   // eslint-disable-next-line
-  getService(service: string): Service {
-    throw new Error('Function getService has not been defined')
-  }
-
-  // eslint-disable-next-line
-  async getData({ opts }: { opts: Opts }): Promise<any> {
+  async getData({ opts }: { opts: Opts }): Promise<ProviderData> {
     throw new Error('Function getData has not been defined')
   }
 }
