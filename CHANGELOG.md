@@ -1,3 +1,11 @@
+# [0.3.0](https://gitlab.com/auto-cloud/cloudgraph/sdk/compare/0.2.0...0.3.0) (2021-08-23)
+
+
+### Features
+
+* **interface:** create types for new provider interface ([6db4b7f](https://gitlab.com/auto-cloud/cloudgraph/sdk/commit/6db4b7f31319224322bcccbf4ae8cc9685573d6e))
+* **interface:** Create types for new provider interface, update Client abstract class, update scripts with build command ([818836e](https://gitlab.com/auto-cloud/cloudgraph/sdk/commit/818836ef472b34466963fe94138e8917b7bc8b26))
+
 # [0.2.0](https://gitlab.com/auto-cloud/cloudgraph/sdk/compare/0.1.1...0.2.0) (2021-08-16)
 
 

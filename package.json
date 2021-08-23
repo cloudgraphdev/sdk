@@ -1,6 +1,6 @@
 {
   "name": "@cloudgraph/sdk",
-  "version": "0.2.0",
+  "version": "0.3.0",
   "description": "SDK for cloud graph providers and cli",
   "main": "dist/index.js",
   "types": "dist/index.d.ts",
@@ -40,7 +40,7 @@
     "eslint-plugin-prettier": "^3.4.0",
     "husky": "^4.3.0",
     "lint-staged": "^11.1.1",
-    "semantic-release": "^17.4.5"
+    "semantic-release": "^17.4.6"
   },
   "husky": {
     "hooks": {
