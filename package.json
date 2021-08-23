@@ -9,6 +9,9 @@
     "tag": "latest",
     "access": "public"
   },
+  "homepage": "https://www.cloudgraph.dev/",
+  "repository": "github:cloudgraphdev/sdk",
+  "bugs": "https://github.com/cloudgraphdev/sdk/issues",
   "scripts": {
     "prepublish": "npx tsc",
     "lint": "eslint --config .eslintrc.json --ext .js,.ts ./",
