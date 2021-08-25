@@ -1,18 +1,27 @@
-import consola from 'consola'
+import ora, { Ora } from 'ora'
 
-// const consola = require('consola')
-
-// export const pinoLogger = pino({ name: 'cloud-graph', prettyPrint: process.env.NODE_ENV === 'development' })
+export enum LogLevel {
+  Error= 0,
+  Warn= 1,
+  Log= 2,
+  Info= 3,
+  Success= 3,
+  Debug= 4,
+  Trace= 5,
+}
 
 export class Logger {
   constructor(debug: string) {
     const levelRange = ['-1', '0', '1', '2', '3', '4', '5']
-    this.logger = consola.create({
-      level: levelRange.indexOf(debug) > -1 ? Number(debug) : 3,
-    })
+    this.level = levelRange.indexOf(debug) > -1 ? Number(debug) : 3
+    this.logger = ora()
   }
 
-  logger: typeof consola
+  level: LogLevel
+
+  logger: Ora
+
+  startText: string
 
   // Legacy log method
   log(
@@ -27,25 +36,30 @@ export class Logger {
     }
   }
 
-  info(msg: string | Array<any> | any) {
-    this.logger.info(msg)
+  startSpinner(msg: string): Ora {
+    this.startText = msg
+    return this.logger.start(msg)
   }
 
-  error(msg: string | Array<any> | any) {
-    this.logger.error(msg)
+  info(msg: string | any) {
+    if (this.level >= LogLevel.Info) this.logger.info(msg).start(this.startText)
   }
 
-  success(msg) {
-    this.logger.success(msg)
+  error(msg: string | any) {
+    if (this.level >= LogLevel.Error) this.logger.fail(msg)
   }
 
-  warn(msg: string | Array<any> | any) {
-    this.logger.warn(msg)
+  success(msg: string | any) {
+    if (this.level >= LogLevel.Success) this.logger.succeed(msg)
   }
 
-  debug(msg: string | Array<any> | any) {
-    this.logger.debug(msg)
+  warn(msg: string | any) {
+    if (this.level >= LogLevel.Warn) this.logger.warn(msg)
+  }
+
+  debug(msg: string | any) {
+    if (this.level >= LogLevel.Trace) this.logger.info(msg).start(this.startText)
   }
 }
 
-export default new Logger(process.env.DEBUG)
+export default new Logger(process.env.CG_DEBUG)
