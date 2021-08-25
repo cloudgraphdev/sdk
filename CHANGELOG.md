@@ -1,3 +1,14 @@
+## [0.3.1](https://gitlab.com/auto-cloud/cloudgraph/sdk/compare/0.3.0...0.3.1) (2021-08-25)
+
+
+### Bug Fixes
+
+* **spinner:** remove consola ([d38c4f6](https://gitlab.com/auto-cloud/cloudgraph/sdk/commit/d38c4f642608e20167f7f1bdbe148f7093ec0588))
+* **spinner:** update logger debug env var ([1cd8064](https://gitlab.com/auto-cloud/cloudgraph/sdk/commit/1cd8064e84a4446d2ad5c191326d48dc22d65210))
+* **spinner:** use Ora ([b429916](https://gitlab.com/auto-cloud/cloudgraph/sdk/commit/b4299161f1ae218af732faa877f75bedb12b724f))
+* **spinner:** use Ora for CLI spinner ([aa19a32](https://gitlab.com/auto-cloud/cloudgraph/sdk/commit/aa19a329e4e3a95acf90669c9a2b6773c473fdc8))
+* add Github repository references ([9fbf598](https://gitlab.com/auto-cloud/cloudgraph/sdk/commit/9fbf598c9907cf4b8e5c0ac4c8cf28f69c02855c))
+
 # [0.3.0](https://gitlab.com/auto-cloud/cloudgraph/sdk/compare/0.2.0...0.3.0) (2021-08-23)
 
 
