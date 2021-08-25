@@ -62,4 +62,4 @@ export class Logger {
   }
 }
 
-export default new Logger(process.env.DEBUG)
+export default new Logger(process.env.CG_DEBUG)
