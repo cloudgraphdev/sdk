@@ -22,7 +22,6 @@
   "license": "MPL-2.0",
   "dependencies": {
     "@types/node": "^16.4.12",
-    "consola": "^2.15.3",
     "inquirer": "^8.1.2",
     "ora": "^6.0.0",
     "pino": "^6.11.3",
