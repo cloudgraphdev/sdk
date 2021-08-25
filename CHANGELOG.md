@@ -1,3 +1,10 @@
+## [0.3.2](https://gitlab.com/auto-cloud/cloudgraph/sdk/compare/0.3.1...0.3.2) (2021-08-25)
+
+
+### Bug Fixes
+
+* **spinner:** downgrade ora to ^5.4.1 ERR_REQUIRE_ESM ([9749e37](https://gitlab.com/auto-cloud/cloudgraph/sdk/commit/9749e3770ef85a22e8cb8584a307c6fd5671d6c2))
+
 ## [0.3.1](https://gitlab.com/auto-cloud/cloudgraph/sdk/compare/0.3.0...0.3.1) (2021-08-25)
 
 
