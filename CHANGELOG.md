@@ -1,3 +1,10 @@
+## [0.3.3](https://gitlab.com/auto-cloud/cloudgraph/sdk/compare/0.3.2...0.3.3) (2021-08-26)
+
+
+### Bug Fixes
+
+* **spinner:** drop spinner restart on info/debug messages ([fa2383e](https://gitlab.com/auto-cloud/cloudgraph/sdk/commit/fa2383ef3c4a878e836a0295194cacb2030cb30d))
+
 ## [0.3.2](https://gitlab.com/auto-cloud/cloudgraph/sdk/compare/0.3.1...0.3.2) (2021-08-25)
 
 
