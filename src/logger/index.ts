@@ -42,7 +42,7 @@ export class Logger {
   }
 
   info(msg: string | any) {
-    if (this.level >= LogLevel.Info) this.logger.info(msg).start(this.startText)
+    if (this.level >= LogLevel.Info) this.logger.info(msg)
   }
 
   error(msg: string | any) {
@@ -58,7 +58,7 @@ export class Logger {
   }
 
   debug(msg: string | any) {
-    if (this.level >= LogLevel.Trace) this.logger.info(msg).start(this.startText)
+    if (this.level >= LogLevel.Trace) this.logger.info(msg)
   }
 }
 
