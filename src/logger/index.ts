@@ -1,20 +1,21 @@
 import ora, { Ora } from 'ora'
 
 export enum LogLevel {
-  Error= 0,
-  Warn= 1,
-  Log= 2,
-  Info= 3,
-  Success= 3,
-  Debug= 4,
-  Trace= 5,
+  Silent = -1,
+  Error = 0,
+  Warn = 1,
+  Log = 2,
+  Info = 3,
+  Success = 3,
+  Debug = 4,
+  Trace = 5,
 }
 
 export class Logger {
   constructor(debug: string) {
     const levelRange = ['-1', '0', '1', '2', '3', '4', '5']
     this.level = levelRange.indexOf(debug) > -1 ? Number(debug) : 3
-    this.logger = ora()
+    this.logger = ora( { isSilent: this.level === LogLevel.Silent } )
   }
 
   level: LogLevel
@@ -41,23 +42,23 @@ export class Logger {
     return this.logger.start(msg)
   }
 
-  info(msg: string | any) {
+  info(msg: string | any): void {
     if (this.level >= LogLevel.Info) this.logger.info(msg)
   }
 
-  error(msg: string | any) {
+  error(msg: string | any): void {
     if (this.level >= LogLevel.Error) this.logger.fail(msg)
   }
 
-  success(msg: string | any) {
+  success(msg: string | any): void {
     if (this.level >= LogLevel.Success) this.logger.succeed(msg)
   }
 
-  warn(msg: string | any) {
+  warn(msg: string | any): void {
     if (this.level >= LogLevel.Warn) this.logger.warn(msg)
   }
 
-  debug(msg: string | any) {
+  debug(msg: string | any): void {
     if (this.level >= LogLevel.Trace) this.logger.info(msg)
   }
 }
