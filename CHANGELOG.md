@@ -1,3 +1,11 @@
+## [0.3.4](https://gitlab.com/auto-cloud/cloudgraph/sdk/compare/0.3.3...0.3.4) (2021-09-08)
+
+
+### Bug Fixes
+
+* Be more specific with types ([8c30b69](https://gitlab.com/auto-cloud/cloudgraph/sdk/commit/8c30b69f00932967dbdd1819cf518999144522cf))
+* Rework logger parsing content ([aed8996](https://gitlab.com/auto-cloud/cloudgraph/sdk/commit/aed899658512319d7c7b37af66753495e76945a8))
+
 ## [0.3.3](https://gitlab.com/auto-cloud/cloudgraph/sdk/compare/0.3.2...0.3.3) (2021-08-26)
 
 
