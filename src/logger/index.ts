@@ -37,7 +37,7 @@ export class Logger {
     }
   }
 
-  private parseMessage(msg: string | any): string {
+  private parseMessage(msg: string | { [key: string]: any }): string {
     if (typeof msg === 'object') {
       return JSON.stringify(msg, null, 2)
     }
@@ -49,24 +49,24 @@ export class Logger {
     return this.logger.start(msg)
   }
 
-  info(msg: string | any): void {
+  info(msg: string | { [key: string]: any }): void {
     if (this.level >= LogLevel.Info) this.logger.info(this.parseMessage(msg))
   }
 
-  error(msg: string | any): void {
+  error(msg: string | { [key: string]: any }): void {
     if (this.level >= LogLevel.Error) this.logger.fail(this.parseMessage(msg))
   }
 
-  success(msg: string | any): void {
+  success(msg: string | { [key: string]: any }): void {
     if (this.level >= LogLevel.Success)
       this.logger.succeed(this.parseMessage(msg))
   }
 
-  warn(msg: string | any): void {
+  warn(msg: string | { [key: string]: any }): void {
     if (this.level >= LogLevel.Warn) this.logger.warn(this.parseMessage(msg))
   }
 
-  debug(msg: string | any): void {
+  debug(msg: string | { [key: string]: any }): void {
     if (this.level >= LogLevel.Trace) this.logger.info(this.parseMessage(msg))
   }
 }
