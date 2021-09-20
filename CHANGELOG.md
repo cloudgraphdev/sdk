@@ -1,3 +1,11 @@
+## [0.3.5](https://gitlab.com/auto-cloud/cloudgraph/sdk/compare/0.3.4...0.3.5) (2021-09-20)
+
+
+### Bug Fixes
+
+* **client:** Update client to assign empty obj to config if there isn't one ([3983c23](https://gitlab.com/auto-cloud/cloudgraph/sdk/commit/3983c23ade85abbe2139ea297c0c7d2edbf7ac19))
+* **client:** Update client to assign empty obj to config if there isnt one ([18de389](https://gitlab.com/auto-cloud/cloudgraph/sdk/commit/18de3894e389bd8f936ed359f24b775d851fe736))
+
 ## [0.3.4](https://gitlab.com/auto-cloud/cloudgraph/sdk/compare/0.3.3...0.3.4) (2021-09-08)
 
 
