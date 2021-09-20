@@ -6,7 +6,7 @@ import { Opts, ProviderData } from '../types'
 export default abstract class Provider {
   constructor(config: any) {
     this.logger = config.logger
-    this.config = config.provider
+    this.config = config.provider ?? {}
   }
 
   interface = inquirer
