@@ -75,21 +75,11 @@ export class Logger {
     }
     return this.spinnerMap.msg
   }
-  
-  spinnerFail(idx, msg): void {
-    if (this.spinnerMap[idx]) {
-      const {instance} = this.spinnerMap[idx]
-      instance.fail(msg)
-    }
-  }
-  
-  spinnerSuccess(idx, msg): void {
-    if (this.spinnerMap[idx]) {
-      const {instance} = this.spinnerMap[idx]
-      instance.succeed(msg)
-    }
-  }
 
+  /**
+   * For the functions below, we can not log while a spinner is running. We try to stop the
+   * spinner => log info/error/success/warn/debug => restart spinner if there is one 
+   */
   info(msg: string | { [key: string]: any }): void {
     if (this.level >= LogLevel.Info) {
       this.stopSpinner()
