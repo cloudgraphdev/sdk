@@ -47,6 +47,7 @@ build:
     - if: $CI_COMMIT_BRANCH
       when: always
   script:
+    - export NODE_ENV=ci
     - yarn prepublish
 
 # test:
