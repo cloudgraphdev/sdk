@@ -16,6 +16,7 @@ export class Logger {
     const levelRange = ['-1', '0', '1', '2', '3', '4', '5']
     this.level = levelRange.indexOf(debug) > -1 ? Number(debug) : 3
     this.logger = ora({ isSilent: this.level === LogLevel.Silent })
+    this.spinnerMap = {}
   }
 
   level: LogLevel
@@ -23,6 +24,8 @@ export class Logger {
   logger: Ora
 
   startText: string
+
+  spinnerMap: {msg?: string, instance?: Ora}
 
   // Legacy log method
   log(
@@ -44,30 +47,77 @@ export class Logger {
     return msg
   }
 
-  startSpinner(msg: string): Ora {
-    this.startText = msg
-    return this.logger.start(msg)
+  startSpinner(msg): void {
+    const instance = this.logger.start(msg)
+    this.spinnerMap = {msg, instance}
   }
 
+  successSpinner(msg): void {
+    if (this.spinnerMap.instance) {
+      const {instance} = this.spinnerMap
+      instance.succeed(msg)
+      this.spinnerMap = {}
+    }
+  }
+
+  failSpinner(msg): void {
+    if (this.spinnerMap.instance) {
+      const {instance} = this.spinnerMap
+      instance.fail(msg)
+      this.spinnerMap = {}
+    }
+  }
+
+  stopSpinner(): string {
+    if (this.spinnerMap.instance) {
+      const {instance} = this.spinnerMap
+      instance.stop()
+    }
+    return this.spinnerMap.msg
+  }
+
+  /**
+   * For the functions below, we can not log while a spinner is running. We try to stop the
+   * spinner => log info/error/success/warn/debug => restart spinner if there is one 
+   */
   info(msg: string | { [key: string]: any }): void {
-    if (this.level >= LogLevel.Info) this.logger.info(this.parseMessage(msg))
+    if (this.level >= LogLevel.Info) {
+      this.stopSpinner()
+      this.logger.info(this.parseMessage(msg))
+      this.spinnerMap.instance && this.startSpinner(this.spinnerMap.msg)
+    }
   }
 
   error(msg: string | { [key: string]: any }): void {
-    if (this.level >= LogLevel.Error) this.logger.fail(this.parseMessage(msg))
+    if (this.level >= LogLevel.Error) {
+      this.stopSpinner()
+      this.logger.fail(this.parseMessage(msg))
+      this.spinnerMap.instance && this.startSpinner(this.spinnerMap.msg)
+    } 
   }
 
   success(msg: string | { [key: string]: any }): void {
-    if (this.level >= LogLevel.Success)
+    if (this.level >= LogLevel.Success) {
+      this.stopSpinner()
       this.logger.succeed(this.parseMessage(msg))
+      this.spinnerMap.instance && this.startSpinner(this.spinnerMap.msg)
+    }
   }
 
   warn(msg: string | { [key: string]: any }): void {
-    if (this.level >= LogLevel.Warn) this.logger.warn(this.parseMessage(msg))
+    if (this.level >= LogLevel.Warn) {
+      this.stopSpinner()
+      this.logger.warn(this.parseMessage(msg))
+      this.spinnerMap.instance && this.startSpinner(this.spinnerMap.msg)
+    } 
   }
 
   debug(msg: string | { [key: string]: any }): void {
-    if (this.level >= LogLevel.Trace) this.logger.info(this.parseMessage(msg))
+    if (this.level >= LogLevel.Trace) {
+      this.stopSpinner()
+      this.logger.info(this.parseMessage(msg))
+      this.spinnerMap.instance && this.startSpinner(this.spinnerMap.msg)
+    } 
   }
 }
 
