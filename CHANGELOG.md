@@ -1,3 +1,12 @@
+## [0.3.6](https://gitlab.com/auto-cloud/cloudgraph/sdk/compare/0.3.5...0.3.6) (2021-09-21)
+
+
+### Bug Fixes
+
+* **deps:** correct devDeps and deps list ([c9650dd](https://gitlab.com/auto-cloud/cloudgraph/sdk/commit/c9650dd2ea057593bfc4ea5f23e101803abb2cd6))
+* **deps:** correct devDeps and deps list ([3f02b21](https://gitlab.com/auto-cloud/cloudgraph/sdk/commit/3f02b210440ac02e58ebb5fb2adc2cb9206ffa3a))
+* **logger:** update logger so you can log during a spinner ([713805d](https://gitlab.com/auto-cloud/cloudgraph/sdk/commit/713805d1519f7a323418f9c2d7bbf962d32ee62f))
+
 ## [0.3.5](https://gitlab.com/auto-cloud/cloudgraph/sdk/compare/0.3.4...0.3.5) (2021-09-20)
 
 
