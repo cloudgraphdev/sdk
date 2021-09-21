@@ -11,12 +11,15 @@
       echo "\"@cloudgraph:registry\" \"https://registry.npmjs.com/\""
       echo "\"//registry.npmjs.com/:_authToken\" \"${NPM_TOKEN}\""
     } | tee -a .yarnrc
+
+.yarn-install: &yarn-install
   - yarn install --cache-folder .npm --prefer-offline
 
 default:
   image: node:16-alpine
   before_script:
     - *configure-registry
+    - *yarn-install
   cache:
     key: ${CI_COMMIT_REF_SLUG}
     paths:
@@ -46,8 +49,11 @@ build:
       when: never
     - if: $CI_COMMIT_BRANCH
       when: always
-  script:
+  before_script:
+    - *configure-registry
     - export NODE_ENV=ci
+    - *yarn-install
+  script:
     - yarn prepublish
 
 # test:
@@ -72,6 +78,7 @@ semantic release:
     GIT_COMMITTER_EMAIL: "no-reply@loudcloud.dev"
   before_script:
     - *configure-registry
+    - *yarn-install
     - yarn add semantic-release @semantic-release/changelog @semantic-release/git @semantic-release/gitlab
   script:
     - npx semantic-release -r $CI_PROJECT_URL
