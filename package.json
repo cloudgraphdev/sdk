@@ -1,6 +1,6 @@
 {
   "name": "@cloudgraph/sdk",
-  "version": "0.3.6",
+  "version": "0.3.7",
   "description": "SDK for cloud graph providers and cli",
   "main": "dist/index.js",
   "types": "dist/index.d.ts",

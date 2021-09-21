@@ -1,3 +1,12 @@
+## [0.3.7](https://gitlab.com/auto-cloud/cloudgraph/sdk/compare/0.3.6...0.3.7) (2021-09-21)
+
+
+### Bug Fixes
+
+* **.gitlab-ci:** remove yarn lockfile freezing ([343d1ad](https://gitlab.com/auto-cloud/cloudgraph/sdk/commit/343d1ad442a06ba65424b66c151a3336137f560d))
+* **.gitlab-ci:** set NODE_ENV to ci for build phase ([7d06713](https://gitlab.com/auto-cloud/cloudgraph/sdk/commit/7d067132e315a007e5b225382d3dc6398dfa0729))
+* **.gitlab-gi:** set NODE_ENV before yarn install ([38c1335](https://gitlab.com/auto-cloud/cloudgraph/sdk/commit/38c13352a827474b085a7c893287d04dbeaf2e3c))
+
 ## [0.3.6](https://gitlab.com/auto-cloud/cloudgraph/sdk/compare/0.3.5...0.3.6) (2021-09-21)
 
 
