@@ -33,10 +33,12 @@ export interface Service {
     regions,
     credentials,
     opts,
+    rawData,
   }: {
     regions: string
     credentials: any
     opts: Opts
+    rawData: any
   }) => any
 }
 
