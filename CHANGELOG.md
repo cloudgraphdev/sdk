@@ -1,3 +1,10 @@
+## [0.3.8](https://gitlab.com/auto-cloud/cloudgraph/sdk/compare/0.3.7...0.3.8) (2021-09-24)
+
+
+### Bug Fixes
+
+* Added extra attribute to getData interface ([853586f](https://gitlab.com/auto-cloud/cloudgraph/sdk/commit/853586fc1072ff9852361a7371d8a6567c29ddb3))
+
 ## [0.3.7](https://gitlab.com/auto-cloud/cloudgraph/sdk/compare/0.3.6...0.3.7) (2021-09-21)
 
 
