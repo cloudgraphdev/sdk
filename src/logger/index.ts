@@ -41,10 +41,19 @@ export class Logger {
   }
 
   private parseMessage(msg: string | { [key: string]: any }): string {
-    if (typeof msg === 'object') {
-      return JSON.stringify(msg, null, 2)
+    let value = msg
+    // Handle error objects to enable them to be stringified
+    if (msg instanceof Error) {
+      if (this.level > 3) {
+        value = msg.stack
+      } else {
+        value = msg.toString()
+      }
     }
-    return msg
+    if (typeof value === 'object') {
+      return JSON.stringify(value, null, 2)
+    }
+    return value
   }
 
   startSpinner(msg): void {
