@@ -1,3 +1,10 @@
+## [0.3.9](https://gitlab.com/auto-cloud/cloudgraph/sdk/compare/0.3.8...0.3.9) (2021-09-28)
+
+
+### Bug Fixes
+
+* **logger:** Update how logger handles instances of error objs ([5edfea0](https://gitlab.com/auto-cloud/cloudgraph/sdk/commit/5edfea0d6a1ef790ea730ff920a50bd0960d003c))
+
 ## [0.3.8](https://gitlab.com/auto-cloud/cloudgraph/sdk/compare/0.3.7...0.3.8) (2021-09-24)
 
 
