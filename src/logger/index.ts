@@ -1,4 +1,5 @@
 import ora, { Ora } from 'ora'
+import fs from 'fs'
 
 export enum LogLevel {
   Silent = -1,
@@ -15,11 +16,15 @@ export class Logger {
   constructor(debug: string) {
     const levelRange = ['-1', '0', '1', '2', '3', '4', '5']
     this.level = levelRange.indexOf(debug) > -1 ? Number(debug) : 3
+    this.errorLogFile = './debug.log'
     this.logger = ora({ isSilent: this.level === LogLevel.Silent })
     this.spinnerMap = {}
+    this.clearLog()
   }
 
   level: LogLevel
+
+  errorLogFile: string
 
   logger: Ora
 
@@ -54,6 +59,18 @@ export class Logger {
       return JSON.stringify(value, null, 2)
     }
     return value
+  }
+
+  private clearLog() {
+    if (this.level >= LogLevel.Trace) {
+      fs.writeFileSync(this.errorLogFile, '')
+    }
+  }
+
+  private writeLog(text: string) {
+    if (this.level >= LogLevel.Trace) {
+      fs.appendFileSync(this.errorLogFile, `${text  }\n`)
+    }
   }
 
   startSpinner(msg): void {
@@ -101,6 +118,7 @@ export class Logger {
     if (this.level >= LogLevel.Error) {
       this.stopSpinner()
       this.logger.fail(this.parseMessage(msg))
+      this.writeLog(this.parseMessage(msg))
       this.spinnerMap.instance && this.startSpinner(this.spinnerMap.msg)
     } 
   }
@@ -125,6 +143,7 @@ export class Logger {
     if (this.level >= LogLevel.Trace) {
       this.stopSpinner()
       this.logger.info(this.parseMessage(msg))
+      this.writeLog(this.parseMessage(msg))
       this.spinnerMap.instance && this.startSpinner(this.spinnerMap.msg)
     } 
   }
