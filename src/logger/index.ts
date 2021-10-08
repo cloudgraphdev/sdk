@@ -16,7 +16,7 @@ export class Logger {
   constructor(debug: string) {
     const levelRange = ['-1', '0', '1', '2', '3', '4', '5']
     this.level = levelRange.indexOf(debug) > -1 ? Number(debug) : 3
-    this.errorLogFile = './debug.log'
+    this.errorLogFile = './cg-debug.log'
     this.logger = ora({ isSilent: this.level === LogLevel.Silent })
     this.spinnerMap = {}
     this.clearLog()
@@ -116,9 +116,10 @@ export class Logger {
 
   error(msg: string | { [key: string]: any }): void {
     if (this.level >= LogLevel.Error) {
+      const parsedMessage = this.parseMessage(msg)
       this.stopSpinner()
-      this.logger.fail(this.parseMessage(msg))
-      this.writeLog(this.parseMessage(msg))
+      this.logger.fail(parsedMessage)
+      this.writeLog(parsedMessage)
       this.spinnerMap.instance && this.startSpinner(this.spinnerMap.msg)
     } 
   }
@@ -141,9 +142,10 @@ export class Logger {
 
   debug(msg: string | { [key: string]: any }): void {
     if (this.level >= LogLevel.Trace) {
+      const parsedMessage = this.parseMessage(msg)
       this.stopSpinner()
-      this.logger.info(this.parseMessage(msg))
-      this.writeLog(this.parseMessage(msg))
+      this.logger.info(parsedMessage)
+      this.writeLog(parsedMessage)
       this.spinnerMap.instance && this.startSpinner(this.spinnerMap.msg)
     } 
   }
