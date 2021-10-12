@@ -1,3 +1,10 @@
+## [0.3.10](https://gitlab.com/auto-cloud/cloudgraph/sdk/compare/0.3.9...0.3.10) (2021-10-12)
+
+
+### Bug Fixes
+
+* **service:** update service type with new params ([f990413](https://gitlab.com/auto-cloud/cloudgraph/sdk/commit/f990413155a7c5976ee682c30abe468795fb089a))
+
 ## [0.3.9](https://gitlab.com/auto-cloud/cloudgraph/sdk/compare/0.3.8...0.3.9) (2021-09-28)
 
 
