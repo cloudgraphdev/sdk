@@ -31,12 +31,12 @@ export interface Service {
   mutation: string
   getData: ({
     regions,
-    credentials,
+    config,
     opts,
     rawData,
   }: {
     regions: string
-    credentials: any
+    config: any
     opts: Opts
     rawData: any
   }) => any
