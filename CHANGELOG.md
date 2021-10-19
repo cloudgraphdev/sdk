@@ -1,3 +1,15 @@
+# [0.4.0](https://gitlab.com/auto-cloud/cloudgraph/sdk/compare/0.3.10...0.4.0) (2021-10-19)
+
+
+### Bug Fixes
+
+* **debugLog:** set cg prefix on debug log ([3b1cb73](https://gitlab.com/auto-cloud/cloudgraph/sdk/commit/3b1cb73d0a502a5bb28d6b144a205a55d0e31dcf))
+
+
+### Features
+
+* **debugLog:** write error/debug logs to file in debug mode ([bb74b62](https://gitlab.com/auto-cloud/cloudgraph/sdk/commit/bb74b62967534d1dd4816462bf60f95dff220990))
+
 ## [0.3.10](https://gitlab.com/auto-cloud/cloudgraph/sdk/compare/0.3.9...0.3.10) (2021-10-12)
 
 
