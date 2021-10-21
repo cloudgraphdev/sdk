@@ -40,6 +40,7 @@ export default class RulesProvider {
       id: String! @id
       ruleId: String!
       resourceId: String!
+      ruleDescription: String!
       result: ${this.schemaTypeName}Result @search
       # connections
        ${Object.keys(this.typenameToFieldMap)
