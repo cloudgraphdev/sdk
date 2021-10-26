@@ -1,3 +1,15 @@
+# [0.5.0](https://gitlab.com/auto-cloud/cloudgraph/sdk/compare/0.4.0...0.5.0) (2021-10-26)
+
+
+### Bug Fixes
+
+* Fixed unknow field at awsFinding schema ([96bfd2c](https://gitlab.com/auto-cloud/cloudgraph/sdk/commit/96bfd2c5ccbcba4d00d6fcaf645d2e4025d6ecf1))
+
+
+### Features
+
+* Migrated Policy Pack engine to SDK repo ([d939607](https://gitlab.com/auto-cloud/cloudgraph/sdk/commit/d939607533d8c6a4c12f94f85a1648742c258a3e))
+
 # [0.4.0](https://gitlab.com/auto-cloud/cloudgraph/sdk/compare/0.3.10...0.4.0) (2021-10-19)
 
 
