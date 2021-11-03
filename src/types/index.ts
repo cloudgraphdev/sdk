@@ -50,6 +50,7 @@ export interface ServiceConnection {
 }
 
 export interface Entity {
+  className?: string
   name: string
   mutation: string
   data: any[]
