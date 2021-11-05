@@ -1,32 +1,27 @@
 import jsonpath, { PathComponent } from 'jsonpath'
-// import DgraphEngine from '../storage/dgraph'
 
 import JsonEvaluator from './evaluators/json-evaluator'
 import JsEvaluator from './evaluators/js-evaluator'
 import { RuleEvaluator } from './evaluators/rule-evaluator'
 import DefaultEvaluator from './evaluators/default-evaluator'
-import { ResourceData, Rule, RuleFinding, RuleResult } from './types'
+import { Engine, ResourceData, Rule, RuleFinding, RuleResult } from './types'
 import { ProviderData } from '../types'
 
-export default class RulesProvider {
+export default class RulesProvider implements Engine {
   evaluators: RuleEvaluator<any>[] = [new JsonEvaluator(), new JsEvaluator()]
 
   defaultEvaluator = new DefaultEvaluator()
-
-  private readonly rules: Rule[]
 
   private readonly typenameToFieldMap: { [typeName: string]: string }
 
   private readonly schemaTypeName
 
   constructor(
-    rules: Rule[],
-    typenameToFieldMap: { [tn: string]: string },
-    schemaTypeName: string
+    typenameToFieldMap?: { [tn: string]: string },
+    schemaTypeName?: string
   ) {
-    this.rules = rules
-    this.typenameToFieldMap = typenameToFieldMap
-    this.schemaTypeName = schemaTypeName
+    this.typenameToFieldMap = typenameToFieldMap || {}
+    this.schemaTypeName = schemaTypeName || ''
   }
 
   getSchema = (): string[] => {
@@ -40,7 +35,6 @@ export default class RulesProvider {
       id: String! @id
       ruleId: String!
       resourceId: String!
-      ruleDescription: String!
       result: ${this.schemaTypeName}Result @search
       # connections
        ${Object.keys(this.typenameToFieldMap)
@@ -68,18 +62,7 @@ export default class RulesProvider {
     return this.evaluators
   }
 
-  getData = async (cli: any): Promise<ProviderData> => {
-    const findings: any = []
-    for (const rule of this.rules) {
-      try {
-        const { data } = (await cli.query(rule.gql)) as any
-        const result = await this.processRule(rule, data)
-        findings.push(...result)
-      } catch (error) {
-        // console.error(error)
-      }
-    }
-
+  getData = async (findings: RuleFinding[]): Promise<ProviderData> => {
     return {
       connections: [] as any,
       entities: [
@@ -96,10 +79,7 @@ export default class RulesProvider {
     }
   }
 
-  private processRule = async (
-    rule: Rule,
-    data: any
-  ): Promise<RuleFinding[]> => {
+  processRule = async (rule: Rule, data: any): Promise<RuleFinding[]> => {
     const res: any[] = [] //
     const dedupeIds = {} as any
     const resourcePaths = jsonpath.nodes(data, rule.resource)
@@ -138,7 +118,7 @@ export default class RulesProvider {
         resourcePath: jsonpath.stringify(path),
       })
       if (ruleResult) {
-        res.push({ ...ruleResult, ruleDescription: rule.description })
+        res.push({ ...ruleResult })
       }
     }
     return res
@@ -188,7 +168,7 @@ export default class RulesProvider {
       const segment = path[j]
       if (Array.isArray(curr)) {
         // this is an array, we store in []._ the alias of this resource position in the array
-        (curr as any)['@'] = curr[segment as number]
+        ;(curr as any)['@'] = curr[segment as number]
       }
       curr = curr[segment]
     }

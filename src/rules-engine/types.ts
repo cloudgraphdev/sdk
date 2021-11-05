@@ -1,3 +1,5 @@
+import { ProviderData } from '..'
+
 export type ResourceData = {
   data: { [k: string]: any }
   resource: { id: string; [k: string]: any }
@@ -21,17 +23,22 @@ export type _ResourceData = ResourceData & { elementPath?: string }
 export interface Rule {
   id: string
   description: string
-  rationale: string
+  rationale?: string
   gql: string
   resource: string
+}
+
+export enum Result {
+  FAIL = 'FAIL',
+  PASS = 'PASS',
+  MISSING = 'MISSING',
 }
 
 export interface RuleFinding {
   id: string
   ruleId: string
-  ruleDescription: string
   resourceId: string
-  result: 'FAIL' | 'PASS' | 'MISSING'
+  result: Result
   [key: string]: any
 }
 
@@ -43,8 +50,19 @@ export interface JsRule extends Rule {
   check?: (data: any) => boolean
 }
 
+export enum severity {
+  warning = 'Warning',
+  danger = 'Danger',
+}
+
 export enum RuleResult {
   DOESNT_MATCH = 'DOESNT_MATCH',
   MATCHES = 'MATCHES',
   MISSING = 'MISSING',
+}
+
+export interface Engine {
+  processRule: (rule: Rule, data: any) => Promise<RuleFinding[]>
+  getData: (findings: RuleFinding[]) => Promise<ProviderData>
+  getSchema: () => string[]
 }
