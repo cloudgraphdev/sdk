@@ -1,3 +1,10 @@
+## [0.5.1](https://gitlab.com/auto-cloud/cloudgraph/sdk/compare/0.5.0...0.5.1) (2021-11-09)
+
+
+### Bug Fixes
+
+* Exported types for Rules Engine ([360a5bf](https://gitlab.com/auto-cloud/cloudgraph/sdk/commit/360a5bf70043eb642df54a90a571890fb863777d))
+
 # [0.5.0](https://gitlab.com/auto-cloud/cloudgraph/sdk/compare/0.4.0...0.5.0) (2021-10-26)
 
 
