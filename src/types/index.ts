@@ -22,11 +22,13 @@ export interface Service {
     region,
     account,
     data,
+    afterNodeInsertion
   }: {
     service: any
     region: string
     account: string
     data: any
+    afterNodeInsertion?: boolean
   }) => any
   mutation: string
   getData: ({
@@ -59,6 +61,7 @@ export interface Entity {
 export interface ProviderData {
   entities: Entity[]
   connections: { [key: string]: ServiceConnection[] }
+  additionalConnections?: { [key: string]: ServiceConnection[] }
 }
 
 export type LoggerInput = string | { [key: string]: any } | unknown
