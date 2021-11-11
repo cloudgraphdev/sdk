@@ -2,7 +2,7 @@ import JsonEvaluator from '../src/rules-engine/evaluators/json-evaluator'
 import { RuleResult } from '../src/rules-engine/types'
 
 describe('JsonEvaluator', () => {
-  it('should accept all rules that have a conditions field', () => {
+  test('should accept all rules that have a conditions field', () => {
     const e = new JsonEvaluator()
 
     expect(e.canEvaluate({} as any)).toBe(false)
@@ -11,7 +11,7 @@ describe('JsonEvaluator', () => {
     expect(e.canEvaluate({ conditions: 1 } as any)).toBe(true)
   })
 
-  it('should execute simple rules', async () => {
+  test('should execute simple rules', async () => {
     const e = new JsonEvaluator()
     const data = {
       a: 1,
@@ -47,7 +47,7 @@ describe('JsonEvaluator', () => {
     expect(results).toStrictEqual(expected)
   })
 
-  it('should combine simple rules [and,or]', async () => {
+  test('should combine simple rules [and,or]', async () => {
     const e = new JsonEvaluator()
     const data = {
       a: 1,
@@ -105,7 +105,7 @@ describe('JsonEvaluator', () => {
     ).toBe(RuleResult.DOESNT_MATCH)
   })
 
-  it('should resolve paths', async () => {
+  test('should resolve paths', async () => {
     const e = new JsonEvaluator()
     const data = { data: { a: { b: [0, { d: 'value' }] } } } as any
     const rule = { path: 'xx', equal: 'value' }
@@ -133,7 +133,7 @@ describe('JsonEvaluator', () => {
     ).toBe(RuleResult.MATCHES)
   })
 
-  it('should support array operators', async () => {
+  test('should support array operators', async () => {
     const e = new JsonEvaluator()
     const data = { data: { a: { b: [0, 1, 2] } } } as any
     let rule: any = { path: 'a.b', array_any: { path: '[*]', equal: 2 } }
@@ -154,7 +154,7 @@ describe('JsonEvaluator', () => {
     ).toBe(RuleResult.MATCHES)
   })
 
-  it('should process dates', async () => {
+  test('should process dates', async () => {
     const e = new JsonEvaluator()
     const day = 1000 * 60 * 60 * 24 // @TODO - replace by some date library (that is not moment)
     const now = Date.now()
