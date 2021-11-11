@@ -35,7 +35,7 @@ export interface Service {
     data: any
     afterNodeInsertion?: boolean
   }) => { [key: string]: ServiceConnection[] }
-  mutation: string
+  mutation?: string
   getData: ({
     regions,
     config,
