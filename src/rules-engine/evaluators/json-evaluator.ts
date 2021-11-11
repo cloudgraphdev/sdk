@@ -52,7 +52,15 @@ export default class JsonEvaluator implements RuleEvaluator<JsonRule> {
     lessThanInclusive: (a, b) => a <= b,
     greaterThan: (a, b) => a > b,
     greaterThanInclusive: (a, b) => a >= b,
+    isEmpty: (data, shouldBeEmpty) => {
+      if (Array.isArray(data)) {
+        // Verify empty/filled arrays
+        const array = (data || []).length
+        return shouldBeEmpty ? array === 0 : array > 0
+      }
 
+      return false
+    },
     daysAgo: a =>
       Math.trunc((Date.now() - new Date(a).getTime()) / (60 * 60 * 1000 * 24)), // @TODO use library
 
@@ -133,7 +141,6 @@ export default class JsonEvaluator implements RuleEvaluator<JsonRule> {
     } else {
       firstArg = value
     }
-    // console.log(operator, firstArg, otherArgs, data)
     return operator(firstArg, otherArgs, data)
   }
 }
