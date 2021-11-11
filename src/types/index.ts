@@ -59,3 +59,5 @@ export interface ProviderData {
   entities: Entity[]
   connections: { [key: string]: ServiceConnection[] }
 }
+
+export type LoggerInput = string | { [key: string]: any } | unknown
