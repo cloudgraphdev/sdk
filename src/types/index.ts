@@ -11,6 +11,7 @@ export interface ServiceConnection {
   resourceType: string
   relation: string
   field: string
+  insertAfterNodeInsertion?: boolean
 }
 export interface Service {
   format: ({
@@ -27,13 +28,11 @@ export interface Service {
     region,
     account,
     data,
-    afterNodeInsertion,
   }: {
     service: any
     region: string
     account: string
     data: any
-    afterNodeInsertion?: boolean
   }) => { [key: string]: ServiceConnection[] }
   mutation?: string
   getData: ({
