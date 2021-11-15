@@ -1,3 +1,10 @@
+## [0.5.3](https://gitlab.com/auto-cloud/cloudgraph/sdk/compare/0.5.2...0.5.3) (2021-11-15)
+
+
+### Bug Fixes
+
+* Added new operator to evaluate empty/filled arrays ([57cfc82](https://gitlab.com/auto-cloud/cloudgraph/sdk/commit/57cfc82880e19e823e29a2515fcb747e53cfd760))
+
 ## [0.5.2](https://gitlab.com/auto-cloud/cloudgraph/sdk/compare/0.5.1...0.5.2) (2021-11-15)
 
 
