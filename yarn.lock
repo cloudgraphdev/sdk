@@ -826,12 +826,12 @@
   dependencies:
     "@octokit/openapi-types" "^9.5.0"
 
-"@semantic-release/changelog@^6.0.0":
-  version "6.0.0"
-  resolved "https://registry.yarnpkg.com/@semantic-release/changelog/-/changelog-6.0.0.tgz#b16636009bfbde9c09c6c1b89463af257d4a7142"
-  integrity sha512-X01Me+QVMykvILockNGlXXl3dgr1QqpbRQsknQoOJQCXQGXoqY3DNQ3rBQuI8/SUK7RZwYLctg0NbPNArlo6eQ==
+"@semantic-release/changelog@^6.0.1":
+  version "6.0.1"
+  resolved "https://registry.yarnpkg.com/@semantic-release/changelog/-/changelog-6.0.1.tgz#8dd0334fd8c7d50cda747d2591e4f18f816b3c9c"
+  integrity sha512-FT+tAGdWHr0RCM3EpWegWnvXJ05LQtBkQUaQRIExONoXjVjLuOILNm4DEKNaV+GAQyJjbLRVs57ti//GypH6PA==
   dependencies:
-    "@semantic-release/error" "^2.1.0"
+    "@semantic-release/error" "^3.0.0"
     aggregate-error "^3.0.0"
     fs-extra "^9.0.0"
     lodash "^4.17.4"
@@ -849,7 +849,7 @@
     lodash "^4.17.4"
     micromatch "^4.0.2"
 
-"@semantic-release/error@^2.1.0", "@semantic-release/error@^2.2.0":
+"@semantic-release/error@^2.2.0":
   version "2.2.0"
   resolved "https://registry.yarnpkg.com/@semantic-release/error/-/error-2.2.0.tgz#ee9d5a09c9969eade1ec864776aeda5c5cddbbf0"
   integrity sha512-9Tj/qn+y2j+sjCI3Jd+qseGtHjOAeg7dU2/lVcqIQ9TV3QDaDXDYXcoOHU+7o2Hwh8L8ymL4gfuO7KxDs3q2zg==
@@ -859,12 +859,12 @@
   resolved "https://registry.yarnpkg.com/@semantic-release/error/-/error-3.0.0.tgz#30a3b97bbb5844d695eb22f9d3aa40f6a92770c2"
   integrity sha512-5hiM4Un+tpl4cKw3lV4UgzJj+SmfNIDCLLw0TepzQxz9ZGV5ixnqkzIVF+3tp0ZHgcMKE+VNGHJjEeyFG2dcSw==
 
-"@semantic-release/git@^10.0.0":
-  version "10.0.0"
-  resolved "https://registry.yarnpkg.com/@semantic-release/git/-/git-10.0.0.tgz#41dda434e9c2fe222d030f12060e6f5a8696e7ba"
-  integrity sha512-/BljvngXJzwbFFJouxHHvSzAhi5iaucF7l0kQPszD4m7Y79+FHyvQl5Q/HK7T/e8MIwU9hz321KjOZn9yfSpPg==
+"@semantic-release/git@^10.0.1":
+  version "10.0.1"
+  resolved "https://registry.yarnpkg.com/@semantic-release/git/-/git-10.0.1.tgz#c646e55d67fae623875bf3a06a634dd434904498"
+  integrity sha512-eWrx5KguUcU2wUPaO6sfvZI0wPafUKAMNC18aXY4EnNcrZL86dEmpNVnC9uMpGZkmZJ9EfCVJBQx4pV4EMGT1w==
   dependencies:
-    "@semantic-release/error" "^2.1.0"
+    "@semantic-release/error" "^3.0.0"
     aggregate-error "^3.0.0"
     debug "^4.0.0"
     dir-glob "^3.0.0"
@@ -895,12 +895,12 @@
     p-retry "^4.0.0"
     url-join "^4.0.0"
 
-"@semantic-release/gitlab@^7.0.3":
-  version "7.0.3"
-  resolved "https://registry.yarnpkg.com/@semantic-release/gitlab/-/gitlab-7.0.3.tgz#ab919b40fabd01c2be54114694152852c2eea810"
-  integrity sha512-2T70JP8pUbm6Be0ZTupmDQ7s77cXbafjWoGAMwmwmQoYOQlkW3QAigKTl/TJeN0tXg+xuou0o2WzFa0Y1cSZ9Q==
+"@semantic-release/gitlab@^7.0.4":
+  version "7.0.4"
+  resolved "https://registry.yarnpkg.com/@semantic-release/gitlab/-/gitlab-7.0.4.tgz#a9fe263d73ab76cc2d725b23ef659c53e33494e2"
+  integrity sha512-TL6kT526+ir/uehMFdTlJNXUj+p+SjPAYUkit6lh5Rs8kxeHQ01bgmpYLQlc94ZDpy9x2Tzcb/NRwKojkmLG4A==
   dependencies:
-    "@semantic-release/error" "^2.2.0"
+    "@semantic-release/error" "^3.0.0"
     aggregate-error "^3.0.0"
     debug "^4.0.0"
     dir-glob "^3.0.0"
@@ -2136,6 +2136,11 @@ data-urls@^2.0.0:
     abab "^2.0.3"
     whatwg-mimetype "^2.3.0"
     whatwg-url "^8.0.0"
+
+date-fns@^2.25.0:
+  version "2.25.0"
+  resolved "https://registry.yarnpkg.com/date-fns/-/date-fns-2.25.0.tgz#8c5c8f1d958be3809a9a03f4b742eba894fc5680"
+  integrity sha512-ovYRFnTrbGPD4nqaEqescPEv1mNwvt+UTqI3Ay9SzNtey9NZnYu6E2qCcBBgJ6/2VF1zGGygpyTDITqpQQ5e+w==
 
 dateformat@^3.0.0:
   version "3.0.3"

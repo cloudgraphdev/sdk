@@ -8,6 +8,7 @@ import {
   _ResourceData,
 } from '../types'
 import { RuleEvaluator } from './rule-evaluator'
+import AdditionalOperators from '../operators'
 
 export default class JsonEvaluator implements RuleEvaluator<JsonRule> {
   canEvaluate(rule: JsonRule): boolean {
@@ -41,21 +42,6 @@ export default class JsonEvaluator implements RuleEvaluator<JsonRule> {
   }
 
   operators: { [key: string]: Operator } = {
-    // eslint-disable-next-line eqeqeq
-    equal: (a, b) => a == b, // == is fine
-    notEqual: (a, b) => a !== b,
-    in: (a, b) => (b as any[]).indexOf(a) > -1,
-    notIn: (a, b) => (b as any[]).indexOf(a) === -1,
-    contains: (a, b) => a.indexOf(b) > -1,
-    doesNotContain: (a, b) => a.indexOf(b) === -1,
-    lessThan: (a, b) => a < b,
-    lessThanInclusive: (a, b) => a <= b,
-    greaterThan: (a, b) => a > b,
-    greaterThanInclusive: (a, b) => a >= b,
-
-    daysAgo: a =>
-      Math.trunc((Date.now() - new Date(a).getTime()) / (60 * 60 * 1000 * 24)), // @TODO use library
-
     or: (_, conditions: Condition[], data) => {
       for (let i = 0; i < conditions.length; i++) {
         // if 1 is true, it's true
@@ -100,6 +86,7 @@ export default class JsonEvaluator implements RuleEvaluator<JsonRule> {
       }
       return false
     },
+    ...AdditionalOperators,
   }
 
   isCondition = (a: unknown): boolean =>
@@ -133,7 +120,6 @@ export default class JsonEvaluator implements RuleEvaluator<JsonRule> {
     } else {
       firstArg = value
     }
-    // console.log(operator, firstArg, otherArgs, data)
     return operator(firstArg, otherArgs, data)
   }
 }
