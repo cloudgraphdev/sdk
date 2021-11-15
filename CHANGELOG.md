@@ -1,3 +1,10 @@
+## [0.5.2](https://gitlab.com/auto-cloud/cloudgraph/sdk/compare/0.5.1...0.5.2) (2021-11-15)
+
+
+### Bug Fixes
+
+* Extended logger type ([dd19b1a](https://gitlab.com/auto-cloud/cloudgraph/sdk/commit/dd19b1a23556e933fa8b8167defd91b9f067e4e2))
+
 ## [0.5.1](https://gitlab.com/auto-cloud/cloudgraph/sdk/compare/0.5.0...0.5.1) (2021-11-09)
 
 
