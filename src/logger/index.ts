@@ -1,6 +1,8 @@
 import ora, { Ora } from 'ora'
 import fs from 'fs'
 
+import { LoggerInput } from '../types'
+
 export enum LogLevel {
   Silent = -1,
   Error = 0,
@@ -30,7 +32,7 @@ export class Logger {
 
   startText: string
 
-  spinnerMap: {msg?: string, instance?: Ora}
+  spinnerMap: { msg?: string; instance?: Ora }
 
   // Legacy log method
   log(
@@ -45,7 +47,7 @@ export class Logger {
     }
   }
 
-  private parseMessage(msg: string | { [key: string]: any }): string {
+  private parseMessage(msg: LoggerInput): string {
     let value = msg
     // Handle error objects to enable them to be stringified
     if (msg instanceof Error) {
@@ -58,37 +60,37 @@ export class Logger {
     if (typeof value === 'object') {
       return JSON.stringify(value, null, 2)
     }
-    return value
+    return String(value)
   }
 
-  private clearLog() {
+  private clearLog(): void {
     if (this.level >= LogLevel.Trace) {
       fs.writeFileSync(this.errorLogFile, '')
     }
   }
 
-  private writeLog(text: string) {
+  private writeLog(text: string): void {
     if (this.level >= LogLevel.Trace) {
-      fs.appendFileSync(this.errorLogFile, `${text  }\n`)
+      fs.appendFileSync(this.errorLogFile, `${text}\n`)
     }
   }
 
-  startSpinner(msg): void {
+  startSpinner(msg: string): void {
     const instance = this.logger.start(msg)
-    this.spinnerMap = {msg, instance}
+    this.spinnerMap = { msg, instance }
   }
 
-  successSpinner(msg): void {
+  successSpinner(msg: string): void {
     if (this.spinnerMap.instance) {
-      const {instance} = this.spinnerMap
+      const { instance } = this.spinnerMap
       instance.succeed(msg)
       this.spinnerMap = {}
     }
   }
 
-  failSpinner(msg): void {
+  failSpinner(msg: string): void {
     if (this.spinnerMap.instance) {
-      const {instance} = this.spinnerMap
+      const { instance } = this.spinnerMap
       instance.fail(msg)
       this.spinnerMap = {}
     }
@@ -96,7 +98,7 @@ export class Logger {
 
   stopSpinner(): string {
     if (this.spinnerMap.instance) {
-      const {instance} = this.spinnerMap
+      const { instance } = this.spinnerMap
       instance.stop()
     }
     return this.spinnerMap.msg
@@ -104,9 +106,9 @@ export class Logger {
 
   /**
    * For the functions below, we can not log while a spinner is running. We try to stop the
-   * spinner => log info/error/success/warn/debug => restart spinner if there is one 
+   * spinner => log info/error/success/warn/debug => restart spinner if there is one
    */
-  info(msg: string | { [key: string]: any }): void {
+  info(msg: LoggerInput): void {
     if (this.level >= LogLevel.Info) {
       this.stopSpinner()
       this.logger.info(this.parseMessage(msg))
@@ -114,17 +116,17 @@ export class Logger {
     }
   }
 
-  error(msg: string | { [key: string]: any }): void {
+  error(msg: LoggerInput): void {
     if (this.level >= LogLevel.Error) {
       const parsedMessage = this.parseMessage(msg)
       this.stopSpinner()
       this.logger.fail(parsedMessage)
       this.writeLog(parsedMessage)
       this.spinnerMap.instance && this.startSpinner(this.spinnerMap.msg)
-    } 
+    }
   }
 
-  success(msg: string | { [key: string]: any }): void {
+  success(msg: LoggerInput): void {
     if (this.level >= LogLevel.Success) {
       this.stopSpinner()
       this.logger.succeed(this.parseMessage(msg))
@@ -132,22 +134,22 @@ export class Logger {
     }
   }
 
-  warn(msg: string | { [key: string]: any }): void {
+  warn(msg: LoggerInput): void {
     if (this.level >= LogLevel.Warn) {
       this.stopSpinner()
       this.logger.warn(this.parseMessage(msg))
       this.spinnerMap.instance && this.startSpinner(this.spinnerMap.msg)
-    } 
+    }
   }
 
-  debug(msg: string | { [key: string]: any }): void {
+  debug(msg: LoggerInput): void {
     if (this.level >= LogLevel.Trace) {
       const parsedMessage = this.parseMessage(msg)
       this.stopSpinner()
       this.logger.info(parsedMessage)
       this.writeLog(parsedMessage)
       this.spinnerMap.instance && this.startSpinner(this.spinnerMap.msg)
-    } 
+    }
   }
 }
 
