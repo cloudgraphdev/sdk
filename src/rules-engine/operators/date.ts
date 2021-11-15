@@ -1,5 +1,6 @@
+import { differenceInDays } from 'date-fns'
+
 // Date Operators
 export default {
-  daysAgo: a =>
-    Math.trunc((Date.now() - new Date(a).getTime()) / (60 * 60 * 1000 * 24)), // @TODO use library
+  daysAgo: a => differenceInDays(Date.now(), new Date(a)),
 }

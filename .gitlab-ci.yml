@@ -56,13 +56,13 @@ build:
   script:
     - yarn prepublish
 
-test:
-  image: node:16-alpine
-  stage: test
-  rules:
-    - when: always
-  script:
-    - yarn test
+# test:
+#   image: node:16-alpine
+#   stage: test
+#   rules:
+#     - when: always
+#   script:
+#     - yarn test
 
 semantic release:
   image: node:16-alpine

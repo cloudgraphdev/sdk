@@ -22,6 +22,7 @@
   "author": "AutoCloud",
   "license": "MPL-2.0",
   "dependencies": {
+    "date-fns": "^2.25.0",
     "inquirer": "^8.1.2",
     "jsonpath": "^1.1.1",
     "lodash": "^4.17.21",
