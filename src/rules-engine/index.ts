@@ -34,14 +34,15 @@ export default class RulesProvider implements Engine {
     }
     type ${this.schemaTypeName} @key(fields: "id") {
       id: String! @id
-      ruleId: String!
-      resourceId: String!
+      ruleId: String! @search(by: [hash, regexp])
+      resourceId: String! @search(by: [hash, regexp])
+      severity: String! @search(by: [hash, regexp])
       result: ${this.schemaTypeName}Result @search
       # connections
        ${Object.keys(this.typenameToFieldMap)
          .map(
            (tn: string) =>
-             `${this.typenameToFieldMap[tn]}: [${tn}] @hasInverse(field: findings)`
+             `${tn}: [${this.typenameToFieldMap[tn]}] @hasInverse(field: findings)`
          )
          .join(' ')}
     }
@@ -49,8 +50,8 @@ export default class RulesProvider implements Engine {
     const extensions = Object.keys(this.typenameToFieldMap)
       .map(
         (tn: string) =>
-          `extend type ${tn} {
-   findings: [${this.schemaTypeName}] @hasInverse(field: ${this.typenameToFieldMap[tn]})
+          `extend type ${this.typenameToFieldMap[tn]} {
+   findings: [${this.schemaTypeName}] @hasInverse(field: ${tn})
 }`
       )
       .join('\n')
@@ -146,6 +147,7 @@ export default class RulesProvider implements Engine {
       ruleId: rule.id,
       resourceId: data.resource.id,
       result: result !== RuleResult.MATCHES ? 'FAIL' : 'PASS',
+      severity: rule.severity,
     } as RuleFinding
 
     const connField =
@@ -168,7 +170,7 @@ export default class RulesProvider implements Engine {
       const segment = path[j]
       if (Array.isArray(curr)) {
         // this is an array, we store in []._ the alias of this resource position in the array
-        (curr as any)['@'] = curr[segment as number]
+        ;(curr as any)['@'] = curr[segment as number] // eslint-disable-line
       }
       curr = curr[segment]
     }

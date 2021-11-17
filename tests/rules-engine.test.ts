@@ -1,7 +1,7 @@
 import cuid from 'cuid'
 
 import RulesProvider from '../src/rules-engine'
-import { Engine, Result } from '../src/rules-engine/types'
+import { Engine, Result, Severity } from '../src/rules-engine/types'
 
 const typenameToFieldMap = {
   resourceA: 'querySchemaA',
@@ -24,6 +24,7 @@ const ruleMock = {
     path: '@.value',
     equal: false,
   },
+  severity: Severity.DANGER,
 }
 
 describe('RulesEngine', () => {
@@ -50,18 +51,21 @@ describe('RulesEngine', () => {
         ruleId: cuid(),
         resourceId: cuid(),
         result: Result.FAIL,
+        severity: Severity.WARNING,
       },
       {
         id: cuid(),
         ruleId: cuid(),
         resourceId: cuid(),
         result: Result.PASS,
+        severity: Severity.DANGER,
       },
       {
         id: cuid(),
         ruleId: cuid(),
         resourceId: cuid(),
         result: Result.MISSING,
+        severity: Severity.WARNING,
       },
     ]
 
