@@ -1,4 +1,5 @@
 import jsonpath, { PathComponent } from 'jsonpath'
+import isEmpty from 'lodash/isEmpty'
 
 import JsonEvaluator from './evaluators/json-evaluator'
 import JsEvaluator from './evaluators/js-evaluator'
@@ -62,7 +63,7 @@ export default class RulesProvider implements Engine {
     return this.evaluators
   }
 
-  getData = async (findings: RuleFinding[]): Promise<ProviderData> => {
+  getData = (findings: RuleFinding[]): ProviderData => {
     return {
       connections: [] as any,
       entities: [
@@ -79,14 +80,13 @@ export default class RulesProvider implements Engine {
     }
   }
 
-  processRule = async (rule: Rule, data: any): Promise<RuleFinding[]> => {
-    const res: any[] = [] //
-    const dedupeIds = {} as any
+  processRule = async (rule: Rule, data: unknown): Promise<RuleFinding[]> => {
+    const res: any[] = []
+    const dedupeIds = {}
     const resourcePaths = jsonpath.nodes(data, rule.resource)
     const evaluator = this.getRuleEvaluator(rule)
 
-    if (!evaluator) {
-      // console.warn('cant process rule - unrecognized pattern', rule)
+    if (!evaluator || isEmpty(data)) {
       return []
     }
 
@@ -145,7 +145,7 @@ export default class RulesProvider implements Engine {
       id: `${rule.id}/${data.resource.id}`,
       ruleId: rule.id,
       resourceId: data.resource.id,
-      result: result === RuleResult.MATCHES ? 'FAIL' : 'PASS',
+      result: result !== RuleResult.MATCHES ? 'FAIL' : 'PASS',
     } as RuleFinding
 
     const connField =
@@ -168,7 +168,7 @@ export default class RulesProvider implements Engine {
       const segment = path[j]
       if (Array.isArray(curr)) {
         // this is an array, we store in []._ the alias of this resource position in the array
-        ;(curr as any)['@'] = curr[segment as number]
+        (curr as any)['@'] = curr[segment as number]
       }
       curr = curr[segment]
     }
