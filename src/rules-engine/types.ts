@@ -63,6 +63,6 @@ export enum RuleResult {
 
 export interface Engine {
   processRule: (rule: Rule, data: any) => Promise<RuleFinding[]>
-  getData: (findings: RuleFinding[]) => Promise<ProviderData>
+  getData: (findings: RuleFinding[]) => ProviderData
   getSchema: () => string[]
 }
