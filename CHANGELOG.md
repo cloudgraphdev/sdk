@@ -1,3 +1,12 @@
+## [0.5.4](https://gitlab.com/auto-cloud/cloudgraph/sdk/compare/0.5.3...0.5.4) (2021-11-19)
+
+
+### Bug Fixes
+
+* Fixed RulesEngine interface ([8b8958a](https://gitlab.com/auto-cloud/cloudgraph/sdk/commit/8b8958a9f52a19db716b103cffbc381b94a8042b))
+* Included severity field to rule engine ([4c18614](https://gitlab.com/auto-cloud/cloudgraph/sdk/commit/4c18614054d29d4f29ac8ff117f700ff6a91f35f))
+* Validated empty data passed on processRule ([dfb6e1e](https://gitlab.com/auto-cloud/cloudgraph/sdk/commit/dfb6e1ebb50de683ee12c4a5e962bb027ee079d0))
+
 ## [0.5.3](https://gitlab.com/auto-cloud/cloudgraph/sdk/compare/0.5.2...0.5.3) (2021-11-15)
 
 
