@@ -52,6 +52,7 @@ describe('RulesEngine', () => {
         resourceId: cuid(),
         result: Result.FAIL,
         severity: Severity.WARNING,
+        typename: 'querySchemaA',
       },
       {
         id: cuid(),
@@ -59,6 +60,7 @@ describe('RulesEngine', () => {
         resourceId: cuid(),
         result: Result.PASS,
         severity: Severity.DANGER,
+        typename: 'querySchemaA',
       },
       {
         id: cuid(),
@@ -66,12 +68,13 @@ describe('RulesEngine', () => {
         resourceId: cuid(),
         result: Result.MISSING,
         severity: Severity.WARNING,
+        typename: 'querySchemaA',
       },
     ]
 
     const {
       entities: [findingsData],
-    } = rulesEngine.getData(data)
+    } = rulesEngine.preprareMutations(data)
 
     expect(findingsData).toBeDefined()
     expect(findingsData.name).toBe(schemaTypeName)
@@ -84,7 +87,7 @@ describe('RulesEngine', () => {
 
     const {
       entities: [findingsData],
-    } = rulesEngine.getData(data)
+    } = rulesEngine.preprareMutations(data)
 
     expect(findingsData).toBeDefined()
     expect(findingsData.name).toBe(schemaTypeName)

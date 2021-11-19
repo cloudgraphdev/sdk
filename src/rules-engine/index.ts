@@ -1,5 +1,6 @@
 import jsonpath, { PathComponent } from 'jsonpath'
 import isEmpty from 'lodash/isEmpty'
+import groupBy from 'lodash/groupBy'
 
 import JsonEvaluator from './evaluators/json-evaluator'
 import JsEvaluator from './evaluators/js-evaluator'
@@ -64,20 +65,54 @@ export default class RulesProvider implements Engine {
     return this.evaluators
   }
 
-  getData = (findings: RuleFinding[]): ProviderData => {
+  preprareMutations = (findings: RuleFinding[]): ProviderData => {
+    const mutations = []
+    // Group Findings by schema type
+    const findingsByType = groupBy(findings, 'typename')
+
+    for (const findingType in findingsByType) {
+      if (findingType) {
+        // Group Findings by resource
+        const findingsByResource = groupBy(
+          findingsByType[findingType],
+          'resourceId'
+        )
+
+        for (const resource in findingsByResource) {
+          if (resource) {
+            const data = (
+              (findingsByResource[resource] as RuleFinding[]) || []
+            ).map(({ typename, ...properties }) => properties)
+
+            // Create dynamically update mutations by resource
+            const updateMutation = {
+              name: this.schemaTypeName,
+              count: data.length,
+              mutation: `mutation update${findingType}($input: Update${findingType}Input!) {
+                update${findingType}(input: $input) {
+                  numUids
+                }
+              }
+              `,
+              data: {
+                filter: {
+                  id: { eq: resource },
+                },
+                set: {
+                  findings: data,
+                },
+              },
+            }
+
+            mutations.push(updateMutation)
+          }
+        }
+      }
+    }
+
     return {
       connections: [] as any,
-      entities: [
-        {
-          name: this.schemaTypeName,
-          mutation: `mutation($input: [Add${this.schemaTypeName}Input!]!) {
-  add${this.schemaTypeName}(input: $input, upsert: true) {
-    numUids
-  }
-}`,
-          data: findings,
-        },
-      ],
+      entities: mutations,
     }
   }
 
@@ -148,6 +183,7 @@ export default class RulesProvider implements Engine {
       resourceId: data.resource.id,
       result: result !== RuleResult.MATCHES ? 'FAIL' : 'PASS',
       severity: rule.severity,
+      typename: data.resource.__typename, // eslint-disable-line no-underscore-dangle
     } as RuleFinding
 
     const connField =
