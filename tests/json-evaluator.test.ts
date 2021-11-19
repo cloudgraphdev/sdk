@@ -2,17 +2,18 @@ import JsonEvaluator from '../src/rules-engine/evaluators/json-evaluator'
 import { RuleResult } from '../src/rules-engine/types'
 
 describe('JsonEvaluator', () => {
+  let evaluator
+  beforeEach(() => {
+    evaluator = new JsonEvaluator()
+  })
+
   test('should accept all rules that have a conditions field', () => {
-    const e = new JsonEvaluator()
-
-    expect(e.canEvaluate({} as any)).toBe(false)
-    expect(e.canEvaluate({ conditionss: 1 } as any)).toBe(false)
-
-    expect(e.canEvaluate({ conditions: 1 } as any)).toBe(true)
+    expect(evaluator.canEvaluate({} as any)).toBe(false)
+    expect(evaluator.canEvaluate({ conditionss: 1 } as any)).toBe(false)
+    expect(evaluator.canEvaluate({ conditions: 1 } as any)).toBe(true)
   })
 
   test('should execute simple rules', async () => {
-    const e = new JsonEvaluator()
     const data = {
       a: 1,
       b: '1',
@@ -37,7 +38,7 @@ describe('JsonEvaluator', () => {
     const results = []
     const expected = []
     for (const r of rules) {
-      const res = await e.evaluateSingleResource(
+      const res = await evaluator.evaluateSingleResource(
         { conditions: r } as any,
         { data } as any
       )
@@ -48,7 +49,6 @@ describe('JsonEvaluator', () => {
   })
 
   test('should combine simple rules [and,or]', async () => {
-    const e = new JsonEvaluator()
     const data = {
       a: 1,
       b: 2,
@@ -56,26 +56,26 @@ describe('JsonEvaluator', () => {
     const trueRule = { path: 'a', equal: 1 }
     const falseRule = { path: 'a', equal: 99 }
     expect(
-      await e.evaluateSingleResource(
+      await evaluator.evaluateSingleResource(
         { conditions: { and: [trueRule, trueRule, trueRule] } } as any,
         { data } as any
       )
     ).toBe(RuleResult.MATCHES)
     expect(
-      await e.evaluateSingleResource(
+      await evaluator.evaluateSingleResource(
         { conditions: { and: [trueRule, trueRule, falseRule] } } as any,
         { data } as any
       )
     ).toBe(RuleResult.DOESNT_MATCH)
 
     expect(
-      await e.evaluateSingleResource(
+      await evaluator.evaluateSingleResource(
         { conditions: { or: [falseRule, falseRule, falseRule] } } as any,
         { data } as any
       )
     ).toBe(RuleResult.DOESNT_MATCH)
     expect(
-      await e.evaluateSingleResource(
+      await evaluator.evaluateSingleResource(
         { conditions: { or: [falseRule, trueRule, falseRule] } } as any,
         { data } as any
       )
@@ -83,7 +83,7 @@ describe('JsonEvaluator', () => {
 
     // nested
     expect(
-      await e.evaluateSingleResource(
+      await evaluator.evaluateSingleResource(
         {
           conditions: {
             or: [falseRule, falseRule, { and: [trueRule, trueRule] }],
@@ -94,7 +94,7 @@ describe('JsonEvaluator', () => {
     ).toBe(RuleResult.MATCHES)
 
     expect(
-      await e.evaluateSingleResource(
+      await evaluator.evaluateSingleResource(
         {
           conditions: {
             or: [falseRule, falseRule, { and: [trueRule, falseRule] }],
@@ -106,56 +106,53 @@ describe('JsonEvaluator', () => {
   })
 
   test('should resolve paths', async () => {
-    const e = new JsonEvaluator()
     const data = { data: { a: { b: [0, { d: 'value' }] } } } as any
     const rule = { path: 'xx', equal: 'value' }
 
     rule.path = 'a.b[1].d'
     expect(
-      await e.evaluateSingleResource({ conditions: rule } as any, data)
+      await evaluator.evaluateSingleResource({ conditions: rule } as any, data)
     ).toBe(RuleResult.MATCHES)
     rule.path = 'a.b[0].d'
     expect(
-      await e.evaluateSingleResource({ conditions: rule } as any, data)
+      await evaluator.evaluateSingleResource({ conditions: rule } as any, data)
     ).toBe(RuleResult.DOESNT_MATCH)
 
     // @ is replaced by the resource path
     data.resourcePath = '$.a.b[1]'
     rule.path = '@.d'
     expect(
-      await e.evaluateSingleResource({ conditions: rule } as any, data)
+      await evaluator.evaluateSingleResource({ conditions: rule } as any, data)
     ).toBe(RuleResult.MATCHES)
 
     data.resourcePath = '$.a'
     rule.path = '@.b[1].d'
     expect(
-      await e.evaluateSingleResource({ conditions: rule } as any, data)
+      await evaluator.evaluateSingleResource({ conditions: rule } as any, data)
     ).toBe(RuleResult.MATCHES)
   })
 
   test('should support array operators', async () => {
-    const e = new JsonEvaluator()
     const data = { data: { a: { b: [0, 1, 2] } } } as any
     let rule: any = { path: 'a.b', array_any: { path: '[*]', equal: 2 } }
 
     expect(
-      await e.evaluateSingleResource({ conditions: rule } as any, data)
+      await evaluator.evaluateSingleResource({ conditions: rule } as any, data)
     ).toBe(RuleResult.MATCHES)
 
     //
     rule = { path: 'a.b', array_all: { path: '[*]', equal: 2 } }
     expect(
-      await e.evaluateSingleResource({ conditions: rule } as any, data)
+      await evaluator.evaluateSingleResource({ conditions: rule } as any, data)
     ).toBe(RuleResult.DOESNT_MATCH)
 
     rule = { path: 'a.b', array_all: { path: '[*]', greaterThan: -1 } }
     expect(
-      await e.evaluateSingleResource({ conditions: rule } as any, data)
+      await evaluator.evaluateSingleResource({ conditions: rule } as any, data)
     ).toBe(RuleResult.MATCHES)
   })
 
   test('should process dates', async () => {
-    const e = new JsonEvaluator()
     const day = 1000 * 60 * 60 * 24 // @TODO - replace by some date library (that is not moment)
     const now = Date.now()
     const data = {
@@ -170,12 +167,12 @@ describe('JsonEvaluator', () => {
 
     rule.lessThan = 10
     expect(
-      await e.evaluateSingleResource({ conditions: rule } as any, data)
+      await evaluator.evaluateSingleResource({ conditions: rule } as any, data)
     ).toBe(RuleResult.DOESNT_MATCH)
 
     rule.lessThan = 20
     expect(
-      await e.evaluateSingleResource({ conditions: rule } as any, data)
+      await evaluator.evaluateSingleResource({ conditions: rule } as any, data)
     ).toBe(RuleResult.MATCHES)
   })
 })

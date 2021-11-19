@@ -20,12 +20,15 @@ export type Operator = (
 
 export type _ResourceData = ResourceData & { elementPath?: string }
 
-export interface Rule {
-  id: string
-  description: string
-  rationale?: string
-  gql: string
-  resource: string
+export enum Severity {
+  WARNING = 'warning',
+  DANGER = 'danger',
+}
+
+export enum RuleResult {
+  DOESNT_MATCH = 'DOESNT_MATCH',
+  MATCHES = 'MATCHES',
+  MISSING = 'MISSING',
 }
 
 export enum Result {
@@ -33,13 +36,21 @@ export enum Result {
   PASS = 'PASS',
   MISSING = 'MISSING',
 }
+export interface Rule {
+  id: string
+  description: string
+  rationale?: string
+  gql: string
+  resource: string
+  severity: Severity
+}
 
 export interface RuleFinding {
   id: string
   ruleId: string
   resourceId: string
   result: Result
-  [key: string]: any
+  severity: Severity
 }
 
 export interface JsonRule extends Rule {
@@ -50,19 +61,8 @@ export interface JsRule extends Rule {
   check?: (data: any) => boolean
 }
 
-export enum severity {
-  warning = 'Warning',
-  danger = 'Danger',
-}
-
-export enum RuleResult {
-  DOESNT_MATCH = 'DOESNT_MATCH',
-  MATCHES = 'MATCHES',
-  MISSING = 'MISSING',
-}
-
 export interface Engine {
   processRule: (rule: Rule, data: any) => Promise<RuleFinding[]>
-  getData: (findings: RuleFinding[]) => Promise<ProviderData>
+  getData: (findings: RuleFinding[]) => ProviderData
   getSchema: () => string[]
 }
