@@ -45,54 +45,46 @@ describe('RulesEngine', () => {
   })
 
   it('Should pass preparing the mutations to insert findings data given a RuleFindings array', () => {
+    const ruleId = cuid()
+    const resourceId = cuid()
     const data = [
       {
         id: cuid(),
-        ruleId: cuid(),
-        resourceId: cuid(),
+        ruleId,
+        resourceId,
         result: Result.FAIL,
         severity: Severity.WARNING,
         typename: 'querySchemaA',
       },
       {
         id: cuid(),
-        ruleId: cuid(),
-        resourceId: cuid(),
+        ruleId,
+        resourceId,
         result: Result.PASS,
         severity: Severity.DANGER,
-        typename: 'querySchemaA',
-      },
-      {
-        id: cuid(),
-        ruleId: cuid(),
-        resourceId: cuid(),
-        result: Result.MISSING,
-        severity: Severity.WARNING,
         typename: 'querySchemaA',
       },
     ]
 
     const {
       entities: [findingsData],
-    } = rulesEngine.preprareMutations(data)
+    } = rulesEngine.prepareMutations(data)
 
     expect(findingsData).toBeDefined()
     expect(findingsData.name).toBe(schemaTypeName)
-    expect(findingsData.mutation).toContain(schemaTypeName)
-    expect(findingsData.data.length).toBe(data.length)
+    expect(findingsData.mutation).toContain(typenameToFieldMap.resourceA)
+    expect(findingsData.data.filter).toBeDefined()
+    expect(findingsData.data.set).toBeDefined()
+    expect(findingsData.data.set.findings.length).toBe(data.length)
   })
 
   it('Should pass preparing the mutations to insert findings data given an empty RuleFindings array', () => {
     const data = []
 
-    const {
-      entities: [findingsData],
-    } = rulesEngine.preprareMutations(data)
+    const { entities } = rulesEngine.prepareMutations(data)
 
-    expect(findingsData).toBeDefined()
-    expect(findingsData.name).toBe(schemaTypeName)
-    expect(findingsData.mutation).toContain(schemaTypeName)
-    expect(findingsData.data.length).toBe(data.length)
+    expect(entities).toBeDefined()
+    expect(entities.length).toBe(0)
   })
 
   it('Should return an empty array processing a rule with no data', async () => {

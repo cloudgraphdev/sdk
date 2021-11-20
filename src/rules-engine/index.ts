@@ -65,13 +65,13 @@ export default class RulesProvider implements Engine {
     return this.evaluators
   }
 
-  preprareMutations = (findings: RuleFinding[]): ProviderData => {
+  prepareMutations = (findings: RuleFinding[]): ProviderData => {
     const mutations = []
     // Group Findings by schema type
     const findingsByType = groupBy(findings, 'typename')
 
     for (const findingType in findingsByType) {
-      if (findingType) {
+      if (!isEmpty(findingType)) {
         // Group Findings by resource
         const findingsByResource = groupBy(
           findingsByType[findingType],
@@ -87,7 +87,6 @@ export default class RulesProvider implements Engine {
             // Create dynamically update mutations by resource
             const updateMutation = {
               name: this.schemaTypeName,
-              count: data.length,
               mutation: `mutation update${findingType}($input: Update${findingType}Input!) {
                 update${findingType}(input: $input) {
                   numUids

@@ -64,6 +64,6 @@ export interface JsRule extends Rule {
 
 export interface Engine {
   processRule: (rule: Rule, data: any) => Promise<RuleFinding[]>
-  preprareMutations: (findings: RuleFinding[]) => ProviderData
+  prepareMutations: (findings: RuleFinding[]) => ProviderData
   getSchema: () => string[]
 }
