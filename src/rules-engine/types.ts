@@ -51,6 +51,7 @@ export interface RuleFinding {
   resourceId: string
   result: Result
   severity: Severity
+  typename: string
 }
 
 export interface JsonRule extends Rule {
@@ -63,6 +64,6 @@ export interface JsRule extends Rule {
 
 export interface Engine {
   processRule: (rule: Rule, data: any) => Promise<RuleFinding[]>
-  getData: (findings: RuleFinding[]) => ProviderData
+  prepareMutations: (findings: RuleFinding[]) => ProviderData
   getSchema: () => string[]
 }

@@ -51,7 +51,7 @@ export interface Entity {
   className?: string
   name: string
   mutation: string
-  data: any[]
+  data: any[] | any
 }
 
 export interface ProviderData {
