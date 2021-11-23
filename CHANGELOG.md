@@ -1,3 +1,10 @@
+# [0.6.0](https://gitlab.com/auto-cloud/cloudgraph/sdk/compare/0.5.4...0.6.0) (2021-11-23)
+
+
+### Features
+
+* tweaks to drop the need to maintain a mandatory mutation file ([e3e2e92](https://gitlab.com/auto-cloud/cloudgraph/sdk/commit/e3e2e92fddb00fe83a029ec7c90fb70e46be5f1d))
+
 ## [0.5.4](https://gitlab.com/auto-cloud/cloudgraph/sdk/compare/0.5.3...0.5.4) (2021-11-19)
 
 
