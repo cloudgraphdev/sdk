@@ -1,3 +1,11 @@
+## [0.6.1](https://gitlab.com/auto-cloud/cloudgraph/sdk/compare/0.6.0...0.6.1) (2021-11-23)
+
+
+### Bug Fixes
+
+* Enabled update mutations at rules engine ([16fbfea](https://gitlab.com/auto-cloud/cloudgraph/sdk/commit/16fbfeabc5e60aaa5955146997c9a3f46aaba7b0))
+* Fixed unit tests ([8d8f221](https://gitlab.com/auto-cloud/cloudgraph/sdk/commit/8d8f221f23b962a530d937708ee7b00908d34e32))
+
 # [0.6.0](https://gitlab.com/auto-cloud/cloudgraph/sdk/compare/0.5.4...0.6.0) (2021-11-23)
 
 
