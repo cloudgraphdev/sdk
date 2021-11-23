@@ -6,7 +6,13 @@ export interface Opts {
   debug: boolean
   logger: Logger
 }
-
+export interface ServiceConnection {
+  id: string
+  resourceType: string
+  relation: string
+  field: string
+  insertAfterNodeInsertion?: boolean
+}
 export interface Service {
   format: ({
     service,
@@ -27,8 +33,8 @@ export interface Service {
     region: string
     account: string
     data: any
-  }) => any
-  mutation: string
+  }) => { [key: string]: ServiceConnection[] }
+  mutation?: string
   getData: ({
     regions,
     config,
@@ -41,15 +47,8 @@ export interface Service {
     rawData: any
   }) => any
 }
-
-export interface ServiceConnection {
-  id: string
-  resourceType: string
-  relation: string
-  field: string
-}
-
 export interface Entity {
+  className?: string
   name: string
   mutation: string
   data: any[]
