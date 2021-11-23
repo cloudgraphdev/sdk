@@ -1,7 +1,7 @@
 import logger, { Logger } from './logger'
 import Client from './client'
 import RulesEngine from './rules-engine'
-import { Opts, Service, ServiceConnection, ProviderData } from './types'
+import { Opts, Service, ServiceConnection, ProviderData, Entity } from './types'
 import {
   Rule,
   RuleFinding,
@@ -23,6 +23,7 @@ export type {
   RuleFinding,
   JsRule,
   JsonRule,
+  Entity,
 }
 export default {
   logger,
