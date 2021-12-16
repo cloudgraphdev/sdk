@@ -1,6 +1,12 @@
 import logger, { Logger } from './logger'
 import Client from './client'
 import RulesEngine from './rules-engine'
+import {
+  StorageEngineConnectionConfig,
+  StorageEngineConfig,
+  StorageEngine,
+  GraphQLInputData,
+} from './storage'
 import { Opts, Service, ServiceConnection, ProviderData, Entity } from './types'
 import {
   Rule,
@@ -24,6 +30,10 @@ export type {
   JsRule,
   JsonRule,
   Entity,
+  StorageEngineConnectionConfig,
+  StorageEngineConfig,
+  StorageEngine,
+  GraphQLInputData,
 }
 export default {
   logger,
