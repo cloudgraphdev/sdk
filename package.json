@@ -24,7 +24,7 @@
   "dependencies": {
     "@graphql-tools/load-files": "^6.5.3",
     "@graphql-tools/merge": "^8.2.1",
-    "chalk": "^5.0.0",
+    "chalk": "^4.1.1",
     "date-fns": "^2.25.0",
     "graphql": "^16.2.0",
     "inquirer": "^8.1.2",

@@ -1,5 +1,5 @@
-import { PolicyPackPlugin } from '../rules-engine/types'
-import plugins from './plugins'
+import PolicyPackPlugin from '../rules-engine/policyPackPlugin'
+import plugins from './cgPlugins'
 
 export default {
   [plugins.policies]: PolicyPackPlugin,

@@ -18,6 +18,8 @@ export interface StorageEngineConfig extends StorageEngineConnectionConfig {
 }
 
 export interface StorageEngine {
+  get host(): string
+
   healthCheck: (showInitialStatus?: boolean) => Promise<boolean>
 
   setSchema: (schema: string[]) => Promise<void>

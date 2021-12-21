@@ -23,12 +23,25 @@ import {
   JsonRule,
   Engine,
 } from './rules-engine/types'
-import { plugins, pluginMap } from './plugin/types'
+import Plugin, { PluginModule, PluginType } from './plugin'
+import pluginMap from './plugin/pluginMap'
+import cloudGraphPlugin from './plugin/cgPlugins'
 import {
   mergeSchemas,
   getSchemaFromFolder,
   generateSchemaMapDynamically,
 } from './utils/schema'
+
+export {
+  PluginModule,
+  PluginType,
+  Result,
+  cloudGraphPlugin,
+  pluginMap,
+  mergeSchemas,
+  getSchemaFromFolder,
+  generateSchemaMapDynamically,
+}
 
 export type {
   Opts,
@@ -48,15 +61,10 @@ export type {
   StorageEngine,
   GraphQLInputData,
   SchemaMap,
+  Plugin,
 }
 export default {
   logger,
   Client,
   RulesEngine,
-  Result,
-  plugins,
-  pluginMap,
-  mergeSchemas,
-  getSchemaFromFolder,
-  generateSchemaMapDynamically,
 }
