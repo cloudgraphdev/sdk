@@ -60,3 +60,7 @@ export interface ProviderData {
 }
 
 export type LoggerInput = string | { [key: string]: any } | unknown
+
+export type SchemaMap = {
+  [schemaName: string]: string
+}

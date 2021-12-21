@@ -7,7 +7,14 @@ import {
   StorageEngine,
   GraphQLInputData,
 } from './storage'
-import { Opts, Service, ServiceConnection, ProviderData, Entity } from './types'
+import {
+  Opts,
+  Service,
+  ServiceConnection,
+  ProviderData,
+  Entity,
+  SchemaMap,
+} from './types'
 import {
   Rule,
   RuleFinding,
@@ -16,6 +23,12 @@ import {
   JsonRule,
   Engine,
 } from './rules-engine/types'
+import { plugins, pluginMap } from './plugin/types'
+import {
+  mergeSchemas,
+  getSchemaFromFolder,
+  generateSchemaMapDynamically,
+} from './utils/schema'
 
 export type {
   Opts,
@@ -34,10 +47,16 @@ export type {
   StorageEngineConfig,
   StorageEngine,
   GraphQLInputData,
+  SchemaMap,
 }
 export default {
   logger,
   Client,
   RulesEngine,
   Result,
+  plugins,
+  pluginMap,
+  mergeSchemas,
+  getSchemaFromFolder,
+  generateSchemaMapDynamically,
 }
