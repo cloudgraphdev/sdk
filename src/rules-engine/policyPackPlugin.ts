@@ -211,13 +211,11 @@ export default class PolicyPackPlugin extends Plugin {
                 }`
               )}  found during rules execution.`
             )
-          // this.logger.info(
-          //   `For more information, you can query query ${chalk.italic.green(
-          //     allProviders
-          //       .map(provider => `query${provider}Findings`)
-          //       .join(', ')
-          //   )} in the GraphQL query tool`
-          // )
+          this.logger.info(
+            `For more information, you can query ${chalk.italic.green(
+              'query[Provider]Findings'
+            )} in the GraphQL query tool`
+          )
         }
       }
     }
