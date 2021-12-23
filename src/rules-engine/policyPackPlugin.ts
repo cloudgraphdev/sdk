@@ -20,23 +20,27 @@ export default class PolicyPackPlugin extends Plugin {
     config,
     logger,
     provider,
-    policyPacks,
+    flags,
   }: {
     config: { [key: string]: string }
     logger: Logger
     provider: { name: string; schemasMap?: SchemaMap; serviceKey?: string }
-    policyPacks
+    flags: {
+      [flag: string]: any
+    }
   }) {
     super()
     this.logger = logger
     this.config = config
     this.provider = provider
-    this.policyPacks = policyPacks
+    this.flags = flags
   }
 
   private config: { [key: string]: any } = {}
 
-  private policyPacks: string
+  private flags: {
+    [flag: string]: any
+  }
 
   private provider: {
     name: string
@@ -93,9 +97,8 @@ export default class PolicyPackPlugin extends Plugin {
   }
 
   async configure(pluginManager: PluginManager): Promise<any> {
-    let allPolicyPacks = isEmpty(this.policyPacks)
-      ? []
-      : this.policyPacks.split(',')
+    const { policyPacks = '' } = this.flags
+    let allPolicyPacks = isEmpty(policyPacks) ? [] : policyPacks.split(',')
     if (allPolicyPacks.length >= 1) {
       this.logger.debug(`Executing rules for policy packs: ${allPolicyPacks}`)
     } else {
@@ -143,9 +146,13 @@ export default class PolicyPackPlugin extends Plugin {
     }
   }
 
-  async execute(
-    storageRunning: boolean,
-    storageEngine: StorageEngine,
+  async execute({
+    storageRunning,
+    storageEngine,
+    processConnectionsBetweenEntities,
+  }: {
+    storageRunning: boolean
+    storageEngine: StorageEngine
     processConnectionsBetweenEntities: (props: {
       provider?: string
       providerData: ProviderData
@@ -153,7 +160,7 @@ export default class PolicyPackPlugin extends Plugin {
       storageRunning: boolean
       schemaMap?: SchemaMap
     }) => void
-  ): Promise<any> {
+  }): Promise<any> {
     for (const policyPack in this.policyPacksPlugins) {
       if (policyPack && this.policyPacksPlugins[policyPack]) {
         this.logger.startSpinner(
@@ -161,7 +168,6 @@ export default class PolicyPackPlugin extends Plugin {
             policyPack
           )}`
         )
-        this.logger.startSpinner('executing')
         // Update Schema:
         const currentSchema: string = await storageEngine.getSchema()
         const findingsSchema: string[] =

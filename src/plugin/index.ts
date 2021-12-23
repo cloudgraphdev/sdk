@@ -27,9 +27,13 @@ export default abstract class Plugin {
     throw new Error(`Function configure has not been defined: ${pluginManager}`)
   }
 
-  execute(
-    storageRunning: boolean,
-    storageEngine: StorageEngine,
+  execute({
+    storageRunning,
+    storageEngine,
+    processConnectionsBetweenEntities,
+  }: {
+    storageRunning: boolean
+    storageEngine: StorageEngine
     processConnectionsBetweenEntities: (props: {
       provider?: string
       providerData: ProviderData
@@ -37,7 +41,7 @@ export default abstract class Plugin {
       storageRunning: boolean
       schemaMap?: SchemaMap
     }) => void
-  ): Promise<any> {
+  }): Promise<any> {
     throw new Error(
       `Function configure has not been defined ${storageRunning} ${storageEngine} ${processConnectionsBetweenEntities}`
     )
