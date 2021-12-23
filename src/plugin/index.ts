@@ -1,3 +1,5 @@
+import { ProviderData, SchemaMap, StorageEngine } from '..'
+
 export enum PluginType {
   Provider = 'provider',
   PolicyPack = 'policyPack',
@@ -8,15 +10,33 @@ export enum PluginModule {
   'policyPack' = 'policy-pack',
 }
 
+export interface PluginManager {
+  getPlugin: (plugin: string, version?: string) => Promise<any>
+
+  queryRemoteVersion: (importPath: string) => Promise<string>
+
+  getVersion: (importPath: string) => Promise<string>
+
+  checkRequiredVersion: (importPath: string) => Promise<boolean>
+
+  removePlugin: (plugin: string) => Promise<void>
+}
+
 export default abstract class Plugin {
-  configure(pluginManager: any): Promise<{ [key: string]: any }> {
+  configure(pluginManager: PluginManager): Promise<{ [key: string]: any }> {
     throw new Error(`Function configure has not been defined: ${pluginManager}`)
   }
 
   execute(
-    storageRunning: any,
-    storageEngine: any,
-    processConnectionsBetweenEntities: any
+    storageRunning: boolean,
+    storageEngine: StorageEngine,
+    processConnectionsBetweenEntities: (props: {
+      provider?: string
+      providerData: ProviderData
+      storageEngine: StorageEngine
+      storageRunning: boolean
+      schemaMap?: SchemaMap
+    }) => void
   ): Promise<any> {
     throw new Error(
       `Function configure has not been defined ${storageRunning} ${storageEngine} ${processConnectionsBetweenEntities}`

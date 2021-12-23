@@ -23,7 +23,7 @@ import {
   JsonRule,
   Engine,
 } from './rules-engine/types'
-import Plugin, { PluginModule, PluginType } from './plugin'
+import Plugin, { PluginManager, PluginModule, PluginType } from './plugin'
 import pluginMap from './plugin/pluginMap'
 import cloudGraphPlugin from './plugin/cgPlugins'
 import {
@@ -62,6 +62,7 @@ export type {
   GraphQLInputData,
   SchemaMap,
   Plugin,
+  PluginManager,
 }
 export default {
   logger,

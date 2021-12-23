@@ -2,9 +2,16 @@ import chalk from 'chalk'
 import { groupBy, isEmpty } from 'lodash'
 
 import { generateSchemaMapDynamically, mergeSchemas } from '../utils/schema'
-import { Engine, Logger, RuleFinding, SchemaMap } from '..'
+import {
+  Engine,
+  Logger,
+  ProviderData,
+  RuleFinding,
+  SchemaMap,
+  StorageEngine,
+} from '..'
 import RulesEngine from '../rules-engine'
-import Plugin from '../plugin'
+import Plugin, { PluginManager } from '../plugin'
 
 import { Result } from './types'
 
@@ -55,7 +62,7 @@ export default class PolicyPackPlugin extends Plugin {
     pluginManager,
   }: {
     policyPack: string
-    pluginManager: any
+    pluginManager: PluginManager
   }): Promise<any> {
     try {
       if (this.policyPacksPlugins[policyPack]) {
@@ -85,7 +92,7 @@ export default class PolicyPackPlugin extends Plugin {
     }
   }
 
-  async configure(pluginManager): Promise<any> {
+  async configure(pluginManager: PluginManager): Promise<any> {
     let allPolicyPacks = isEmpty(this.policyPacks)
       ? []
       : this.policyPacks.split(',')
@@ -103,14 +110,10 @@ export default class PolicyPackPlugin extends Plugin {
       )
     }
     const failedPolicyPackList: string[] = []
-    let resources
-    if (this.provider.serviceKey) {
-      // Uses custom service key
-      resources = this.config[this.provider.serviceKey].split(',')
-    } else {
-      // Uses default resources key
-      resources = this.config.resources.split(',')
-    }
+
+    const resources =
+      this.config[this.provider?.serviceKey ?? 'resources']?.split(',') || []
+
     // // Generate schema mapping
     const resourceTypeNamesToFieldsMap =
       this.provider.schemasMap ||
@@ -141,10 +144,16 @@ export default class PolicyPackPlugin extends Plugin {
   }
 
   async execute(
-    storageRunning,
-    storageEngine,
-    processConnectionsBetweenEntities
-  ) {
+    storageRunning: boolean,
+    storageEngine: StorageEngine,
+    processConnectionsBetweenEntities: (props: {
+      provider?: string
+      providerData: ProviderData
+      storageEngine: StorageEngine
+      storageRunning: boolean
+      schemaMap?: SchemaMap
+    }) => void
+  ): Promise<any> {
     for (const policyPack in this.policyPacksPlugins) {
       if (policyPack && this.policyPacksPlugins[policyPack]) {
         this.logger.startSpinner(
@@ -171,9 +180,10 @@ export default class PolicyPackPlugin extends Plugin {
             ]?.engine?.processRule(rule, data)) as RuleFinding[]
             findings.push(...results)
           } catch (error) {
-            this.logger.debug(
+            this.logger.error(
               `Error processing rule ${rule.ruleId} for ${policyPack} policy pack`
             )
+            this.logger.debug(error)
           }
         }
         // Update data
