@@ -1,3 +1,20 @@
+# [0.7.0](https://gitlab.com/auto-cloud/cloudgraph/sdk/compare/0.6.1...0.7.0) (2021-12-28)
+
+
+### Bug Fixes
+
+* Pass CLI flags during initialization ([f0046e7](https://gitlab.com/auto-cloud/cloudgraph/sdk/commit/f0046e7e1543b3008303fb658865daebdf829581))
+* updated plugin types ([fefeeaa](https://gitlab.com/auto-cloud/cloudgraph/sdk/commit/fefeeaaa235c7156d6c5cbcd70600eb61712ff3a))
+
+
+### Features
+
+* Included new types from CLI ([fd50907](https://gitlab.com/auto-cloud/cloudgraph/sdk/commit/fd509072dd13cd18ad510dcc0f4ae6d83fa365be))
+* Included plugin base class ([c7f2dc3](https://gitlab.com/auto-cloud/cloudgraph/sdk/commit/c7f2dc37d724155e838d7e4fe89c20ed7ad92e2c))
+* Included StorageEngine interface to sdk ([52cb776](https://gitlab.com/auto-cloud/cloudgraph/sdk/commit/52cb77618fd6f06eb9b77152b126b97c5e2d388c))
+* Included types for PluginManager ([7d8363f](https://gitlab.com/auto-cloud/cloudgraph/sdk/commit/7d8363f457fe37ced7bc4652d8adc37aa0f2aaac))
+* Moved schema utils to sdk ([a04a424](https://gitlab.com/auto-cloud/cloudgraph/sdk/commit/a04a424fee99e41220995a29fcc6756f66524bff))
+
 ## [0.6.1](https://gitlab.com/auto-cloud/cloudgraph/sdk/compare/0.6.0...0.6.1) (2021-11-23)
 
 
