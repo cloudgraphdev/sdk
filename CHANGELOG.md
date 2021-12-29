@@ -1,3 +1,10 @@
+## [0.7.1](https://gitlab.com/auto-cloud/cloudgraph/sdk/compare/0.7.0...0.7.1) (2021-12-29)
+
+
+### Bug Fixes
+
+* Included description field to findings schema ([596b45a](https://gitlab.com/auto-cloud/cloudgraph/sdk/commit/596b45a979f442fa57b58591adfa851993ab6fc2))
+
 # [0.7.0](https://gitlab.com/auto-cloud/cloudgraph/sdk/compare/0.6.1...0.7.0) (2021-12-28)
 
 
