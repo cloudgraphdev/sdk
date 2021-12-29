@@ -38,6 +38,7 @@ export default class RulesProvider implements Engine {
       ruleId: String! @search(by: [hash, regexp])
       resourceId: String! @search(by: [hash, regexp])
       severity: String! @search(by: [hash, regexp])
+      description: String! @search(by: [hash, regexp])
       result: ${this.schemaTypeName}Result @search
       # connections
        ${Object.keys(this.typenameToFieldMap)
@@ -153,7 +154,7 @@ export default class RulesProvider implements Engine {
         resourcePath: jsonpath.stringify(path),
       })
       if (ruleResult) {
-        res.push({ ...ruleResult })
+        res.push({ ...ruleResult, description: rule.description })
       }
     }
     return res
