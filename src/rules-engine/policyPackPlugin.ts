@@ -57,6 +57,7 @@ export default class PolicyPackPlugin extends Plugin {
   private policyPacksPlugins: {
     [policyPackName: string]: {
       engine: Engine
+      entity: string
       rules: any
     }
   } = {}
@@ -74,7 +75,7 @@ export default class PolicyPackPlugin extends Plugin {
       }
 
       const {
-        default: { rules },
+        default: { rules = [], entity = '' },
       } = (await pluginManager.getPlugin(policyPack)) ?? {}
 
       if (!rules) {
@@ -83,7 +84,7 @@ export default class PolicyPackPlugin extends Plugin {
         )
       }
 
-      return rules
+      return { rules, entity }
     } catch (error: any) {
       this.logger.error(error)
       this.logger.warn(
@@ -121,27 +122,41 @@ export default class PolicyPackPlugin extends Plugin {
     const resourceTypeNamesToFieldsMap =
       this.provider.schemasMap ||
       generateSchemaMapDynamically(this.provider.name, resources)
-    // // Initialize RulesEngine
-    const rulesEngine = new RulesEngine(
-      resourceTypeNamesToFieldsMap,
-      `${this.provider.name}Findings`
-    )
+
     for (const policyPack of allPolicyPacks) {
       this.logger.info(
         `Beginning ${chalk.italic.green('RULES')} for ${policyPack}`
       )
-      const policyPackRules = await this.getPolicyPackPackage({
+      const policyPackPlugin = await this.getPolicyPackPackage({
         policyPack,
         pluginManager,
       })
-      if (!policyPackRules) {
+
+      if (!policyPackPlugin?.rules) {
         failedPolicyPackList.push(policyPack)
         this.logger.warn(`No valid rules found for ${policyPack}, skipping...`)
         continue // eslint-disable-line no-continue
       }
+
+      if (!policyPackPlugin?.entity) {
+        failedPolicyPackList.push(policyPack)
+        this.logger.warn(
+          `No entity was specified for ${policyPack}, skipping...`
+        )
+        continue // eslint-disable-line no-continue
+      }
+
+      // Initialize RulesEngine
+      const rulesEngine = new RulesEngine(
+        this.provider.name,
+        policyPackPlugin.entity,
+        resourceTypeNamesToFieldsMap
+      )
+
       this.policyPacksPlugins[policyPack] = {
         engine: rulesEngine,
-        rules: policyPackRules,
+        entity: policyPackPlugin.entity,
+        rules: policyPackPlugin.rules,
       }
     }
   }
@@ -163,6 +178,12 @@ export default class PolicyPackPlugin extends Plugin {
   }): Promise<any> {
     for (const policyPack in this.policyPacksPlugins) {
       if (policyPack && this.policyPacksPlugins[policyPack]) {
+        const {
+          engine,
+          entity,
+          rules = [],
+        } = this.policyPacksPlugins[policyPack]
+
         this.logger.startSpinner(
           `${chalk.italic.green('EXECUTING')} rules for ${chalk.italic.green(
             policyPack
@@ -170,13 +191,13 @@ export default class PolicyPackPlugin extends Plugin {
         )
         // Update Schema:
         const currentSchema: string = await storageEngine.getSchema()
-        const findingsSchema: string[] =
-          this.policyPacksPlugins[policyPack]?.engine?.getSchema() || []
+        const findingsSchema: string[] = engine?.getSchema() || []
+
         await storageEngine.setSchema([
           mergeSchemas(currentSchema, findingsSchema),
         ])
         const findings: RuleFinding[] = []
-        const rules = this.policyPacksPlugins[policyPack]?.rules || []
+
         // Run rules:
         for (const rule of rules) {
           try {
@@ -193,10 +214,7 @@ export default class PolicyPackPlugin extends Plugin {
           }
         }
         // Update data
-        const updatedData =
-          this.policyPacksPlugins[policyPack]?.engine?.prepareMutations(
-            findings
-          )
+        const updatedData = engine?.prepareMutations(findings)
         // Save connections
         processConnectionsBetweenEntities({
           providerData: updatedData,
@@ -229,7 +247,7 @@ export default class PolicyPackPlugin extends Plugin {
             )
           this.logger.info(
             `For more information, you can query ${chalk.italic.green(
-              'query[Provider]Findings'
+              `query${this.provider.name}${entity}Findings`
             )} in the GraphQL query tool`
           )
         }

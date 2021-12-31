@@ -16,35 +16,39 @@ export default class RulesProvider implements Engine {
 
   private readonly typenameToFieldMap: { [typeName: string]: string }
 
-  private readonly schemaTypeName
+  private readonly providerName
+
+  private readonly entityName
 
   constructor(
-    typenameToFieldMap?: { [tn: string]: string },
-    schemaTypeName?: string
+    providerName: string,
+    entityName: string,
+    typenameToFieldMap?: { [tn: string]: string }
   ) {
     this.typenameToFieldMap = typenameToFieldMap || {}
-    this.schemaTypeName = schemaTypeName || ''
+    this.entityName = entityName
+    this.providerName = providerName
   }
 
   getSchema = (): string[] => {
     const mainType = `
-    enum ${this.schemaTypeName}Result {
+    enum FindingsResult {
       PASS
       FAIL
       MISSING
     }
-    type ${this.schemaTypeName} @key(fields: "id") {
+    type ${this.providerName}${this.entityName}Findings @key(fields: "id") {
       id: String! @id
       ruleId: String! @search(by: [hash, regexp])
       resourceId: String! @search(by: [hash, regexp])
       severity: String! @search(by: [hash, regexp])
       description: String! @search(by: [hash, regexp])
-      result: ${this.schemaTypeName}Result @search
+      result: FindingsResult @search
       # connections
        ${Object.keys(this.typenameToFieldMap)
          .map(
            (tn: string) =>
-             `${tn}: [${this.typenameToFieldMap[tn]}] @hasInverse(field: findings)`
+             `${tn}: [${this.typenameToFieldMap[tn]}] @hasInverse(field: ${this.entityName}Findings)`
          )
          .join(' ')}
     }
@@ -53,7 +57,7 @@ export default class RulesProvider implements Engine {
       .map(
         (tn: string) =>
           `extend type ${this.typenameToFieldMap[tn]} {
-   findings: [${this.schemaTypeName}] @hasInverse(field: ${tn})
+   ${this.entityName}Findings: [${this.providerName}${this.entityName}Findings] @hasInverse(field: ${tn})
 }`
       )
       .join('\n')
@@ -87,7 +91,7 @@ export default class RulesProvider implements Engine {
 
             // Create dynamically update mutations by resource
             const updateMutation = {
-              name: this.schemaTypeName,
+              name: `${this.providerName}${this.entityName}Findings`,
               mutation: `mutation update${findingType}($input: Update${findingType}Input!) {
                 update${findingType}(input: $input) {
                   numUids
@@ -99,7 +103,7 @@ export default class RulesProvider implements Engine {
                   id: { eq: resource },
                 },
                 set: {
-                  findings: data,
+                  [`${this.entityName}Findings`]: data,
                 },
               },
             }
