@@ -75,7 +75,7 @@ export default class PolicyPackPlugin extends Plugin {
       }
 
       const {
-        default: { rules = [], entity = '' },
+        default: { rules = [], entity = 'Custom' },
       } = (await pluginManager.getPlugin(policyPack)) ?? {}
 
       if (!rules) {
@@ -210,7 +210,7 @@ export default class PolicyPackPlugin extends Plugin {
             findings.push(...results)
           } catch (error) {
             this.logger.error(
-              `Error processing rule ${rule.ruleId} for ${policyPack} policy pack`
+              `Error processing rule ${rule.id} for ${policyPack} policy pack`
             )
             this.logger.debug(error)
           }
