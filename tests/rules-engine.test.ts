@@ -60,6 +60,7 @@ describe('RulesEngine', () => {
         result: Result.FAIL,
         severity: Severity.WARNING,
         typename: 'querySchemaA',
+        description: '',
       },
       {
         id: cuid(),
@@ -68,12 +69,12 @@ describe('RulesEngine', () => {
         result: Result.PASS,
         severity: Severity.DANGER,
         typename: 'querySchemaA',
+
+        description: '',
       },
     ]
 
-    const {
-      entities: [findingsData],
-    } = rulesEngine.prepareMutations(data)
+    const [findingsData] = rulesEngine.prepareEntitiesMutations(data)
 
     expect(findingsData).toBeDefined()
     expect(findingsData.name).toBe(`${providerName}${entityName}Findings`)
@@ -88,7 +89,7 @@ describe('RulesEngine', () => {
   it('Should pass preparing the mutations to insert findings data given an empty RuleFindings array', () => {
     const data = []
 
-    const { entities } = rulesEngine.prepareMutations(data)
+    const entities = rulesEngine.prepareEntitiesMutations(data)
 
     expect(entities).toBeDefined()
     expect(entities.length).toBe(0)
