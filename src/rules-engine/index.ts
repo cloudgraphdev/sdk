@@ -7,7 +7,7 @@ import JsEvaluator from './evaluators/js-evaluator'
 import { RuleEvaluator } from './evaluators/rule-evaluator'
 import DefaultEvaluator from './evaluators/default-evaluator'
 import { Engine, ResourceData, Rule, RuleFinding, RuleResult } from './types'
-import { ProviderData } from '../types'
+import { Entity } from '../types'
 
 export default class RulesProvider implements Engine {
   evaluators: RuleEvaluator<any>[] = [new JsonEvaluator(), new JsEvaluator()]
@@ -37,6 +37,12 @@ export default class RulesProvider implements Engine {
       FAIL
       MISSING
     }
+    type ${this.providerName}Findings @key(fields: "id") {
+      id: String! @id
+      ${this.entityName}Findings: [${this.providerName}${
+      this.entityName
+    }Findings]
+    }
     type ${this.providerName}${this.entityName}Findings @key(fields: "id") {
       id: String! @id
       ruleId: String! @search(by: [hash, regexp])
@@ -44,6 +50,9 @@ export default class RulesProvider implements Engine {
       severity: String! @search(by: [hash, regexp])
       description: String! @search(by: [hash, regexp])
       result: FindingsResult @search
+      findings: ${this.providerName}Findings  @hasInverse(field: ${
+      this.entityName
+    }Findings)
       # connections
        ${Object.keys(this.typenameToFieldMap)
          .map(
@@ -52,7 +61,7 @@ export default class RulesProvider implements Engine {
          )
          .join(' ')}
     }
-   `
+      `
     const extensions = Object.keys(this.typenameToFieldMap)
       .map(
         (tn: string) =>
@@ -70,8 +79,9 @@ export default class RulesProvider implements Engine {
     return this.evaluators
   }
 
-  prepareMutations = (findings: RuleFinding[]): ProviderData => {
+  prepareEntitiesMutations = (findings: RuleFinding[] = []): Entity[] => {
     const mutations = []
+
     // Group Findings by schema type
     const findingsByType = groupBy(findings, 'typename')
 
@@ -114,10 +124,45 @@ export default class RulesProvider implements Engine {
       }
     }
 
-    return {
-      connections: [] as any,
-      entities: mutations,
-    }
+    return mutations
+  }
+
+  prepareProviderMutations = (findings: RuleFinding[] = []): Entity[] => {
+    // Prepare provider schema connections
+    return [
+      {
+        name: `${this.providerName}Findings`,
+        mutation: `
+        mutation($input: [Add${this.providerName}FindingsInput!]!) {
+          add${this.providerName}Findings(input: $input, upsert: true) {
+            numUids
+          }
+        }
+        `,
+        data: {
+          id: `${this.providerName}-provider`,
+        },
+      },
+      {
+        name: `${this.providerName}Findings`,
+        mutation: `mutation update${this.providerName}Findings($input: Update${this.providerName}FindingsInput!) {
+            update${this.providerName}Findings(input: $input) {
+              numUids
+            }
+          }
+          `,
+        data: {
+          filter: {
+            id: { eq: `${this.providerName}-provider` },
+          },
+          set: {
+            [`${this.entityName}Findings`]: findings.map(
+              ({ typename, ...rest }) => ({ ...rest })
+            ),
+          },
+        },
+      },
+    ]
   }
 
   processRule = async (rule: Rule, data: unknown): Promise<RuleFinding[]> => {

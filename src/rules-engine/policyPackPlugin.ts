@@ -62,7 +62,7 @@ export default class PolicyPackPlugin extends Plugin {
     }
   } = {}
 
-  async getPolicyPackPackage({
+  private async getPolicyPackPackage({
     policyPack,
     pluginManager,
   }: {
@@ -196,6 +196,7 @@ export default class PolicyPackPlugin extends Plugin {
         await storageEngine.setSchema([
           mergeSchemas(currentSchema, findingsSchema),
         ])
+
         const findings: RuleFinding[] = []
 
         // Run rules:
@@ -205,6 +206,7 @@ export default class PolicyPackPlugin extends Plugin {
             const results = (await this.policyPacksPlugins[
               policyPack
             ]?.engine?.processRule(rule, data)) as RuleFinding[]
+
             findings.push(...results)
           } catch (error) {
             this.logger.error(
@@ -213,19 +215,30 @@ export default class PolicyPackPlugin extends Plugin {
             this.logger.debug(error)
           }
         }
-        // Update data
-        const updatedData = engine?.prepareMutations(findings)
+
+        // Prepare entities mutations
+        const entitiesData = engine?.prepareEntitiesMutations(findings)
+
+        // Prepare provider mutations
+        const providerData = engine?.prepareProviderMutations(findings)
+
         // Save connections
         processConnectionsBetweenEntities({
-          providerData: updatedData,
+          providerData: {
+            entities: [...entitiesData, ...providerData],
+            connections: [] as any,
+          },
           storageEngine,
           storageRunning,
         })
         await storageEngine.run(false)
+
         this.logger.successSpinner(
           `${chalk.italic.green(policyPack)} rules excuted successfully`
         )
         this.logger.successSpinner('success')
+
+        // TODO: Use table to display results
         const results = findings.filter(
           finding => finding.result === Result.FAIL
         )
