@@ -1,3 +1,16 @@
+# [0.8.0](https://gitlab.com/auto-cloud/cloudgraph/sdk/compare/0.7.1...0.8.0) (2022-01-05)
+
+
+### Bug Fixes
+
+* Updated default value for missing entity field ([1689810](https://gitlab.com/auto-cloud/cloudgraph/sdk/commit/168981088abff2fc25e7b8435ac279fa486259a0))
+
+
+### Features
+
+* Created overall schema for findings ([f46e567](https://gitlab.com/auto-cloud/cloudgraph/sdk/commit/f46e567459fd71efa62541bc962b2b40c8c9be3e))
+* Grouped findings by entity ([19de4b7](https://gitlab.com/auto-cloud/cloudgraph/sdk/commit/19de4b7c99d06931764a55708722596ed162b9f2))
+
 ## [0.7.1](https://gitlab.com/auto-cloud/cloudgraph/sdk/compare/0.7.0...0.7.1) (2021-12-29)
 
 
