@@ -7,7 +7,8 @@ const typenameToFieldMap = {
   resourceA: 'querySchemaA',
   resourceB: 'querySchemaB',
 }
-const schemaTypeName = 'providerFindings'
+const providerName = 'aws'
+const entityName = 'CIS'
 
 const ruleMock = {
   id: 'id',
@@ -30,7 +31,11 @@ const ruleMock = {
 describe('RulesEngine', () => {
   let rulesEngine: Engine
   beforeAll(() => {
-    rulesEngine = new RulesProvider(typenameToFieldMap, schemaTypeName)
+    rulesEngine = new RulesProvider(
+      providerName,
+      entityName,
+      typenameToFieldMap
+    )
   })
   it('Should pass getting the updated schema created dynamically using schemaTypeName and typenameToFieldMap fields', () => {
     const schema = rulesEngine.getSchema()
@@ -55,6 +60,7 @@ describe('RulesEngine', () => {
         result: Result.FAIL,
         severity: Severity.WARNING,
         typename: 'querySchemaA',
+        description: '',
       },
       {
         id: cuid(),
@@ -63,25 +69,27 @@ describe('RulesEngine', () => {
         result: Result.PASS,
         severity: Severity.DANGER,
         typename: 'querySchemaA',
+
+        description: '',
       },
     ]
 
-    const {
-      entities: [findingsData],
-    } = rulesEngine.prepareMutations(data)
+    const [findingsData] = rulesEngine.prepareEntitiesMutations(data)
 
     expect(findingsData).toBeDefined()
-    expect(findingsData.name).toBe(schemaTypeName)
+    expect(findingsData.name).toBe(`${providerName}${entityName}Findings`)
     expect(findingsData.mutation).toContain(typenameToFieldMap.resourceA)
     expect(findingsData.data.filter).toBeDefined()
     expect(findingsData.data.set).toBeDefined()
-    expect(findingsData.data.set.findings.length).toBe(data.length)
+    expect(findingsData.data.set[`${entityName}Findings`].length).toBe(
+      data.length
+    )
   })
 
   it('Should pass preparing the mutations to insert findings data given an empty RuleFindings array', () => {
     const data = []
 
-    const { entities } = rulesEngine.prepareMutations(data)
+    const entities = rulesEngine.prepareEntitiesMutations(data)
 
     expect(entities).toBeDefined()
     expect(entities.length).toBe(0)

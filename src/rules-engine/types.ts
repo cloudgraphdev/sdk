@@ -1,4 +1,4 @@
-import { ProviderData } from '..'
+import { Entity } from '..'
 
 export type ResourceData = {
   data: { [k: string]: any }
@@ -51,6 +51,7 @@ export interface RuleFinding {
   resourceId: string
   result: Result
   severity: Severity
+  description: string
   typename: string
 }
 
@@ -64,6 +65,7 @@ export interface JsRule extends Rule {
 
 export interface Engine {
   processRule: (rule: Rule, data: any) => Promise<RuleFinding[]>
-  prepareMutations: (findings: RuleFinding[]) => ProviderData
+  prepareEntitiesMutations: (findings: RuleFinding[]) => Entity[]
+  prepareProviderMutations: (findings: RuleFinding[]) => Entity[]
   getSchema: () => string[]
 }
