@@ -1,3 +1,10 @@
+# [0.9.0](https://gitlab.com/auto-cloud/cloudgraph/sdk/compare/0.8.0...0.9.0) (2022-01-05)
+
+
+### Features
+
+* Included new regex operator for rules engine ([beb4bce](https://gitlab.com/auto-cloud/cloudgraph/sdk/commit/beb4bce4f0a81e08841562c30f5195d0e9e7ae76))
+
 # [0.8.0](https://gitlab.com/auto-cloud/cloudgraph/sdk/compare/0.7.1...0.8.0) (2022-01-05)
 
 
