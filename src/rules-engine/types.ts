@@ -9,6 +9,7 @@ export type ResourceData = {
 export type Condition = {
   path?: string
   value?: string | number | Condition | (string | number)[]
+  jq?: string
   [operationId: string]: any
 }
 
@@ -16,7 +17,7 @@ export type Operator = (
   mainArg: any,
   otherArgs: any[],
   data: ResourceData & { elementPath?: string }
-) => boolean | number
+) => boolean | number | Promise<boolean | number>
 
 export type _ResourceData = ResourceData & { elementPath?: string }
 

@@ -26,6 +26,12 @@ describe('JsonEvaluator', () => {
       { path: 'a', equal: '2', expected: false },
       { path: 'b', equal: 1, expected: true },
       { path: 'b', equal: '1', expected: true },
+      { path: 'b', not: { equal: 1 }, expected: false },
+      { path: 'b', not: { equal: '1' }, expected: false },
+      { path: 'b', not: { equal: 2 }, expected: true },
+      { path: 'b', not: { equal: '2' }, expected: true },
+      { path: 'b', not: { not: { equal: 1 } }, expected: true },
+      { path: 'b', not: { not: { equal: 2 } }, expected: false },
       { path: 'c', notEqual: 'a', expected: true },
       { path: 'a', notEqual: 1, expected: false },
       { path: 'a', in: [1, 2, 3], expected: true },
@@ -147,6 +153,168 @@ describe('JsonEvaluator', () => {
     ).toBe(RuleResult.DOESNT_MATCH)
 
     rule = { path: 'a.b', array_all: { path: '[*]', greaterThan: -1 } }
+    expect(
+      await evaluator.evaluateSingleResource({ conditions: rule } as any, data)
+    ).toBe(RuleResult.MATCHES)
+  })
+
+  test('should support negation logic array operators', async () => {
+    const data = { data: { a: { b: [0, 1, 2] } } } as any
+    let rule: any = {
+      path: 'a.b',
+      not: { array_any: { path: '[*]', equal: 2 } },
+    }
+    expect(
+      await evaluator.evaluateSingleResource({ conditions: rule } as any, data)
+    ).toBe(RuleResult.DOESNT_MATCH)
+
+    //
+    rule = { path: 'a.b', not: { array_all: { path: '[*]', equal: 2 } } }
+    expect(
+      await evaluator.evaluateSingleResource({ conditions: rule } as any, data)
+    ).toBe(RuleResult.MATCHES)
+
+    rule = { path: 'a.b', not: { array_all: { path: '[*]', greaterThan: -1 } } }
+    expect(
+      await evaluator.evaluateSingleResource({ conditions: rule } as any, data)
+    ).toBe(RuleResult.DOESNT_MATCH)
+  })
+
+  test('should support array with nested operators', async () => {
+    const data = {
+      data: {
+        a: {
+          b: [
+            { c: 1, d: 2 },
+            { c: 3, d: 4 },
+          ],
+        },
+      },
+    } as any
+    const rule: any = {
+      path: 'a.b',
+      array_any: {
+        path: '[*]',
+        and: [
+          {
+            path: '[*].c',
+            equal: 3,
+          },
+          {
+            path: '[*].d',
+            equal: 4,
+          },
+        ],
+      },
+    }
+
+    expect(
+      await evaluator.evaluateSingleResource({ conditions: rule } as any, data)
+    ).toBe(RuleResult.MATCHES)
+  })
+
+  test('should support jq on array operators', async () => {
+    const data = {
+      data: {
+        a: {
+          b: [{ color: 'red' }, { color: 'green' }, { color: 'blue' }],
+          c: [{ fruit: 'apple' }, { fruit: 'orange' }, { fruit: 'banana' }],
+        },
+      },
+    } as any
+    const rule: any = {
+      jq: '[.b[] + .c[]]',
+      path: 'a',
+      array_any: {
+        path: '[*]',
+        and: [
+          {
+            path: '[*].color',
+            equal: 'green',
+          },
+          {
+            path: '[*].fruit',
+            equal: 'orange',
+          },
+        ],
+      },
+    }
+
+    expect(
+      await evaluator.evaluateSingleResource({ conditions: rule } as any, data)
+    ).toBe(RuleResult.MATCHES)
+  })
+
+  test('should support jq on array with nested operators', async () => {
+    const data = {
+      data: {
+        cloudwatchLog: [
+          {
+            metricFilters: [
+              {
+                filterName: 'KmsDeletion',
+                filterPattern:
+                  '{($.eventSource = kms.amazonaws.com) && (($.eventName=DisableKey)||($.eventName=ScheduleKeyDeletion)) }',
+                metricTransformations: [
+                  {
+                    metricName: 'KmsDeletionCount',
+                  },
+                ],
+              },
+              {
+                filterName: 'ConsoleSignInFailures',
+                filterPattern:
+                  '{ ($.eventName = ConsoleLogin) && ($.errorMessage = "Failed authentication") }',
+                metricTransformations: [
+                  {
+                    metricName: 'ConsoleSignInFailureCount',
+                  },
+                ],
+              },
+            ],
+            cloudwatch: [
+              {
+                metric: 'KmsDeletionCount',
+                sns: [
+                  {
+                    arn: 'arn:aws:sns:us-east-1:...',
+                    subscriptions: [
+                      {
+                        arn: 'arn:aws:...',
+                      },
+                    ],
+                  },
+                ],
+              },
+            ],
+          },
+        ],
+      },
+    } as any
+    const rule: any = {
+      path: 'cloudwatchLog',
+      jq: '[.[].metricFilters[] + .[].cloudwatch[] | select(.metricTransformations[].metricName == .metric)]',
+      array_any: {
+        and: [
+          {
+            path: '[*].filterPattern',
+            equal:
+              '{($.eventSource = kms.amazonaws.com) && (($.eventName=DisableKey)||($.eventName=ScheduleKeyDeletion)) }',
+          },
+          {
+            path: '[*].sns',
+            array_any: {
+              path: '[*].subscriptions',
+              array_any: {
+                path: '[*].arn',
+                match: /^arn:aws:.*$/,
+              },
+            },
+          },
+        ],
+      },
+    }
+
     expect(
       await evaluator.evaluateSingleResource({ conditions: rule } as any, data)
     ).toBe(RuleResult.MATCHES)
