@@ -1,3 +1,10 @@
+# [0.10.0](https://gitlab.com/auto-cloud/cloudgraph/sdk/compare/0.9.0...0.10.0) (2022-01-07)
+
+
+### Features
+
+* adding jq and not operators to policy packs json evaluator ([1912c61](https://gitlab.com/auto-cloud/cloudgraph/sdk/commit/1912c61d3a1d73e44fa24f53430d635fc07d9427))
+
 # [0.9.0](https://gitlab.com/auto-cloud/cloudgraph/sdk/compare/0.8.0...0.9.0) (2022-01-05)
 
 
