@@ -1,4 +1,5 @@
 import lodash from 'lodash'
+import * as jqNode from 'node-jq'
 import {
   Condition,
   JsonRule,
@@ -19,7 +20,7 @@ export default class JsonEvaluator implements RuleEvaluator<JsonRule> {
     rule: JsonRule,
     data: ResourceData
   ): Promise<RuleResult> {
-    return this.evaluateCondition(rule.conditions, data)
+    return (await this.evaluateCondition(rule.conditions, data))
       ? RuleResult.MATCHES
       : RuleResult.DOESNT_MATCH
   }
@@ -42,42 +43,50 @@ export default class JsonEvaluator implements RuleEvaluator<JsonRule> {
   }
 
   operators: { [key: string]: Operator } = {
-    or: (_, conditions: Condition[], data) => {
+    not: async (_, conditions: Condition, data) => {
+      let notConditions = conditions
+      if (data.elementPath) {
+        notConditions = { ...conditions, path: data.elementPath }
+      }
+
+      return !(await this.evaluateCondition(notConditions, data))
+    },
+    or: async (_, conditions: Condition[], data) => {
       for (let i = 0; i < conditions.length; i++) {
         // if 1 is true, it's true
-        if (this.evaluateCondition(conditions[i], data)) return true
+        if (await this.evaluateCondition(conditions[i], data)) return true
       }
       return false
     },
-    and: (_, conditions: Condition[], data) => {
+    and: async (_, conditions: Condition[], data) => {
       for (let i = 0; i < conditions.length; i++) {
         // if 1 is false, it's false
-        if (!this.evaluateCondition(conditions[i], data)) return false
+        if (!(await this.evaluateCondition(conditions[i], data))) return false
       }
       return true
     },
-    array_all: (array, conditions: Condition, data) => {
+    array_all: async (array, conditions: Condition, data) => {
       // an AND, but with every resource item
       const baseElementPath = data.elementPath
 
       for (let i = 0; i < array.length; i++) {
         if (
-          !this.evaluateCondition(conditions, {
+          !(await this.evaluateCondition(conditions, {
             ...data,
             elementPath: `${baseElementPath}[${i}]`,
-          })
+          }))
         )
           return false
       }
       return true
     },
-    array_any: (array, conditions, data) => {
+    array_any: async (array, conditions, data) => {
       // an OR, but with every resource item
 
       const baseElementPath = data.elementPath
       for (let i = 0; i < array.length; i++) {
         if (
-          this.evaluateCondition(conditions as Condition, {
+          await this.evaluateCondition(conditions as Condition, {
             ...data,
             elementPath: `${baseElementPath}[${i}]`,
           })
@@ -92,14 +101,15 @@ export default class JsonEvaluator implements RuleEvaluator<JsonRule> {
   isCondition = (a: unknown): boolean =>
     !!a && (a as any).constructor === Object
 
-  evaluateCondition(
+  async evaluateCondition(
     _condition: Condition,
     _data: _ResourceData
-  ): boolean | number {
+  ): Promise<number | boolean> {
     const condition = { ..._condition }
-    const { path, value } = condition
+    const { path, value, jq: jqQuery } = condition
     delete condition.path
     delete condition.value
+    delete condition.jq
     // remaining field should be the op name
     const op = Object.keys(condition)[0] //
     const operator = this.operators[op]
@@ -116,10 +126,29 @@ export default class JsonEvaluator implements RuleEvaluator<JsonRule> {
       data.elementPath = elementPath
       firstArg = this.resolvePath(data, elementPath)
     } else if (this.isCondition(value)) {
-      firstArg = this.evaluateCondition(value as any, data)
+      firstArg = await this.evaluateCondition(value as any, data)
     } else {
       firstArg = value
     }
+
+    if (firstArg && jqQuery) {
+      firstArg = await this.runJq(firstArg, jqQuery)
+      lodash.set(data.data, data.elementPath, firstArg)
+    }
+
     return operator(firstArg, otherArgs, data)
+  }
+
+  async runJq(data: unknown, jqQuery: string): Promise<unknown> {
+    try {
+      const json = (await jqNode.run(jqQuery, data, {
+        input: 'json',
+        output: 'json',
+      })) as unknown
+
+      return json || data
+    } catch (e) {
+      return data
+    }
   }
 }
