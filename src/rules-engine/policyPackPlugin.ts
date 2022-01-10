@@ -124,9 +124,6 @@ export default class PolicyPackPlugin extends Plugin {
       generateSchemaMapDynamically(this.provider.name, resources)
 
     for (const policyPack of allPolicyPacks) {
-      this.logger.info(
-        `Beginning ${chalk.italic.green('RULES')} for ${policyPack}`
-      )
       const policyPackPlugin = await this.getPolicyPackPackage({
         policyPack,
         pluginManager,
@@ -176,6 +173,9 @@ export default class PolicyPackPlugin extends Plugin {
       schemaMap?: SchemaMap
     }) => void
   }): Promise<any> {
+    this.logger.info(
+      `Beginning ${chalk.italic.green('RULES')} for ${this.provider.name}`
+    )
     for (const policyPack in this.policyPacksPlugins) {
       if (policyPack && this.policyPacksPlugins[policyPack]) {
         const {
