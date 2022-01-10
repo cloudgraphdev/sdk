@@ -1,3 +1,10 @@
+## [0.10.1](https://gitlab.com/auto-cloud/cloudgraph/sdk/compare/0.10.0...0.10.1) (2022-01-10)
+
+
+### Bug Fixes
+
+* Removed policy pack plugin message during configuration ([eeede94](https://gitlab.com/auto-cloud/cloudgraph/sdk/commit/eeede9447d1bd23667852b656b68ccc73cad8b16))
+
 # [0.10.0](https://gitlab.com/auto-cloud/cloudgraph/sdk/compare/0.9.0...0.10.0) (2022-01-07)
 
 
