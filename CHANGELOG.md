@@ -1,3 +1,10 @@
+## [0.10.2](https://gitlab.com/auto-cloud/cloudgraph/sdk/compare/0.10.1...0.10.2) (2022-01-11)
+
+
+### Bug Fixes
+
+* Only shows execution message when plugins available ([ce868a6](https://gitlab.com/auto-cloud/cloudgraph/sdk/commit/ce868a640eb6a5a1c12bbe0a976be1d1f4513d0b))
+
 ## [0.10.1](https://gitlab.com/auto-cloud/cloudgraph/sdk/compare/0.10.0...0.10.1) (2022-01-10)
 
 
