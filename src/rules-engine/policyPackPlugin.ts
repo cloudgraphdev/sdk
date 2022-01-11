@@ -173,9 +173,10 @@ export default class PolicyPackPlugin extends Plugin {
       schemaMap?: SchemaMap
     }) => void
   }): Promise<any> {
-    this.logger.info(
-      `Beginning ${chalk.italic.green('RULES')} for ${this.provider.name}`
-    )
+    !isEmpty(this.policyPacksPlugins) &&
+      this.logger.info(
+        `Beginning ${chalk.italic.green('RULES')} for ${this.provider.name}`
+      )
     for (const policyPack in this.policyPacksPlugins) {
       if (policyPack && this.policyPacksPlugins[policyPack]) {
         const {
