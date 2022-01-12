@@ -25,7 +25,7 @@ const ruleMock = {
     path: '@.value',
     equal: false,
   },
-  severity: Severity.DANGER,
+  severity: Severity.HIGH,
 }
 
 describe('RulesEngine', () => {
@@ -58,7 +58,7 @@ describe('RulesEngine', () => {
         ruleId,
         resourceId,
         result: Result.FAIL,
-        severity: Severity.WARNING,
+        severity: Severity.MEDIUM,
         typename: 'querySchemaA',
         description: '',
       },
@@ -67,7 +67,7 @@ describe('RulesEngine', () => {
         ruleId,
         resourceId,
         result: Result.PASS,
-        severity: Severity.DANGER,
+        severity: Severity.LOW,
         typename: 'querySchemaA',
 
         description: '',

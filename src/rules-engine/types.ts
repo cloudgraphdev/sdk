@@ -22,8 +22,9 @@ export type Operator = (
 export type _ResourceData = ResourceData & { elementPath?: string }
 
 export enum Severity {
-  WARNING = 'warning',
-  DANGER = 'danger',
+  HIGH = 'high',
+  MEDIUM = 'medium',
+  LOW = 'low',
 }
 
 export enum RuleResult {

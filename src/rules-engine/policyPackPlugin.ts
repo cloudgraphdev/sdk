@@ -13,7 +13,7 @@ import {
 import RulesEngine from '../rules-engine'
 import Plugin, { PluginManager } from '../plugin'
 
-import { Result } from './types'
+import { Result, Severity } from './types'
 
 export default class PolicyPackPlugin extends Plugin {
   constructor({
@@ -94,6 +94,40 @@ export default class PolicyPackPlugin extends Plugin {
         'For more information on this error, please see https://github.com/cloudgraphdev/cli#common-errors'
       )
       return null
+    }
+  }
+
+  private displayResults(findingsResults: {
+    [severity: string]: RuleFinding[]
+  }): void {
+    // TODO: Display Results will be improved on CG-549
+    for (const severityLevel in findingsResults) {
+      if (severityLevel) {
+        const count = findingsResults[severityLevel].length
+        let message = ''
+        if (severityLevel === Severity.HIGH) {
+          message = `${chalk.italic.redBright.red(
+            `[ ${count || 0} ${
+              count === 1 ? 'issue was' : 'issues were'
+            } found during rules execution marked as high severity ]`
+          )}`
+        } else if (severityLevel === Severity.MEDIUM) {
+          message = `${chalk.italic.yellow(
+            `[ ${count || 0} ${
+              count === 1 ? 'issue was' : 'issues were'
+            } found during rules execution marked as medium severity ]`
+          )}`
+        }
+
+        this.logger.info(
+          message ||
+            `${chalk.italic(
+              `[ ${count || 0} ${
+                count === 1 ? 'issue was' : 'issues were'
+              } found during rules execution marked as ${severityLevel} severity ]`
+            )}`
+        )
+      }
     }
   }
 
@@ -243,22 +277,10 @@ export default class PolicyPackPlugin extends Plugin {
         const results = findings.filter(
           finding => finding.result === Result.FAIL
         )
+
         if (!isEmpty(results)) {
-          const { warning, danger } = groupBy(results, 'severity')
-          warning &&
-            this.logger.warn(
-              `${chalk.italic.yellow(
-                `${warning.length || 0} warning${warning.length > 1 ? 's' : ''}`
-              )}  found during rules execution.`
-            )
-          danger &&
-            this.logger.error(
-              `${chalk.italic.redBright.red(
-                `${danger.length || 0} vulnerabilit${
-                  danger.length > 1 ? 'ies' : 'y'
-                }`
-              )}  found during rules execution.`
-            )
+          this.displayResults(groupBy(results, 'severity'))
+
           this.logger.info(
             `For more information, you can query ${chalk.italic.green(
               `query${this.provider.name}${entity}Findings`
