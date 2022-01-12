@@ -1,3 +1,11 @@
+## [0.10.3](https://gitlab.com/auto-cloud/cloudgraph/sdk/compare/0.10.2...0.10.3) (2022-01-12)
+
+
+### Bug Fixes
+
+* Implemented temporary solution to display findings results ([c9a7d18](https://gitlab.com/auto-cloud/cloudgraph/sdk/commit/c9a7d18160d2749003b96168accefce0c9937c88))
+* Renamed Severity levels ([ad1fd6c](https://gitlab.com/auto-cloud/cloudgraph/sdk/commit/ad1fd6cfd51528d2e1f9637e0ecb1c029b66a0f4))
+
 ## [0.10.2](https://gitlab.com/auto-cloud/cloudgraph/sdk/compare/0.10.1...0.10.2) (2022-01-11)
 
 
