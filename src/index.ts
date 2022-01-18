@@ -6,6 +6,7 @@ import {
   StorageEngineConfig,
   StorageEngine,
   GraphQLInputData,
+  GraphQLQueryData,
 } from './storage'
 import {
   Opts,
@@ -60,6 +61,7 @@ export type {
   StorageEngineConfig,
   StorageEngine,
   GraphQLInputData,
+  GraphQLQueryData,
   SchemaMap,
   Plugin,
   PluginManager,
