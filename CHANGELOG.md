@@ -1,3 +1,10 @@
+## [0.10.4](https://gitlab.com/auto-cloud/cloudgraph/sdk/compare/0.10.3...0.10.4) (2022-01-18)
+
+
+### Bug Fixes
+
+* Updated getSchemaFromFolder definition ([a5dbe1a](https://gitlab.com/auto-cloud/cloudgraph/sdk/commit/a5dbe1afeb4f73c3441ed184b0797fdb7e7eaadd))
+
 ## [0.10.3](https://gitlab.com/auto-cloud/cloudgraph/sdk/compare/0.10.2...0.10.3) (2022-01-12)
 
 
