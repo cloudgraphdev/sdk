@@ -1,3 +1,10 @@
+## [0.10.6](https://gitlab.com/auto-cloud/cloudgraph/sdk/compare/0.10.5...0.10.6) (2022-01-18)
+
+
+### Bug Fixes
+
+* type cleanup, removed old prop ([d81eb1e](https://gitlab.com/auto-cloud/cloudgraph/sdk/commit/d81eb1e8212af9e0e4d62c6912e02d07af9ef011))
+
 ## [0.10.5](https://gitlab.com/auto-cloud/cloudgraph/sdk/compare/0.10.4...0.10.5) (2022-01-18)
 
 
