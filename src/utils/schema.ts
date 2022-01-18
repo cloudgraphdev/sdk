@@ -8,10 +8,17 @@ export const mergeSchemas = (currSchema: string, additions: string[]) => {
   return print(s)
 }
 
-export function getSchemaFromFolder(dirPath: string, provider?: string): any[] {
-  return loadFilesSync(path.join(dirPath, provider ? `${provider}*` : ''), {
-    extensions: ['graphql'],
-  })
+export function getSchemaFromFolder(
+  dirPath: string,
+  provider?: string
+): string {
+  const typesArray = loadFilesSync(
+    path.join(dirPath, provider ? `${provider}*` : ''),
+    {
+      extensions: ['graphql'],
+    }
+  )
+  return print(mergeTypeDefs(typesArray))
 }
 
 export const generateSchemaMapDynamically = (
