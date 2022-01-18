@@ -1,3 +1,10 @@
+## [0.10.5](https://gitlab.com/auto-cloud/cloudgraph/sdk/compare/0.10.4...0.10.5) (2022-01-18)
+
+
+### Bug Fixes
+
+* **types:** refactor graphql types to allow patch operation, new type for input ([cbe266c](https://gitlab.com/auto-cloud/cloudgraph/sdk/commit/cbe266cc91aa299c5f698141f5d539d77a409eb7))
+
 ## [0.10.4](https://gitlab.com/auto-cloud/cloudgraph/sdk/compare/0.10.3...0.10.4) (2022-01-18)
 
 
