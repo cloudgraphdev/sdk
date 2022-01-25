@@ -39,11 +39,13 @@ export interface Service {
     regions,
     config,
     opts,
+    account,
     rawData,
   }: {
-    regions: string
+    regions?: string
     config: any
     opts: Opts
+    account?: string
     rawData: any
   }) => any
 }
