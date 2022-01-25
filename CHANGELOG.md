@@ -1,3 +1,10 @@
+## [0.10.7](https://gitlab.com/auto-cloud/cloudgraph/sdk/compare/0.10.6...0.10.7) (2022-01-25)
+
+
+### Bug Fixes
+
+* **getData:** update get data to take account param so we can include it in raw data ([7da8949](https://gitlab.com/auto-cloud/cloudgraph/sdk/commit/7da8949221ebed1ab97b1115999f54ffd80c4bd7))
+
 ## [0.10.6](https://gitlab.com/auto-cloud/cloudgraph/sdk/compare/0.10.5...0.10.6) (2022-01-18)
 
 
