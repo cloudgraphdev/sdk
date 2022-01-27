@@ -28,21 +28,29 @@ import Plugin, { PluginManager, PluginModule, PluginType } from './plugin'
 import pluginMap from './plugin/pluginMap'
 import cloudGraphPlugin from './plugin/cgPlugins'
 import {
+  sortResourcesDependencies,
+  intersectStringArrays,
+  getKeyByValue,
+  toCamel,
+} from './utils'
+import {
   mergeSchemas,
   getSchemaFromFolder,
   generateSchemaMapDynamically,
 } from './utils/schema'
 
+// Export Utils
 export {
-  PluginModule,
-  PluginType,
-  Result,
-  cloudGraphPlugin,
-  pluginMap,
+  sortResourcesDependencies,
+  intersectStringArrays,
+  getKeyByValue,
+  toCamel,
   mergeSchemas,
   getSchemaFromFolder,
   generateSchemaMapDynamically,
 }
+
+export { PluginModule, PluginType, Result, cloudGraphPlugin, pluginMap }
 
 export type {
   Opts,
