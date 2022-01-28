@@ -1,3 +1,10 @@
+## [0.10.8](https://gitlab.com/auto-cloud/cloudgraph/sdk/compare/0.10.7...0.10.8) (2022-01-28)
+
+
+### Bug Fixes
+
+* Moved common utils to SDK ([ab96993](https://gitlab.com/auto-cloud/cloudgraph/sdk/commit/ab96993bafcc45db430d6bb7ace91a40dbdedd94))
+
 ## [0.10.7](https://gitlab.com/auto-cloud/cloudgraph/sdk/compare/0.10.6...0.10.7) (2022-01-25)
 
 
