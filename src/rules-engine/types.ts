@@ -42,11 +42,13 @@ export interface Rule {
   id: string
   description: string
   rationale?: string
+  audit?: string
+  remediation?: string
+  references?: Array<string>
   gql: string
   resource: string
   severity: Severity
 }
-
 export interface RuleFinding {
   id: string
   ruleId: string
@@ -54,6 +56,10 @@ export interface RuleFinding {
   result: Result
   severity: Severity
   description: string
+  rationale?: string
+  audit?: string
+  remediation?: string
+  references?: Array<string>
   typename: string
 }
 
