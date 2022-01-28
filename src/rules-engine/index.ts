@@ -3,16 +3,18 @@ import isEmpty from 'lodash/isEmpty'
 import groupBy from 'lodash/groupBy'
 
 import JsonEvaluator from './evaluators/json-evaluator'
+import ManualEvaluator from './evaluators/manual-evaluator'
 import JsEvaluator from './evaluators/js-evaluator'
 import { RuleEvaluator } from './evaluators/rule-evaluator'
-import DefaultEvaluator from './evaluators/default-evaluator'
-import { Engine, ResourceData, Rule, RuleFinding, RuleResult } from './types'
+import { Engine, ResourceData, Rule, RuleFinding } from './types'
 import { Entity } from '../types'
 
 export default class RulesProvider implements Engine {
-  evaluators: RuleEvaluator<any>[] = [new JsonEvaluator(), new JsEvaluator()]
-
-  defaultEvaluator = new DefaultEvaluator()
+  evaluators: RuleEvaluator<any>[] = [
+    new JsonEvaluator(),
+    new JsEvaluator(),
+    new ManualEvaluator(),
+  ]
 
   private readonly typenameToFieldMap: { [typeName: string]: string }
 
@@ -36,6 +38,7 @@ export default class RulesProvider implements Engine {
       PASS
       FAIL
       MISSING
+      SKIPPED
     }
     type ${this.providerName}Findings @key(fields: "id") {
       id: String! @id
@@ -46,7 +49,7 @@ export default class RulesProvider implements Engine {
     type ${this.providerName}${this.entityName}Findings @key(fields: "id") {
       id: String! @id
       ruleId: String! @search(by: [hash, regexp])
-      resourceId: String! @search(by: [hash, regexp])
+      resourceId: String @search(by: [hash, regexp])
       severity: String! @search(by: [hash, regexp])
       description: String! @search(by: [hash, regexp])
       audit: String @search(by: [hash, regexp])
@@ -78,9 +81,35 @@ export default class RulesProvider implements Engine {
     return [mainType, extensions]
   }
 
-  getRuleEvaluators(): RuleEvaluator<any>[] {
-    // @TODO - we need to define how this is going to be decided at runtime (configuration)
-    return this.evaluators
+  prepareMutations = (findings: RuleFinding[] = []): Entity[] => {
+    const processedFindings = findings.filter(
+      ({ typename }) => typename !== 'manual'
+    )
+    const unprocessedFindings = findings
+      .filter(({ typename }) => typename === 'manual')
+      .map(({ typename, ...filteredFinding }) => ({ ...filteredFinding }))
+
+    // Prepare entities mutations
+    const entitiesData = this.prepareEntitiesMutations(processedFindings)
+
+    // Prepare provider mutations
+    const providerData = this.prepareProviderMutations(processedFindings)
+
+    return [
+      ...entitiesData,
+      ...providerData,
+      {
+        name: `${this.providerName}${this.entityName}Findings`,
+        mutation: `
+      mutation($input: [Add${this.providerName}${this.entityName}FindingsInput!]!) {
+        add${this.providerName}${this.entityName}Findings(input: $input, upsert: true) {
+          numUids
+        }
+      }
+      `,
+        data: unprocessedFindings,
+      },
+    ]
   }
 
   prepareEntitiesMutations = (findings: RuleFinding[] = []): Entity[] => {
@@ -172,10 +201,16 @@ export default class RulesProvider implements Engine {
   processRule = async (rule: Rule, data: unknown): Promise<RuleFinding[]> => {
     const res: any[] = []
     const dedupeIds = {}
-    const resourcePaths = jsonpath.nodes(data, rule.resource)
+    const resourcePaths = data ? jsonpath.nodes(data, rule.resource) : []
     const evaluator = this.getRuleEvaluator(rule)
 
-    if (!evaluator || isEmpty(data)) {
+    if (isEmpty(data) && evaluator instanceof ManualEvaluator) {
+      // Returned Manual Rule Response
+      res.push(await evaluator.evaluateSingleResource(rule))
+      return res
+    }
+
+    if (!evaluator) {
       return []
     }
 
@@ -207,27 +242,19 @@ export default class RulesProvider implements Engine {
         resourcePath: jsonpath.stringify(path),
       })
       if (ruleResult) {
-        res.push({
-          ...ruleResult,
-          description: rule.description,
-          audit: rule.audit,
-          rationale: rule.rationale,
-          remediation: rule.remediation,
-          references: rule.references,
-        })
+        res.push({ ...ruleResult })
       }
     }
     return res
   }
 
   private getRuleEvaluator = (rule: Rule): RuleEvaluator<any> => {
-    const evaluators = this.getRuleEvaluators()
-    for (const evaluator of evaluators) {
+    for (const evaluator of this.evaluators) {
       if (evaluator.canEvaluate(rule)) {
         return evaluator
       }
     }
-    return this.defaultEvaluator
+    return undefined
   }
 
   private processSingleResourceRule = async (
@@ -235,16 +262,7 @@ export default class RulesProvider implements Engine {
     evaluator: RuleEvaluator<any>,
     data: ResourceData
   ): Promise<RuleFinding> => {
-    const result = await evaluator.evaluateSingleResource(rule, data)
-
-    const finding = {
-      id: `${rule.id}/${data.resource.id}`,
-      ruleId: rule.id,
-      resourceId: data.resource.id,
-      result: result !== RuleResult.MATCHES ? 'FAIL' : 'PASS',
-      severity: rule.severity,
-      typename: data.resource.__typename, // eslint-disable-line no-underscore-dangle
-    } as RuleFinding
+    const finding = await evaluator.evaluateSingleResource(rule, data)
 
     const connField =
       data.resource.__typename && // eslint-disable-line no-underscore-dangle

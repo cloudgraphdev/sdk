@@ -33,6 +33,9 @@ export default class JsonEvaluator implements RuleEvaluator<JsonRule> {
       severity: rule.severity,
       description: rule.description,
       rationale: rule.rationale,
+      audit: rule.audit,
+      remediation: rule.remediation,
+      references: rule.references,
       typename: data.resource.__typename, // eslint-disable-line no-underscore-dangle
     } as RuleFinding
 
