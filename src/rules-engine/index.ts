@@ -32,6 +32,161 @@ export default class RulesProvider implements Engine {
     this.providerName = providerName
   }
 
+  /**
+   * Evaluates which Evaluator can be used for each rule
+   * @param rule rule to evaluate
+   * @returns A RuleEvaluator
+   */
+  private getRuleEvaluator = (rule: Rule): RuleEvaluator<any> => {
+    for (const evaluator of this.evaluators) {
+      if (evaluator.canEvaluate(rule)) {
+        return evaluator
+      }
+    }
+    return undefined
+  }
+
+  /**
+   * Process a Rule with an RuleEvaluator
+   * @param rule Rule to Process
+   * @param evaluator RuleEvaluator
+   * @param data Rule Data
+   * @returns RuleFinding result
+   */
+  private processSingleResourceRule = async (
+    rule: Rule,
+    evaluator: RuleEvaluator<any>,
+    data: ResourceData
+  ): Promise<RuleFinding> => {
+    const finding = await evaluator.evaluateSingleResource(rule, data)
+
+    const connField =
+      data.resource.__typename && // eslint-disable-line no-underscore-dangle
+      this.typenameToFieldMap[data.resource.__typename] // eslint-disable-line no-underscore-dangle
+
+    if (connField) {
+      finding[connField] = [{ id: data.resource.id }]
+    }
+    return finding
+  }
+
+  /**
+   * traverse the path, and 'highlight' the path towards the resource
+   * a[0].b.c[3].id === a['@'].b.c['@'].id // so rules can use this notation to know their parents
+   */
+  private highlightPath(data: any, path: PathComponent[]): any {
+    let curr = data // we can write the data, as next time we'll set the same fields
+    for (let j = 1; j < path.length; j++) {
+      const segment = path[j]
+      if (Array.isArray(curr)) {
+        // this is an array, we store in []._ the alias of this resource position in the array
+        ;(curr as any)['@'] = curr[segment as number] // eslint-disable-line
+      }
+      curr = curr[segment]
+    }
+    return data
+  }
+
+  /**
+   * Prepare the mutations for the resources findings
+   * @param findings RuleFinding array
+   * @returns A formatted Entity array
+   */
+  private prepareEntitiesMutations = (
+    findings: RuleFinding[] = []
+  ): Entity[] => {
+    const mutations = []
+
+    // Group Findings by schema type
+    const findingsByType = groupBy(findings, 'typename')
+
+    for (const findingType in findingsByType) {
+      if (!isEmpty(findingType)) {
+        // Group Findings by resource
+        const findingsByResource = groupBy(
+          findingsByType[findingType],
+          'resourceId'
+        )
+
+        for (const resource in findingsByResource) {
+          if (resource) {
+            const data = (
+              (findingsByResource[resource] as RuleFinding[]) || []
+            ).map(({ typename, ...properties }) => properties)
+
+            // Create dynamically update mutations by resource
+            const updateMutation = {
+              name: `${this.providerName}${this.entityName}Findings`,
+              mutation: `mutation update${findingType}($input: Update${findingType}Input!) {
+                update${findingType}(input: $input) {
+                  numUids
+                }
+              }
+              `,
+              data: {
+                filter: {
+                  id: { eq: resource },
+                },
+                set: {
+                  [`${this.entityName}Findings`]: data,
+                },
+              },
+            }
+
+            mutations.push(updateMutation)
+          }
+        }
+      }
+    }
+
+    return mutations
+  }
+
+  /**
+   * Prepare the mutations for overall provider findings
+   * @param findings RuleFinding array
+   * @returns A formatted Entity array
+   */
+  private prepareProviderMutations = (
+    findings: RuleFinding[] = []
+  ): Entity[] => {
+    // Prepare provider schema connections
+    return [
+      {
+        name: `${this.providerName}Findings`,
+        mutation: `
+        mutation($input: [Add${this.providerName}FindingsInput!]!) {
+          add${this.providerName}Findings(input: $input, upsert: true) {
+            numUids
+          }
+        }
+        `,
+        data: {
+          id: `${this.providerName}-provider`,
+        },
+      },
+      {
+        name: `${this.providerName}Findings`,
+        mutation: `mutation update${this.providerName}Findings($input: Update${this.providerName}FindingsInput!) {
+            update${this.providerName}Findings(input: $input) {
+              numUids
+            }
+          }
+          `,
+        data: {
+          filter: {
+            id: { eq: `${this.providerName}-provider` },
+          },
+          set: {
+            [`${this.entityName}Findings`]: findings.map(
+              ({ typename, ...rest }) => ({ ...rest })
+            ),
+          },
+        },
+      },
+    ]
+  }
+
   getSchema = (): string[] => {
     const mainType = `
     enum FindingsResult {
@@ -112,92 +267,6 @@ export default class RulesProvider implements Engine {
     ]
   }
 
-  prepareEntitiesMutations = (findings: RuleFinding[] = []): Entity[] => {
-    const mutations = []
-
-    // Group Findings by schema type
-    const findingsByType = groupBy(findings, 'typename')
-
-    for (const findingType in findingsByType) {
-      if (!isEmpty(findingType)) {
-        // Group Findings by resource
-        const findingsByResource = groupBy(
-          findingsByType[findingType],
-          'resourceId'
-        )
-
-        for (const resource in findingsByResource) {
-          if (resource) {
-            const data = (
-              (findingsByResource[resource] as RuleFinding[]) || []
-            ).map(({ typename, ...properties }) => properties)
-
-            // Create dynamically update mutations by resource
-            const updateMutation = {
-              name: `${this.providerName}${this.entityName}Findings`,
-              mutation: `mutation update${findingType}($input: Update${findingType}Input!) {
-                update${findingType}(input: $input) {
-                  numUids
-                }
-              }
-              `,
-              data: {
-                filter: {
-                  id: { eq: resource },
-                },
-                set: {
-                  [`${this.entityName}Findings`]: data,
-                },
-              },
-            }
-
-            mutations.push(updateMutation)
-          }
-        }
-      }
-    }
-
-    return mutations
-  }
-
-  prepareProviderMutations = (findings: RuleFinding[] = []): Entity[] => {
-    // Prepare provider schema connections
-    return [
-      {
-        name: `${this.providerName}Findings`,
-        mutation: `
-        mutation($input: [Add${this.providerName}FindingsInput!]!) {
-          add${this.providerName}Findings(input: $input, upsert: true) {
-            numUids
-          }
-        }
-        `,
-        data: {
-          id: `${this.providerName}-provider`,
-        },
-      },
-      {
-        name: `${this.providerName}Findings`,
-        mutation: `mutation update${this.providerName}Findings($input: Update${this.providerName}FindingsInput!) {
-            update${this.providerName}Findings(input: $input) {
-              numUids
-            }
-          }
-          `,
-        data: {
-          filter: {
-            id: { eq: `${this.providerName}-provider` },
-          },
-          set: {
-            [`${this.entityName}Findings`]: findings.map(
-              ({ typename, ...rest }) => ({ ...rest })
-            ),
-          },
-        },
-      },
-    ]
-  }
-
   processRule = async (rule: Rule, data: unknown): Promise<RuleFinding[]> => {
     const res: any[] = []
     const dedupeIds = {}
@@ -246,48 +315,5 @@ export default class RulesProvider implements Engine {
       }
     }
     return res
-  }
-
-  private getRuleEvaluator = (rule: Rule): RuleEvaluator<any> => {
-    for (const evaluator of this.evaluators) {
-      if (evaluator.canEvaluate(rule)) {
-        return evaluator
-      }
-    }
-    return undefined
-  }
-
-  private processSingleResourceRule = async (
-    rule: Rule,
-    evaluator: RuleEvaluator<any>,
-    data: ResourceData
-  ): Promise<RuleFinding> => {
-    const finding = await evaluator.evaluateSingleResource(rule, data)
-
-    const connField =
-      data.resource.__typename && // eslint-disable-line no-underscore-dangle
-      this.typenameToFieldMap[data.resource.__typename] // eslint-disable-line no-underscore-dangle
-
-    if (connField) {
-      finding[connField] = [{ id: data.resource.id }]
-    }
-    return finding
-  }
-
-  /**
-   * traverse the path, and 'highlight' the path towards the resource
-   * a[0].b.c[3].id === a['@'].b.c['@'].id // so rules can use this notation to know their parents
-   */
-  private highlightPath(data: any, path: PathComponent[]) {
-    let curr = data // we can write the data, as next time we'll set the same fields
-    for (let j = 1; j < path.length; j++) {
-      const segment = path[j]
-      if (Array.isArray(curr)) {
-        // this is an array, we store in []._ the alias of this resource position in the array
-        ;(curr as any)['@'] = curr[segment as number] // eslint-disable-line
-      }
-      curr = curr[segment]
-    }
-    return data
   }
 }
