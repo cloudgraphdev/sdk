@@ -1,4 +1,4 @@
-import { JsRule, ResourceData, Rule, RuleResult } from '../types'
+import { JsRule, ResourceData, Rule, RuleResult, RuleFinding } from '../types'
 import { RuleEvaluator } from './rule-evaluator'
 
 export default class JsEvaluator implements RuleEvaluator<JsRule> {
@@ -9,7 +9,22 @@ export default class JsEvaluator implements RuleEvaluator<JsRule> {
   async evaluateSingleResource(
     rule: JsRule,
     data: ResourceData
-  ): Promise<RuleResult> {
-    return rule.check!(data) ? RuleResult.MATCHES : RuleResult.DOESNT_MATCH
+  ): Promise<RuleFinding> {
+    const result = rule.check!(data)
+      ? RuleResult.MATCHES
+      : RuleResult.DOESNT_MATCH
+
+    const finding = {
+      id: `${rule.id}/${data.resource.id}`,
+      ruleId: rule.id,
+      resourceId: data.resource.id,
+      result: result !== RuleResult.MATCHES ? 'FAIL' : 'PASS',
+      severity: rule.severity,
+      description: rule.description,
+      rationale: rule.rationale,
+      typename: data.resource.__typename, // eslint-disable-line no-underscore-dangle
+    } as RuleFinding
+
+    return finding
   }
 }

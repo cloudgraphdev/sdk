@@ -5,6 +5,7 @@ import {
   JsonRule,
   Operator,
   ResourceData,
+  RuleFinding,
   RuleResult,
   _ResourceData,
 } from '../types'
@@ -19,10 +20,23 @@ export default class JsonEvaluator implements RuleEvaluator<JsonRule> {
   async evaluateSingleResource(
     rule: JsonRule,
     data: ResourceData
-  ): Promise<RuleResult> {
-    return (await this.evaluateCondition(rule.conditions, data))
+  ): Promise<RuleFinding> {
+    const result = (await this.evaluateCondition(rule.conditions, data))
       ? RuleResult.MATCHES
       : RuleResult.DOESNT_MATCH
+
+    const finding = {
+      id: `${rule.id}/${data.resource.id}`,
+      ruleId: rule.id,
+      resourceId: data.resource.id,
+      result: result !== RuleResult.MATCHES ? 'FAIL' : 'PASS',
+      severity: rule.severity,
+      description: rule.description,
+      rationale: rule.rationale,
+      typename: data.resource.__typename, // eslint-disable-line no-underscore-dangle
+    } as RuleFinding
+
+    return finding
   }
 
   calculatePath = (data: _ResourceData, _path: string) => {
