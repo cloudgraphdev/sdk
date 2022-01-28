@@ -13,6 +13,10 @@ const entityName = 'CIS'
 const ruleMock = {
   id: 'id',
   description: 'none',
+  rationale: "raison d'être",
+  audit: 'evaluate schemaA',
+  remediation: 'fix the schemaA',
+  references: [],
   gql: `{
     querySchemaA {
       id
@@ -69,12 +73,11 @@ describe('RulesEngine', () => {
         result: Result.PASS,
         severity: Severity.LOW,
         typename: 'querySchemaA',
-
         description: '',
       },
     ]
 
-    const [findingsData] = rulesEngine.prepareEntitiesMutations(data)
+    const [findingsData] = rulesEngine.prepareMutations(data)
 
     expect(findingsData).toBeDefined()
     expect(findingsData.name).toBe(`${providerName}${entityName}Findings`)
@@ -89,10 +92,10 @@ describe('RulesEngine', () => {
   it('Should pass preparing the mutations to insert findings data given an empty RuleFindings array', () => {
     const data = []
 
-    const entities = rulesEngine.prepareEntitiesMutations(data)
+    const entities = rulesEngine.prepareMutations(data)
 
     expect(entities).toBeDefined()
-    expect(entities.length).toBe(0)
+    expect(entities.length).toBe(3)
   })
 
   it('Should return an empty array processing a rule with no data', async () => {
