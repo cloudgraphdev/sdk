@@ -49,6 +49,10 @@ export default class RulesProvider implements Engine {
       resourceId: String! @search(by: [hash, regexp])
       severity: String! @search(by: [hash, regexp])
       description: String! @search(by: [hash, regexp])
+      audit: String @search(by: [hash, regexp])
+      rationale: String @search(by: [hash, regexp])
+      remediation: String @search(by: [hash, regexp])
+      references: [String] @search(by: [hash, regexp])
       result: FindingsResult @search
       findings: ${this.providerName}Findings  @hasInverse(field: ${
       this.entityName
@@ -203,7 +207,14 @@ export default class RulesProvider implements Engine {
         resourcePath: jsonpath.stringify(path),
       })
       if (ruleResult) {
-        res.push({ ...ruleResult, description: rule.description })
+        res.push({
+          ...ruleResult,
+          description: rule.description,
+          audit: rule.audit,
+          rationale: rule.rationale,
+          remediation: rule.remediation,
+          references: rule.references,
+        })
       }
     }
     return res
