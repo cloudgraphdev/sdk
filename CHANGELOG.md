@@ -1,3 +1,11 @@
+## [0.10.9](https://gitlab.com/auto-cloud/cloudgraph/sdk/compare/0.10.8...0.10.9) (2022-01-28)
+
+
+### Bug Fixes
+
+* **rule-engine:** update rule interface to allow for more fields ([89e9959](https://gitlab.com/auto-cloud/cloudgraph/sdk/commit/89e99599a82ecd57e959fc348a9d60b71f07115f))
+* **rule-engine:** update rule processor to use new fields in schema ([ebcd67e](https://gitlab.com/auto-cloud/cloudgraph/sdk/commit/ebcd67e246e3e0a7e76ed013956d5a4607a47b1b))
+
 ## [0.10.8](https://gitlab.com/auto-cloud/cloudgraph/sdk/compare/0.10.7...0.10.8) (2022-01-28)
 
 
