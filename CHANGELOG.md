@@ -1,3 +1,11 @@
+# [0.11.0](https://gitlab.com/auto-cloud/cloudgraph/sdk/compare/0.10.9...0.11.0) (2022-01-28)
+
+
+### Features
+
+* add daysDiff operator ([cacba7a](https://gitlab.com/auto-cloud/cloudgraph/sdk/commit/cacba7a19c023fb2a70fc989343d7adf1180a7a4))
+* add daysDiff operator ([e18b6ea](https://gitlab.com/auto-cloud/cloudgraph/sdk/commit/e18b6eab834f6efcadcc8ec80f44cd1aea6baea7))
+
 ## [0.10.9](https://gitlab.com/auto-cloud/cloudgraph/sdk/compare/0.10.8...0.10.9) (2022-01-28)
 
 
