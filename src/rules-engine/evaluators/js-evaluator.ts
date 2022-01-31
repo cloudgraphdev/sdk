@@ -15,9 +15,9 @@ export default class JsEvaluator implements RuleEvaluator<JsRule> {
       : RuleResult.DOESNT_MATCH
 
     const finding = {
-      id: `${rule.id}/${data.resource.id}`,
+      id: `${rule.id}/${data.resource?.id}`,
       ruleId: rule.id,
-      resourceId: data.resource.id,
+      resourceId: data.resource?.id,
       result: result !== RuleResult.MATCHES ? 'FAIL' : 'PASS',
       severity: rule.severity,
       description: rule.description,
@@ -25,7 +25,7 @@ export default class JsEvaluator implements RuleEvaluator<JsRule> {
       audit: rule.audit,
       remediation: rule.remediation,
       references: rule.references,
-      typename: data.resource.__typename, // eslint-disable-line no-underscore-dangle
+      typename: data.resource?.__typename, // eslint-disable-line no-underscore-dangle
     } as RuleFinding
 
     return finding
