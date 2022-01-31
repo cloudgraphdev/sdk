@@ -1,5 +1,5 @@
+import cuid from 'cuid'
 import JsEvaluator from '../src/rules-engine/evaluators/js-evaluator'
-import { RuleResult } from '../src/rules-engine/types'
 
 describe('JsEvaluator', () => {
   it('should accept all rules that have a check field', () => {
@@ -27,12 +27,16 @@ describe('JsEvaluator', () => {
     const e = new JsEvaluator()
     const spy = jest.fn()
     spy.mockReturnValue(false)
-    expect(
-      await e.evaluateSingleResource({ check: spy } as never, 0 as never)
-    ).toEqual(RuleResult.DOESNT_MATCH)
+    const failedRule = await e.evaluateSingleResource(
+      { check: spy } as never,
+      { resource: { id: cuid() } } as never
+    )
+    expect(failedRule.result).toEqual('FAIL')
     spy.mockReturnValue(true)
-    expect(
-      await e.evaluateSingleResource({ check: spy } as never, 0 as never)
-    ).toEqual(RuleResult.MATCHES)
+    const passedRule = await e.evaluateSingleResource(
+      { check: spy } as never,
+      { resource: { id: cuid() } } as never
+    )
+    expect(passedRule.result).toEqual('PASS')
   })
 })
