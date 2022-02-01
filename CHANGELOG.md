@@ -1,3 +1,12 @@
+# [0.12.0](https://gitlab.com/auto-cloud/cloudgraph/sdk/compare/0.11.0...0.12.0) (2022-02-01)
+
+
+### Features
+
+* Created Manual Evaluator ([612809d](https://gitlab.com/auto-cloud/cloudgraph/sdk/commit/612809d9ce4e95e527efae69badc75bd58fa9d9d))
+* Deprecated default evaluator ([f199f28](https://gitlab.com/auto-cloud/cloudgraph/sdk/commit/f199f28337f2b0c514ddff17149ba11779c64c7d))
+* Updated rule evaluator definition ([1409105](https://gitlab.com/auto-cloud/cloudgraph/sdk/commit/1409105f2e1a9b8ccb3df60e1154a4e8f53ecbfb))
+
 # [0.11.0](https://gitlab.com/auto-cloud/cloudgraph/sdk/compare/0.10.9...0.11.0) (2022-01-28)
 
 
