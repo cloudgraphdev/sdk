@@ -1,4 +1,5 @@
 import cuid from 'cuid'
+import { Result } from '../src'
 import JsonEvaluator from '../src/rules-engine/evaluators/json-evaluator'
 
 describe('JsonEvaluator', () => {
@@ -54,7 +55,7 @@ describe('JsonEvaluator', () => {
         } as any
       )
       results.push(res.result)
-      expected.push(r.expected ? 'PASS' : 'FAIL')
+      expected.push(r.expected ? Result.PASS : Result.FAIL)
     }
     expect(results).toStrictEqual(expected)
   })
@@ -76,7 +77,7 @@ describe('JsonEvaluator', () => {
       } as any
     )
 
-    expect(finding.result).toBe('PASS')
+    expect(finding.result).toBe(Result.PASS)
     finding = await evaluator.evaluateSingleResource(
       { conditions: { and: [trueRule, trueRule, falseRule] } } as any,
       {
@@ -86,7 +87,7 @@ describe('JsonEvaluator', () => {
         },
       } as any
     )
-    expect(finding.result).toBe('FAIL')
+    expect(finding.result).toBe(Result.FAIL)
 
     finding = await evaluator.evaluateSingleResource(
       { conditions: { or: [falseRule, falseRule, falseRule] } } as any,
@@ -97,7 +98,7 @@ describe('JsonEvaluator', () => {
         },
       } as any
     )
-    expect(finding.result).toBe('FAIL')
+    expect(finding.result).toBe(Result.FAIL)
     finding = await evaluator.evaluateSingleResource(
       { conditions: { or: [falseRule, trueRule, falseRule] } } as any,
       {
@@ -107,7 +108,7 @@ describe('JsonEvaluator', () => {
         },
       } as any
     )
-    expect(finding.result).toBe('PASS')
+    expect(finding.result).toBe(Result.PASS)
 
     // nested
     finding = await evaluator.evaluateSingleResource(
@@ -123,7 +124,7 @@ describe('JsonEvaluator', () => {
         },
       } as any
     )
-    expect(finding.result).toBe('PASS')
+    expect(finding.result).toBe(Result.PASS)
 
     finding = await evaluator.evaluateSingleResource(
       {
@@ -138,7 +139,7 @@ describe('JsonEvaluator', () => {
         },
       } as any
     )
-    expect(finding.result).toBe('FAIL')
+    expect(finding.result).toBe(Result.FAIL)
   })
 
   test('should resolve paths', async () => {
@@ -155,7 +156,7 @@ describe('JsonEvaluator', () => {
       } as any,
       data
     )
-    expect(finding.result).toBe('PASS')
+    expect(finding.result).toBe(Result.PASS)
     rule.path = 'a.b[0].d'
     finding = await evaluator.evaluateSingleResource(
       {
@@ -166,7 +167,7 @@ describe('JsonEvaluator', () => {
       } as any,
       data
     )
-    expect(finding.result).toBe('FAIL')
+    expect(finding.result).toBe(Result.FAIL)
 
     // @ is replaced by the resource path
     data.resourcePath = '$.a.b[1]'
@@ -180,7 +181,7 @@ describe('JsonEvaluator', () => {
       } as any,
       data
     )
-    expect(finding.result).toBe('PASS')
+    expect(finding.result).toBe(Result.PASS)
 
     data.resourcePath = '$.a'
     rule.path = '@.b[1].d'
@@ -193,7 +194,7 @@ describe('JsonEvaluator', () => {
       } as any,
       data
     )
-    expect(finding.result).toBe('PASS')
+    expect(finding.result).toBe(Result.PASS)
   })
 
   test('should support array operators', async () => {
@@ -209,7 +210,7 @@ describe('JsonEvaluator', () => {
       } as any,
       data
     )
-    expect(finding.result).toBe('PASS')
+    expect(finding.result).toBe(Result.PASS)
 
     //
     rule = { path: 'a.b', array_all: { path: '[*]', equal: 2 } }
@@ -222,7 +223,7 @@ describe('JsonEvaluator', () => {
       } as any,
       data
     )
-    expect(finding.result).toBe('FAIL')
+    expect(finding.result).toBe(Result.FAIL)
 
     rule = { path: 'a.b', array_all: { path: '[*]', greaterThan: -1 } }
     finding = await evaluator.evaluateSingleResource(
@@ -234,7 +235,7 @@ describe('JsonEvaluator', () => {
       } as any,
       data
     )
-    expect(finding.result).toBe('PASS')
+    expect(finding.result).toBe(Result.PASS)
   })
 
   test('should support negation logic array operators', async () => {
@@ -247,21 +248,21 @@ describe('JsonEvaluator', () => {
       { conditions: rule, resource: { id: cuid() } } as any,
       data
     )
-    expect(finding.result).toBe('FAIL')
+    expect(finding.result).toBe(Result.FAIL)
 
     rule = { path: 'a.b', not: { array_all: { path: '[*]', equal: 2 } } }
     finding = await evaluator.evaluateSingleResource(
       { conditions: rule, resource: { id: cuid() } } as any,
       data
     )
-    expect(finding.result).toBe('PASS')
+    expect(finding.result).toBe(Result.PASS)
 
     rule = { path: 'a.b', not: { array_all: { path: '[*]', greaterThan: -1 } } }
     finding = await evaluator.evaluateSingleResource(
       { conditions: rule, resource: { id: cuid() } } as any,
       data
     )
-    expect(finding.result).toBe('FAIL')
+    expect(finding.result).toBe(Result.FAIL)
   })
 
   test('should support array with nested operators', async () => {
@@ -299,7 +300,7 @@ describe('JsonEvaluator', () => {
       { conditions: rule } as any,
       data
     )
-    expect(finding.result).toBe('PASS')
+    expect(finding.result).toBe(Result.PASS)
   })
 
   test('should support jq on array operators', async () => {
@@ -337,7 +338,7 @@ describe('JsonEvaluator', () => {
       data
     )
 
-    expect(finding.result).toBe('PASS')
+    expect(finding.result).toBe(Result.PASS)
   })
 
   test('should support jq on array with nested operators', async () => {
@@ -418,6 +419,6 @@ describe('JsonEvaluator', () => {
       data
     )
 
-    expect(finding.result).toBe('PASS')
+    expect(finding.result).toBe(Result.PASS)
   })
 })

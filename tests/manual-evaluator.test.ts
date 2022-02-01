@@ -1,4 +1,5 @@
 import cuid from 'cuid'
+import { Result } from '../src'
 import ManualEvaluator from '../src/rules-engine/evaluators/manual-evaluator'
 
 describe('ManualEvaluator', () => {
@@ -37,7 +38,7 @@ describe('ManualEvaluator', () => {
       { check: spy } as never,
       { resource: { id: cuid() } } as never
     )
-    expect(finding.result).toEqual('SKIPPED')
+    expect(finding.result).toEqual(Result.SKIPPED)
   })
 
   it('should contain "manual" at the id', async () => {

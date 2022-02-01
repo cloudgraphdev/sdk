@@ -1,4 +1,5 @@
 import cuid from 'cuid'
+import { Result } from '../../src'
 import JsonEvaluator from '../../src/rules-engine/evaluators/json-evaluator'
 
 describe('Date Operators', () => {
@@ -28,14 +29,14 @@ describe('Date Operators', () => {
       { conditions: rule } as any,
       data
     )
-    expect(finding.result).toBe('FAIL')
+    expect(finding.result).toBe(Result.FAIL)
 
     rule.lessThan = 20
     finding = await evaluator.evaluateSingleResource(
       { conditions: rule } as any,
       data
     )
-    expect(finding.result).toBe('PASS')
+    expect(finding.result).toBe(Result.PASS)
   })
 
   test('should calculate days diff between two date', async () => {
@@ -62,7 +63,7 @@ describe('Date Operators', () => {
       data
     )
 
-    expect(finding.result).toBe('FAIL')
+    expect(finding.result).toBe(Result.FAIL)
 
     rule.lessThanInclusive = 90
     finding = await evaluator.evaluateSingleResource(
@@ -70,6 +71,6 @@ describe('Date Operators', () => {
       data
     )
 
-    expect(finding.result).toBe('PASS')
+    expect(finding.result).toBe(Result.PASS)
   })
 })

@@ -1,4 +1,4 @@
-import { JsonRule, Rule, RuleFinding } from '../types'
+import { JsonRule, Result, Rule, RuleFinding } from '../types'
 import { RuleEvaluator } from './rule-evaluator'
 
 export default class ManualEvaluator implements RuleEvaluator<JsonRule> {
@@ -10,7 +10,7 @@ export default class ManualEvaluator implements RuleEvaluator<JsonRule> {
     return {
       id: `${rule.id}/manual`,
       ruleId: rule.id,
-      result: 'SKIPPED',
+      result: Result.SKIPPED,
       severity: rule.severity,
       description: rule.description,
       rationale: rule.rationale,

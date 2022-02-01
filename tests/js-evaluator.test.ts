@@ -1,4 +1,5 @@
 import cuid from 'cuid'
+import { Result } from '../src'
 import JsEvaluator from '../src/rules-engine/evaluators/js-evaluator'
 
 describe('JsEvaluator', () => {
@@ -31,12 +32,12 @@ describe('JsEvaluator', () => {
       { check: spy } as never,
       { resource: { id: cuid() } } as never
     )
-    expect(failedRule.result).toEqual('FAIL')
+    expect(failedRule.result).toEqual(Result.FAIL)
     spy.mockReturnValue(true)
     const passedRule = await e.evaluateSingleResource(
       { check: spy } as never,
       { resource: { id: cuid() } } as never
     )
-    expect(passedRule.result).toEqual('PASS')
+    expect(passedRule.result).toEqual(Result.PASS)
   })
 })
