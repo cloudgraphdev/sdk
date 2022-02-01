@@ -37,29 +37,30 @@ export enum Result {
   FAIL = 'FAIL',
   PASS = 'PASS',
   MISSING = 'MISSING',
+  SKIPPED = 'SKIPPED',
 }
 export interface Rule {
   id: string
   description: string
+  references: string[]
   rationale?: string
   audit?: string
   remediation?: string
-  references?: Array<string>
+  severity: Severity
   gql: string
   resource: string
-  severity: Severity
 }
 export interface RuleFinding {
   id: string
   ruleId: string
-  resourceId: string
+  resourceId?: string
   result: Result
   severity: Severity
   description: string
   rationale?: string
   audit?: string
   remediation?: string
-  references?: Array<string>
+  references?: string[]
   typename: string
 }
 
@@ -72,8 +73,24 @@ export interface JsRule extends Rule {
 }
 
 export interface Engine {
-  processRule: (rule: Rule, data: any) => Promise<RuleFinding[]>
-  prepareEntitiesMutations: (findings: RuleFinding[]) => Entity[]
-  prepareProviderMutations: (findings: RuleFinding[]) => Entity[]
+  /**
+   * Returns an GraphQL schema build dynamically based on the provider and existing resources
+   * @returns new schemas and extensions for existing ones
+   */
   getSchema: () => string[]
+
+  /**
+   * Process a rule for the given data
+   * @param rule rule to apply
+   * @param data data to evaluate
+   * @returns An array of RuleFinding
+   */
+  processRule: (rule: Rule, data: any) => Promise<RuleFinding[]>
+
+  /**
+   * Transforms RuleFinding array into a mutation array for GraphQL
+   * @param findings resulted findings during rules execution
+   * @returns Array of generated mutations
+   */
+  prepareMutations: (findings: RuleFinding[]) => Entity[]
 }

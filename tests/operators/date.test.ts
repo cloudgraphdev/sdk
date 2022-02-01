@@ -1,5 +1,6 @@
+import cuid from 'cuid'
+import { Result } from '../../src'
 import JsonEvaluator from '../../src/rules-engine/evaluators/json-evaluator'
-import { RuleResult } from '../../src/rules-engine/types'
 
 describe('Date Operators', () => {
   let evaluator
@@ -14,6 +15,9 @@ describe('Date Operators', () => {
       data: {
         users: [{ passwordDate: new Date(now - 15 * day).toISOString() }],
       },
+      resource: {
+        id: cuid(),
+      },
     } as any
     const rule: any = {
       value: { path: 'users[0].passwordDate', daysAgo: {} },
@@ -21,14 +25,18 @@ describe('Date Operators', () => {
     }
 
     rule.lessThan = 10
-    expect(
-      await evaluator.evaluateSingleResource({ conditions: rule } as any, data)
-    ).toBe(RuleResult.DOESNT_MATCH)
+    let finding = await evaluator.evaluateSingleResource(
+      { conditions: rule } as any,
+      data
+    )
+    expect(finding.result).toBe(Result.FAIL)
 
     rule.lessThan = 20
-    expect(
-      await evaluator.evaluateSingleResource({ conditions: rule } as any, data)
-    ).toBe(RuleResult.MATCHES)
+    finding = await evaluator.evaluateSingleResource(
+      { conditions: rule } as any,
+      data
+    )
+    expect(finding.result).toBe(Result.PASS)
   })
 
   test('should calculate days diff between two date', async () => {
@@ -36,7 +44,12 @@ describe('Date Operators', () => {
     const now = Date.now()
     const data = {
       data: {
-        cryptoKeys: [{ nextRotationTime: new Date(now + 90 * day).toISOString() }],
+        cryptoKeys: [
+          { nextRotationTime: new Date(now + 90 * day).toISOString() },
+        ],
+      },
+      resource: {
+        id: cuid(),
       },
     } as any
     const rule: any = {
@@ -45,13 +58,19 @@ describe('Date Operators', () => {
     }
 
     rule.lessThanInclusive = 80
-    expect(
-      await evaluator.evaluateSingleResource({ conditions: rule } as any, data)
-    ).toBe(RuleResult.DOESNT_MATCH)
+    let finding = await evaluator.evaluateSingleResource(
+      { conditions: rule } as any,
+      data
+    )
+
+    expect(finding.result).toBe(Result.FAIL)
 
     rule.lessThanInclusive = 90
-    expect(
-      await evaluator.evaluateSingleResource({ conditions: rule } as any, data)
-    ).toBe(RuleResult.MATCHES)
+    finding = await evaluator.evaluateSingleResource(
+      { conditions: rule } as any,
+      data
+    )
+
+    expect(finding.result).toBe(Result.PASS)
   })
 })

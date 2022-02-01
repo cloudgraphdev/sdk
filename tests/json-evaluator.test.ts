@@ -1,5 +1,6 @@
+import cuid from 'cuid'
+import { Result } from '../src'
 import JsonEvaluator from '../src/rules-engine/evaluators/json-evaluator'
-import { RuleResult } from '../src/rules-engine/types'
 
 describe('JsonEvaluator', () => {
   let evaluator
@@ -46,10 +47,15 @@ describe('JsonEvaluator', () => {
     for (const r of rules) {
       const res = await evaluator.evaluateSingleResource(
         { conditions: r } as any,
-        { data } as any
+        {
+          data,
+          resource: {
+            id: cuid(),
+          },
+        } as any
       )
-      results.push(res)
-      expected.push(r.expected ? RuleResult.MATCHES : RuleResult.DOESNT_MATCH)
+      results.push(res.result)
+      expected.push(r.expected ? Result.PASS : Result.FAIL)
     }
     expect(results).toStrictEqual(expected)
   })
@@ -61,54 +67,79 @@ describe('JsonEvaluator', () => {
     }
     const trueRule = { path: 'a', equal: 1 }
     const falseRule = { path: 'a', equal: 99 }
-    expect(
-      await evaluator.evaluateSingleResource(
-        { conditions: { and: [trueRule, trueRule, trueRule] } } as any,
-        { data } as any
-      )
-    ).toBe(RuleResult.MATCHES)
-    expect(
-      await evaluator.evaluateSingleResource(
-        { conditions: { and: [trueRule, trueRule, falseRule] } } as any,
-        { data } as any
-      )
-    ).toBe(RuleResult.DOESNT_MATCH)
+    let finding = await evaluator.evaluateSingleResource(
+      { conditions: { and: [trueRule, trueRule, trueRule] } } as any,
+      {
+        data,
+        resource: {
+          id: cuid(),
+        },
+      } as any
+    )
 
-    expect(
-      await evaluator.evaluateSingleResource(
-        { conditions: { or: [falseRule, falseRule, falseRule] } } as any,
-        { data } as any
-      )
-    ).toBe(RuleResult.DOESNT_MATCH)
-    expect(
-      await evaluator.evaluateSingleResource(
-        { conditions: { or: [falseRule, trueRule, falseRule] } } as any,
-        { data } as any
-      )
-    ).toBe(RuleResult.MATCHES)
+    expect(finding.result).toBe(Result.PASS)
+    finding = await evaluator.evaluateSingleResource(
+      { conditions: { and: [trueRule, trueRule, falseRule] } } as any,
+      {
+        data,
+        resource: {
+          id: cuid(),
+        },
+      } as any
+    )
+    expect(finding.result).toBe(Result.FAIL)
+
+    finding = await evaluator.evaluateSingleResource(
+      { conditions: { or: [falseRule, falseRule, falseRule] } } as any,
+      {
+        data,
+        resource: {
+          id: cuid(),
+        },
+      } as any
+    )
+    expect(finding.result).toBe(Result.FAIL)
+    finding = await evaluator.evaluateSingleResource(
+      { conditions: { or: [falseRule, trueRule, falseRule] } } as any,
+      {
+        data,
+        resource: {
+          id: cuid(),
+        },
+      } as any
+    )
+    expect(finding.result).toBe(Result.PASS)
 
     // nested
-    expect(
-      await evaluator.evaluateSingleResource(
-        {
-          conditions: {
-            or: [falseRule, falseRule, { and: [trueRule, trueRule] }],
-          },
-        } as any,
-        { data } as any
-      )
-    ).toBe(RuleResult.MATCHES)
+    finding = await evaluator.evaluateSingleResource(
+      {
+        conditions: {
+          or: [falseRule, falseRule, { and: [trueRule, trueRule] }],
+        },
+      } as any,
+      {
+        data,
+        resource: {
+          id: cuid(),
+        },
+      } as any
+    )
+    expect(finding.result).toBe(Result.PASS)
 
-    expect(
-      await evaluator.evaluateSingleResource(
-        {
-          conditions: {
-            or: [falseRule, falseRule, { and: [trueRule, falseRule] }],
-          },
-        } as any,
-        { data } as any
-      )
-    ).toBe(RuleResult.DOESNT_MATCH)
+    finding = await evaluator.evaluateSingleResource(
+      {
+        conditions: {
+          or: [falseRule, falseRule, { and: [trueRule, falseRule] }],
+        },
+      } as any,
+      {
+        data,
+        resource: {
+          id: cuid(),
+        },
+      } as any
+    )
+    expect(finding.result).toBe(Result.FAIL)
   })
 
   test('should resolve paths', async () => {
@@ -116,46 +147,95 @@ describe('JsonEvaluator', () => {
     const rule = { path: 'xx', equal: 'value' }
 
     rule.path = 'a.b[1].d'
-    expect(
-      await evaluator.evaluateSingleResource({ conditions: rule } as any, data)
-    ).toBe(RuleResult.MATCHES)
+    let finding = await evaluator.evaluateSingleResource(
+      {
+        conditions: rule,
+        resource: {
+          id: cuid(),
+        },
+      } as any,
+      data
+    )
+    expect(finding.result).toBe(Result.PASS)
     rule.path = 'a.b[0].d'
-    expect(
-      await evaluator.evaluateSingleResource({ conditions: rule } as any, data)
-    ).toBe(RuleResult.DOESNT_MATCH)
+    finding = await evaluator.evaluateSingleResource(
+      {
+        conditions: rule,
+        resource: {
+          id: cuid(),
+        },
+      } as any,
+      data
+    )
+    expect(finding.result).toBe(Result.FAIL)
 
     // @ is replaced by the resource path
     data.resourcePath = '$.a.b[1]'
     rule.path = '@.d'
-    expect(
-      await evaluator.evaluateSingleResource({ conditions: rule } as any, data)
-    ).toBe(RuleResult.MATCHES)
+    finding = await evaluator.evaluateSingleResource(
+      {
+        conditions: rule,
+        resource: {
+          id: cuid(),
+        },
+      } as any,
+      data
+    )
+    expect(finding.result).toBe(Result.PASS)
 
     data.resourcePath = '$.a'
     rule.path = '@.b[1].d'
-    expect(
-      await evaluator.evaluateSingleResource({ conditions: rule } as any, data)
-    ).toBe(RuleResult.MATCHES)
+    finding = await evaluator.evaluateSingleResource(
+      {
+        conditions: rule,
+        resource: {
+          id: cuid(),
+        },
+      } as any,
+      data
+    )
+    expect(finding.result).toBe(Result.PASS)
   })
 
   test('should support array operators', async () => {
     const data = { data: { a: { b: [0, 1, 2] } } } as any
     let rule: any = { path: 'a.b', array_any: { path: '[*]', equal: 2 } }
 
-    expect(
-      await evaluator.evaluateSingleResource({ conditions: rule } as any, data)
-    ).toBe(RuleResult.MATCHES)
+    let finding = await evaluator.evaluateSingleResource(
+      {
+        conditions: rule,
+        resource: {
+          id: cuid(),
+        },
+      } as any,
+      data
+    )
+    expect(finding.result).toBe(Result.PASS)
 
     //
     rule = { path: 'a.b', array_all: { path: '[*]', equal: 2 } }
-    expect(
-      await evaluator.evaluateSingleResource({ conditions: rule } as any, data)
-    ).toBe(RuleResult.DOESNT_MATCH)
+    finding = await evaluator.evaluateSingleResource(
+      {
+        conditions: rule,
+        resource: {
+          id: cuid(),
+        },
+      } as any,
+      data
+    )
+    expect(finding.result).toBe(Result.FAIL)
 
     rule = { path: 'a.b', array_all: { path: '[*]', greaterThan: -1 } }
-    expect(
-      await evaluator.evaluateSingleResource({ conditions: rule } as any, data)
-    ).toBe(RuleResult.MATCHES)
+    finding = await evaluator.evaluateSingleResource(
+      {
+        conditions: rule,
+        resource: {
+          id: cuid(),
+        },
+      } as any,
+      data
+    )
+    expect(finding.result).toBe(Result.PASS)
   })
 
   test('should support negation logic array operators', async () => {
@@ -164,20 +244,25 @@ describe('JsonEvaluator', () => {
       path: 'a.b',
       not: { array_any: { path: '[*]', equal: 2 } },
     }
-    expect(
-      await evaluator.evaluateSingleResource({ conditions: rule } as any, data)
-    ).toBe(RuleResult.DOESNT_MATCH)
+    let finding = await evaluator.evaluateSingleResource(
+      { conditions: rule, resource: { id: cuid() } } as any,
+      data
+    )
+    expect(finding.result).toBe(Result.FAIL)
 
-    //
     rule = { path: 'a.b', not: { array_all: { path: '[*]', equal: 2 } } }
-    expect(
-      await evaluator.evaluateSingleResource({ conditions: rule } as any, data)
-    ).toBe(RuleResult.MATCHES)
+    finding = await evaluator.evaluateSingleResource(
+      { conditions: rule, resource: { id: cuid() } } as any,
+      data
+    )
+    expect(finding.result).toBe(Result.PASS)
 
     rule = { path: 'a.b', not: { array_all: { path: '[*]', greaterThan: -1 } } }
-    expect(
-      await evaluator.evaluateSingleResource({ conditions: rule } as any, data)
-    ).toBe(RuleResult.DOESNT_MATCH)
+    finding = await evaluator.evaluateSingleResource(
+      { conditions: rule, resource: { id: cuid() } } as any,
+      data
+    )
+    expect(finding.result).toBe(Result.FAIL)
   })
 
   test('should support array with nested operators', async () => {
@@ -189,6 +274,9 @@ describe('JsonEvaluator', () => {
             { c: 3, d: 4 },
           ],
         },
+      },
+      resource: {
+        id: cuid(),
       },
     } as any
     const rule: any = {
@@ -208,9 +296,11 @@ describe('JsonEvaluator', () => {
       },
     }
 
-    expect(
-      await evaluator.evaluateSingleResource({ conditions: rule } as any, data)
-    ).toBe(RuleResult.MATCHES)
+    const finding = await evaluator.evaluateSingleResource(
+      { conditions: rule } as any,
+      data
+    )
+    expect(finding.result).toBe(Result.PASS)
   })
 
   test('should support jq on array operators', async () => {
@@ -220,6 +310,9 @@ describe('JsonEvaluator', () => {
           b: [{ color: 'red' }, { color: 'green' }, { color: 'blue' }],
           c: [{ fruit: 'apple' }, { fruit: 'orange' }, { fruit: 'banana' }],
         },
+      },
+      resource: {
+        id: cuid(),
       },
     } as any
     const rule: any = {
@@ -240,9 +333,12 @@ describe('JsonEvaluator', () => {
       },
     }
 
-    expect(
-      await evaluator.evaluateSingleResource({ conditions: rule } as any, data)
-    ).toBe(RuleResult.MATCHES)
+    const finding = await evaluator.evaluateSingleResource(
+      { conditions: rule } as any,
+      data
+    )
+
+    expect(finding.result).toBe(Result.PASS)
   })
 
   test('should support jq on array with nested operators', async () => {
@@ -290,6 +386,9 @@ describe('JsonEvaluator', () => {
           },
         ],
       },
+      resource: {
+        id: cuid(),
+      },
     } as any
     const rule: any = {
       path: 'cloudwatchLog',
@@ -315,8 +414,11 @@ describe('JsonEvaluator', () => {
       },
     }
 
-    expect(
-      await evaluator.evaluateSingleResource({ conditions: rule } as any, data)
-    ).toBe(RuleResult.MATCHES)
+    const finding = await evaluator.evaluateSingleResource(
+      { conditions: rule } as any,
+      data
+    )
+
+    expect(finding.result).toBe(Result.PASS)
   })
 })

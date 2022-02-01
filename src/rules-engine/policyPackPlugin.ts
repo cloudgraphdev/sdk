@@ -237,7 +237,9 @@ export default class PolicyPackPlugin extends Plugin {
         // Run rules:
         for (const rule of rules) {
           try {
-            const { data } = await storageEngine.query(rule.gql)
+            const { data } = rule.gql
+              ? await storageEngine.query(rule.gql)
+              : { data: undefined }
             const results = (await this.policyPacksPlugins[
               policyPack
             ]?.engine?.processRule(rule, data)) as RuleFinding[]
@@ -251,16 +253,13 @@ export default class PolicyPackPlugin extends Plugin {
           }
         }
 
-        // Prepare entities mutations
-        const entitiesData = engine?.prepareEntitiesMutations(findings)
-
-        // Prepare provider mutations
-        const providerData = engine?.prepareProviderMutations(findings)
+        // Prepare mutations
+        const mutations = engine?.prepareMutations(findings)
 
         // Save connections
         processConnectionsBetweenEntities({
           providerData: {
-            entities: [...entitiesData, ...providerData],
+            entities: mutations,
             connections: [] as any,
           },
           storageEngine,
