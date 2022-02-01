@@ -24,9 +24,14 @@ import {
   JsonRule,
   Engine,
 } from './rules-engine/types'
-import Plugin, { PluginManager, PluginModule, PluginType } from './plugin'
-import pluginMap from './plugin/pluginMap'
-import cloudGraphPlugin from './plugin/cgPlugins'
+import Plugin, {
+  PluginManager,
+  PluginModule,
+  PluginType,
+  ConfiguredPlugin,
+} from './plugins/types'
+import pluginMap from './plugins/base/pluginMap'
+import cloudGraphPlugin from './plugins/base/cgPlugins'
 import {
   sortResourcesDependencies,
   intersectStringArrays,
@@ -73,6 +78,7 @@ export type {
   SchemaMap,
   Plugin,
   PluginManager,
+  ConfiguredPlugin,
 }
 export default {
   logger,

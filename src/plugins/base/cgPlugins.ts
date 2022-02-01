@@ -1,4 +1,4 @@
-import { PluginType } from '.'
+import { PluginType } from '../types'
 
 // Define supported plugins by CG at the config file
 export default {
