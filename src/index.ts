@@ -31,7 +31,6 @@ import Plugin, {
   ConfiguredPlugin,
 } from './plugins/types'
 import pluginMap from './plugins/base/pluginMap'
-import cloudGraphPlugin from './plugins/base/cgPlugins'
 import {
   sortResourcesDependencies,
   intersectStringArrays,
@@ -55,7 +54,7 @@ export {
   generateSchemaMapDynamically,
 }
 
-export { PluginModule, PluginType, Result, cloudGraphPlugin, pluginMap }
+export { PluginModule, PluginType, Result, pluginMap }
 
 export type {
   Opts,
