@@ -33,6 +33,7 @@ export default class JsonEvaluator implements RuleEvaluator<JsonRule> {
       result: result !== RuleResult.MATCHES ? Result.FAIL : Result.PASS,
       severity: rule.severity,
       description: rule.description,
+      title: rule.title,
       rationale: rule.rationale,
       audit: rule.audit,
       remediation: rule.remediation,

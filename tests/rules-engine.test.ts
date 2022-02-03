@@ -13,6 +13,7 @@ const entityName = 'CIS'
 const ruleMock = {
   id: 'id',
   description: 'none',
+  title: 'Mocked Rule',
   rationale: "raison d'être",
   audit: 'evaluate schemaA',
   remediation: 'fix the schemaA',
@@ -65,6 +66,7 @@ describe('RulesEngine', () => {
         severity: Severity.MEDIUM,
         typename: 'querySchemaA',
         description: '',
+        title: '',
       },
       {
         id: cuid(),
@@ -74,6 +76,7 @@ describe('RulesEngine', () => {
         severity: Severity.LOW,
         typename: 'querySchemaA',
         description: '',
+        title: '',
       },
     ]
 
