@@ -24,9 +24,13 @@ import {
   JsonRule,
   Engine,
 } from './rules-engine/types'
-import Plugin, { PluginManager, PluginModule, PluginType } from './plugin'
-import pluginMap from './plugin/pluginMap'
-import cloudGraphPlugin from './plugin/cgPlugins'
+import Plugin, {
+  PluginManager,
+  PluginModule,
+  PluginType,
+  ConfiguredPlugin,
+} from './plugins/types'
+import pluginMap from './plugins/base/pluginMap'
 import {
   sortResourcesDependencies,
   intersectStringArrays,
@@ -50,7 +54,7 @@ export {
   generateSchemaMapDynamically,
 }
 
-export { PluginModule, PluginType, Result, cloudGraphPlugin, pluginMap }
+export { PluginModule, PluginType, Result, pluginMap }
 
 export type {
   Opts,
@@ -73,6 +77,7 @@ export type {
   SchemaMap,
   Plugin,
   PluginManager,
+  ConfiguredPlugin,
 }
 export default {
   logger,

@@ -1,7 +1,7 @@
 import chalk from 'chalk'
 import { groupBy, isEmpty } from 'lodash'
 
-import { generateSchemaMapDynamically, mergeSchemas } from '../utils/schema'
+import { generateSchemaMapDynamically, mergeSchemas } from '../../utils/schema'
 import {
   Engine,
   Logger,
@@ -9,11 +9,10 @@ import {
   RuleFinding,
   SchemaMap,
   StorageEngine,
-} from '..'
-import RulesEngine from '../rules-engine'
-import Plugin, { PluginManager } from '../plugin'
-
-import { Result, Severity } from './types'
+} from '../..'
+import RulesEngine from '../../rules-engine'
+import { Result, Severity } from '../../rules-engine/types'
+import Plugin, { ConfiguredPlugin, PluginManager } from '../types'
 
 export default class PolicyPackPlugin extends Plugin {
   constructor({
@@ -131,13 +130,20 @@ export default class PolicyPackPlugin extends Plugin {
     }
   }
 
-  async configure(pluginManager: PluginManager): Promise<any> {
+  async configure(
+    pluginManager: PluginManager,
+    plugins: ConfiguredPlugin[]
+  ): Promise<any> {
     const { policyPacks = '' } = this.flags
     let allPolicyPacks = isEmpty(policyPacks) ? [] : policyPacks.split(',')
     if (allPolicyPacks.length >= 1) {
       this.logger.debug(`Executing rules for policy packs: ${allPolicyPacks}`)
     } else {
-      allPolicyPacks = this.config.policies || []
+      const policies = plugins || []
+      allPolicyPacks = policies
+        .filter(policy => policy.providers.includes(this.provider.name))
+        .map(policyFilteredByProvider => policyFilteredByProvider.name)
+
       this.logger.debug(
         `Executing rules for policy packs found in config: ${allPolicyPacks}`
       )

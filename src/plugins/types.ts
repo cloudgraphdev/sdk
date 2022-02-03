@@ -1,5 +1,10 @@
 import { ProviderData, SchemaMap, StorageEngine } from '..'
 
+export interface ConfiguredPlugin {
+  name: string
+  providers: string[]
+}
+
 export enum PluginType {
   Provider = 'provider',
   PolicyPack = 'policyPack',
@@ -23,8 +28,15 @@ export interface PluginManager {
 }
 
 export default abstract class Plugin {
-  configure(pluginManager: PluginManager): Promise<{ [key: string]: any }> {
-    throw new Error(`Function configure has not been defined: ${pluginManager}`)
+  configure(
+    pluginManager: PluginManager,
+    plugins: ConfiguredPlugin[]
+  ): Promise<{ [key: string]: any }> {
+    throw new Error(
+      `Function configure has not been defined: ${pluginManager} ${JSON.stringify(
+        plugins
+      )}`
+    )
   }
 
   execute({
