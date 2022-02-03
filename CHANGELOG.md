@@ -1,3 +1,12 @@
+# [0.13.0](https://gitlab.com/auto-cloud/cloudgraph/sdk/compare/0.12.0...0.13.0) (2022-02-03)
+
+
+### Features
+
+* Adjustments for the policyPack plugin ([c8df8d8](https://gitlab.com/auto-cloud/cloudgraph/sdk/commit/c8df8d8c87affb36fe447f103ec494f85c84a7bc))
+* Removed cgPlugins key file ([6f94b6f](https://gitlab.com/auto-cloud/cloudgraph/sdk/commit/6f94b6f94f9165b3bae6914ad969666944af3f54))
+* Reorder plugins files ([8845cfd](https://gitlab.com/auto-cloud/cloudgraph/sdk/commit/8845cfd7b0aff220a9ff45e9418f4f2d2422bce8))
+
 # [0.12.0](https://gitlab.com/auto-cloud/cloudgraph/sdk/compare/0.11.0...0.12.0) (2022-02-01)
 
 
