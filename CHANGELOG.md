@@ -1,3 +1,10 @@
+## [0.13.1](https://gitlab.com/auto-cloud/cloudgraph/sdk/compare/0.13.0...0.13.1) (2022-02-04)
+
+
+### Bug Fixes
+
+* Included title field for Rules ([717b9fb](https://gitlab.com/auto-cloud/cloudgraph/sdk/commit/717b9fbd12a76e59e3d8483564c3c9c68c2f08a8))
+
 # [0.13.0](https://gitlab.com/auto-cloud/cloudgraph/sdk/compare/0.12.0...0.13.0) (2022-02-03)
 
 
