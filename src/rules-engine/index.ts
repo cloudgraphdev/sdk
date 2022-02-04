@@ -207,6 +207,7 @@ export default class RulesProvider implements Engine {
       resourceId: String @search(by: [hash, regexp])
       severity: String! @search(by: [hash, regexp])
       description: String! @search(by: [hash, regexp])
+      title: String @search(by: [hash, regexp])
       audit: String @search(by: [hash, regexp])
       rationale: String @search(by: [hash, regexp])
       remediation: String @search(by: [hash, regexp])

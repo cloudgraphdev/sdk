@@ -41,6 +41,7 @@ export enum Result {
 }
 export interface Rule {
   id: string
+  title: string
   description: string
   references: string[]
   rationale?: string
@@ -52,6 +53,7 @@ export interface Rule {
 }
 export interface RuleFinding {
   id: string
+  title: string
   ruleId: string
   resourceId?: string
   result: Result

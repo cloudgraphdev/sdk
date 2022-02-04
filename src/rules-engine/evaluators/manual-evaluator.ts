@@ -13,6 +13,7 @@ export default class ManualEvaluator implements RuleEvaluator<JsonRule> {
       result: Result.SKIPPED,
       severity: rule.severity,
       description: rule.description,
+      title: rule.title,
       rationale: rule.rationale,
       audit: rule.audit,
       remediation: rule.remediation,
