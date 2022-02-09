@@ -18,16 +18,25 @@ export default class RulesProvider implements Engine {
 
   private readonly typenameToFieldMap: { [typeName: string]: string }
 
+  private readonly extraFields: string[]
+
   private readonly providerName
 
   private readonly entityName
 
-  constructor(
-    providerName: string,
-    entityName: string,
+  constructor({
+    providerName,
+    entityName,
+    typenameToFieldMap,
+    extraFields,
+  }: {
+    providerName: string
+    entityName: string
     typenameToFieldMap?: { [tn: string]: string }
-  ) {
-    this.typenameToFieldMap = typenameToFieldMap || {}
+    extraFields?: string[]
+  }) {
+    this.extraFields = extraFields ?? []
+    this.typenameToFieldMap = typenameToFieldMap ?? {}
     this.entityName = entityName
     this.providerName = providerName
   }
@@ -59,6 +68,11 @@ export default class RulesProvider implements Engine {
     data: ResourceData
   ): Promise<RuleFinding> => {
     const finding = await evaluator.evaluateSingleResource(rule, data)
+
+    // Inject extra fields
+    for (const field of this.extraFields) {
+      finding[field] = data.resource[field]
+    }
 
     const connField =
       data.resource.__typename && // eslint-disable-line no-underscore-dangle
@@ -201,7 +215,7 @@ export default class RulesProvider implements Engine {
       this.entityName
     }Findings]
     }
-    type ${this.providerName}${this.entityName}Findings @key(fields: "id") {
+    interface baseFinding {
       id: String! @id
       ruleId: String! @search(by: [hash, regexp])
       resourceId: String @search(by: [hash, regexp])
@@ -213,9 +227,17 @@ export default class RulesProvider implements Engine {
       remediation: String @search(by: [hash, regexp])
       references: [String] @search(by: [hash, regexp])
       result: FindingsResult @search
+    }
+    type ${this.providerName}${
+      this.entityName
+    }Findings implements baseFinding  @key(fields: "id") {
       findings: ${this.providerName}Findings  @hasInverse(field: ${
       this.entityName
     }Findings)
+      # extra fields
+      ${this.extraFields.map(
+        field => `${field}: String @search(by: [hash, regexp])`
+      )}
       # connections
        ${Object.keys(this.typenameToFieldMap)
          .map(

@@ -74,7 +74,7 @@ export default class PolicyPackPlugin extends Plugin {
       }
 
       const {
-        default: { rules = [], entity = 'Custom' },
+        default: { rules = [], entity = 'Custom', extraFields = [] },
       } = (await pluginManager.getPlugin(policyPack)) ?? {}
 
       if (!rules) {
@@ -83,7 +83,7 @@ export default class PolicyPackPlugin extends Plugin {
         )
       }
 
-      return { rules, entity }
+      return { rules, entity, extraFields }
     } catch (error: any) {
       this.logger.error(error)
       this.logger.warn(
@@ -184,11 +184,12 @@ export default class PolicyPackPlugin extends Plugin {
       }
 
       // Initialize RulesEngine
-      const rulesEngine = new RulesEngine(
-        this.provider.name,
-        policyPackPlugin.entity,
-        resourceTypeNamesToFieldsMap
-      )
+      const rulesEngine = new RulesEngine({
+        providerName: this.provider.name,
+        entityName: policyPackPlugin.entity,
+        typenameToFieldMap: resourceTypeNamesToFieldsMap,
+        extraFields: policyPackPlugin.extraFields,
+      })
 
       this.policyPacksPlugins[policyPack] = {
         engine: rulesEngine,
