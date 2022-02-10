@@ -1,3 +1,10 @@
+# [0.14.0](https://gitlab.com/auto-cloud/cloudgraph/sdk/compare/0.13.1...0.14.0) (2022-02-10)
+
+
+### Features
+
+* Included extra fields to findings result ([4510423](https://gitlab.com/auto-cloud/cloudgraph/sdk/commit/451042360db61e1105a20c1fdc403482d85a7fcf))
+
 ## [0.13.1](https://gitlab.com/auto-cloud/cloudgraph/sdk/compare/0.13.0...0.13.1) (2022-02-04)
 
 
