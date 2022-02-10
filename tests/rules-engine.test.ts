@@ -36,11 +36,11 @@ const ruleMock = {
 describe('RulesEngine', () => {
   let rulesEngine: Engine
   beforeAll(() => {
-    rulesEngine = new RulesProvider(
+    rulesEngine = new RulesProvider({
       providerName,
       entityName,
-      typenameToFieldMap
-    )
+      typenameToFieldMap,
+    })
   })
   it('Should pass getting the updated schema created dynamically using schemaTypeName and typenameToFieldMap fields', () => {
     const schema = rulesEngine.getSchema()
