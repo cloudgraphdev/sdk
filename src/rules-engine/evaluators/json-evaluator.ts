@@ -84,10 +84,9 @@ export default class JsonEvaluator implements RuleEvaluator<JsonRule> {
       }
       return true
     },
-    array_all: async (array, conditions: Condition, data) => {
+    array_all: async (array = [], conditions: Condition, data) => {
       // an AND, but with every resource item
       const baseElementPath = data.elementPath
-
       for (let i = 0; i < array.length; i++) {
         if (
           !(await this.evaluateCondition(conditions, {
@@ -99,9 +98,8 @@ export default class JsonEvaluator implements RuleEvaluator<JsonRule> {
       }
       return true
     },
-    array_any: async (array, conditions, data) => {
+    array_any: async (array = [], conditions, data) => {
       // an OR, but with every resource item
-
       const baseElementPath = data.elementPath
       for (let i = 0; i < array.length; i++) {
         if (
