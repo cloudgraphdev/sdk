@@ -1,3 +1,10 @@
+## [0.14.1](https://gitlab.com/auto-cloud/cloudgraph/sdk/compare/0.14.0...0.14.1) (2022-02-22)
+
+
+### Bug Fixes
+
+* Fixed exception to execute undefined arrays ([02183cc](https://gitlab.com/auto-cloud/cloudgraph/sdk/commit/02183cca465839ee1609b17c2dc7d746c03fa701))
+
 # [0.14.0](https://gitlab.com/auto-cloud/cloudgraph/sdk/compare/0.13.1...0.14.0) (2022-02-10)
 
 
