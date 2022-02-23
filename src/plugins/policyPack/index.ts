@@ -285,7 +285,7 @@ export default class PolicyPackPlugin extends Plugin {
         )
 
         if (!isEmpty(results)) {
-          this.displayResults(groupBy(results, 'severity'))
+          this.displayResults(groupBy(results, 'rule.severity'))
 
           this.logger.info(
             `For more information, you can query ${chalk.italic.green(
