@@ -53,16 +53,8 @@ export interface Rule {
 }
 export interface RuleFinding {
   id: string
-  title: string
-  ruleId: string
   resourceId?: string
   result: Result
-  severity: Severity
-  description: string
-  rationale?: string
-  audit?: string
-  remediation?: string
-  references?: string[]
   typename: string
 }
 

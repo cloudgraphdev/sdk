@@ -55,28 +55,19 @@ describe('RulesEngine', () => {
   })
 
   it('Should pass preparing the mutations to insert findings data given a RuleFindings array', () => {
-    const ruleId = cuid()
     const resourceId = cuid()
     const data = [
       {
         id: cuid(),
-        ruleId,
         resourceId,
         result: Result.FAIL,
-        severity: Severity.MEDIUM,
         typename: 'querySchemaA',
-        description: '',
-        title: '',
       },
       {
         id: cuid(),
-        ruleId,
         resourceId,
         result: Result.PASS,
-        severity: Severity.LOW,
         typename: 'querySchemaA',
-        description: '',
-        title: '',
       },
     ]
 

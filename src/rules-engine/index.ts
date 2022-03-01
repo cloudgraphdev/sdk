@@ -209,16 +209,16 @@ export default class RulesProvider implements Engine {
       MISSING
       SKIPPED
     }
+
     type ${this.providerName}Findings @key(fields: "id") {
       id: String! @id
       ${this.entityName}Findings: [${this.providerName}${
       this.entityName
     }Findings]
     }
-    interface baseFinding {
-      id: String! @id
-      ruleId: String! @search(by: [hash, regexp])
-      resourceId: String @search(by: [hash, regexp])
+
+    type ruleMetadata @key(fields: "id") {
+      id: String! @id @search(by: [hash, regexp])
       severity: String! @search(by: [hash, regexp])
       description: String! @search(by: [hash, regexp])
       title: String @search(by: [hash, regexp])
@@ -226,11 +226,19 @@ export default class RulesProvider implements Engine {
       rationale: String @search(by: [hash, regexp])
       remediation: String @search(by: [hash, regexp])
       references: [String] @search(by: [hash, regexp])
+      findings: [baseFinding] @hasInverse(field: rule)
+    }
+
+    interface baseFinding {
+      id: String! @id
+      resourceId: String @search(by: [hash, regexp])
+      rule: [ruleMetadata] @hasInverse(field: findings)
       result: FindingsResult @search
     }
+
     type ${this.providerName}${
       this.entityName
-    }Findings implements baseFinding  @key(fields: "id") {
+    }Findings implements baseFinding @key(fields: "id") {
       findings: ${this.providerName}Findings  @hasInverse(field: ${
       this.entityName
     }Findings)

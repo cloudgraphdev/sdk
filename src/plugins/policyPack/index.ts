@@ -11,7 +11,7 @@ import {
   StorageEngine,
 } from '../..'
 import RulesEngine from '../../rules-engine'
-import { Result, Severity } from '../../rules-engine/types'
+import { Result, Rule, Severity } from '../../rules-engine/types'
 import Plugin, { ConfiguredPlugin, PluginManager } from '../types'
 
 export default class PolicyPackPlugin extends Plugin {
@@ -57,7 +57,7 @@ export default class PolicyPackPlugin extends Plugin {
     [policyPackName: string]: {
       engine: Engine
       entity: string
-      rules: any
+      rules: Rule[]
     }
   } = {}
 
@@ -285,7 +285,7 @@ export default class PolicyPackPlugin extends Plugin {
         )
 
         if (!isEmpty(results)) {
-          this.displayResults(groupBy(results, 'severity'))
+          this.displayResults(groupBy(results, 'rule.severity'))
 
           this.logger.info(
             `For more information, you can query ${chalk.italic.green(

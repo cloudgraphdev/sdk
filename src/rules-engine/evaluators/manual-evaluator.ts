@@ -9,16 +9,9 @@ export default class ManualEvaluator implements RuleEvaluator<JsonRule> {
   async evaluateSingleResource(rule: Rule): Promise<RuleFinding> {
     return {
       id: `${rule.id}/manual`,
-      ruleId: rule.id,
       result: Result.SKIPPED,
-      severity: rule.severity,
-      description: rule.description,
-      title: rule.title,
-      rationale: rule.rationale,
-      audit: rule.audit,
-      remediation: rule.remediation,
-      references: rule.references,
       typename: 'manual',
+      rule,
     } as RuleFinding
   }
 }

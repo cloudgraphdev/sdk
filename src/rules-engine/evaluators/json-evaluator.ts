@@ -22,23 +22,17 @@ export default class JsonEvaluator implements RuleEvaluator<JsonRule> {
     rule: JsonRule,
     data: ResourceData
   ): Promise<RuleFinding> {
+    const { gql, conditions, resource, ...ruleMetadata } = rule
     const result = (await this.evaluateCondition(rule.conditions, data))
       ? RuleResult.MATCHES
       : RuleResult.DOESNT_MATCH
 
     const finding = {
       id: `${rule.id}/${data.resource?.id}`,
-      ruleId: rule.id,
       resourceId: data.resource?.id,
       result: result !== RuleResult.MATCHES ? Result.FAIL : Result.PASS,
-      severity: rule.severity,
-      description: rule.description,
-      title: rule.title,
-      rationale: rule.rationale,
-      audit: rule.audit,
-      remediation: rule.remediation,
-      references: rule.references,
       typename: data.resource?.__typename, // eslint-disable-line no-underscore-dangle
+      rule: ruleMetadata,
     } as RuleFinding
 
     return finding
