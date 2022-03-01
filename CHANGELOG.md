@@ -1,3 +1,12 @@
+## [0.14.2](https://gitlab.com/auto-cloud/cloudgraph/sdk/compare/0.14.1...0.14.2) (2022-03-01)
+
+
+### Bug Fixes
+
+* Added inverse relation to ruleMetadata ([345b44d](https://gitlab.com/auto-cloud/cloudgraph/sdk/commit/345b44da24120062ec0dcc6d8595df10c6bd1377))
+* Avoided rule duplication using schema connections ([251a31f](https://gitlab.com/auto-cloud/cloudgraph/sdk/commit/251a31f40c6789b70d11785f43a0919c6e29b4b0))
+* Display findings result properly ([d3d4eba](https://gitlab.com/auto-cloud/cloudgraph/sdk/commit/d3d4ebaf21fabdc518cf3bc14d2fe7f6fdd01c6f))
+
 ## [0.14.1](https://gitlab.com/auto-cloud/cloudgraph/sdk/compare/0.14.0...0.14.1) (2022-02-22)
 
 
