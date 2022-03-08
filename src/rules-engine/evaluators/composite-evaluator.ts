@@ -1,21 +1,16 @@
 import { JsonRule, Result, Rule, RuleFinding } from '../types'
 import { RuleEvaluator } from './rule-evaluator'
 
-export default class ManualEvaluator implements RuleEvaluator<JsonRule> {
+export default class CompositeEvaluator implements RuleEvaluator<JsonRule> {
   canEvaluate(rule: Rule): boolean {
-    return (
-      !('gql' in rule) &&
-      !('conditions' in rule) &&
-      !('resource' in rule) &&
-      !('relatedRules' in rule)
-    )
+    return 'relatedRules' in rule
   }
 
   async evaluateSingleResource(rule: Rule): Promise<RuleFinding> {
     return {
-      id: `${rule.id}/manual`,
+      id: rule.id,
       result: Result.SKIPPED,
-      typename: 'manual',
+      typename: 'composite',
       rule,
     } as RuleFinding
   }

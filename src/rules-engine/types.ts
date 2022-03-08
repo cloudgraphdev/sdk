@@ -50,6 +50,7 @@ export interface Rule {
   severity: Severity
   gql: string
   resource: string
+  relatedRules?: string[]
 }
 export interface RuleFinding {
   id: string

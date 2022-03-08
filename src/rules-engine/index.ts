@@ -6,6 +6,7 @@ import JsonEvaluator from './evaluators/json-evaluator'
 import ManualEvaluator from './evaluators/manual-evaluator'
 import JsEvaluator from './evaluators/js-evaluator'
 import { RuleEvaluator } from './evaluators/rule-evaluator'
+import CompositeEvaluator from './evaluators/composite-evaluator'
 import { Engine, ResourceData, Rule, RuleFinding } from './types'
 import { Entity } from '../types'
 
@@ -14,6 +15,7 @@ export default class RulesProvider implements Engine {
     new JsonEvaluator(),
     new JsEvaluator(),
     new ManualEvaluator(),
+    new CompositeEvaluator(),
   ]
 
   private readonly typenameToFieldMap: { [typeName: string]: string }
@@ -306,6 +308,12 @@ export default class RulesProvider implements Engine {
 
     if (isEmpty(data) && evaluator instanceof ManualEvaluator) {
       // Returned Manual Rule Response
+      res.push(await evaluator.evaluateSingleResource(rule))
+      return res
+    }
+
+    if (isEmpty(data) && evaluator instanceof CompositeEvaluator) {
+      // Returned Composite Rule Response
       res.push(await evaluator.evaluateSingleResource(rule))
       return res
     }
