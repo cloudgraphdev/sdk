@@ -270,10 +270,35 @@ export default class RulesProvider implements Engine {
   }
 
   prepareMutations = (findings: RuleFinding[] = []): Entity[] => {
-    const processedFindings = findings.filter(
-      ({ typename }) => typename !== 'manual'
-    )
-    const unprocessedFindings = findings
+    const processedFindings = findings
+      .filter(({ typename }) => typename !== 'manual')
+      .map(finding => {
+        if (finding.typename !== 'composite') {
+          const parentRule = findings.find(
+            f =>
+              f.rule?.relatedRules?.includes(finding.rule?.id) &&
+              f.typename === 'composite'
+          )
+
+          if (parentRule?.rule) {
+            const {
+              id,
+              rule: { relatedRules, ...ruleMetadata },
+            } = parentRule
+            return {
+              ...finding,
+              id: `${id}/${finding.id}`,
+              rule: ruleMetadata,
+            }
+          }
+
+          return finding
+        }
+        return undefined
+      })
+      .filter(Boolean)
+
+    const manualFindings = findings
       .filter(({ typename }) => typename === 'manual')
       .map(({ typename, ...filteredFinding }) => ({ ...filteredFinding }))
 
@@ -295,7 +320,7 @@ export default class RulesProvider implements Engine {
         }
       }
       `,
-        data: unprocessedFindings,
+        data: manualFindings,
       },
     ]
   }

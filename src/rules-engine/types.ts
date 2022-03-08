@@ -52,13 +52,16 @@ export interface Rule {
   resource: string
   relatedRules?: string[]
 }
-export interface RuleFinding {
+export interface Finding {
   id: string
   resourceId?: string
   result: Result
   typename: string
 }
 
+export interface RuleFinding extends Finding {
+  rule?: Rule
+}
 export interface JsonRule extends Rule {
   conditions: Condition
 }
