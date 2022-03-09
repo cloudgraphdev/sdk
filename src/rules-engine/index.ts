@@ -1,22 +1,15 @@
 import jsonpath, { PathComponent } from 'jsonpath'
 import isEmpty from 'lodash/isEmpty'
-import groupBy from 'lodash/groupBy'
 
 import JsonEvaluator from './evaluators/json-evaluator'
 import ManualEvaluator from './evaluators/manual-evaluator'
 import JsEvaluator from './evaluators/js-evaluator'
 import { RuleEvaluator } from './evaluators/rule-evaluator'
-import CompositeEvaluator from './evaluators/composite-evaluator'
 import { Engine, ResourceData, Rule, RuleFinding } from './types'
 import { Entity } from '../types'
 
 export default class RulesProvider implements Engine {
-  evaluators: RuleEvaluator<any>[] = [
-    new JsonEvaluator(),
-    new JsEvaluator(),
-    new ManualEvaluator(),
-    new CompositeEvaluator(),
-  ]
+  evaluators: RuleEvaluator<any>[] = []
 
   private readonly typenameToFieldMap: { [typeName: string]: string }
 
@@ -41,6 +34,11 @@ export default class RulesProvider implements Engine {
     this.typenameToFieldMap = typenameToFieldMap ?? {}
     this.entityName = entityName
     this.providerName = providerName
+    this.evaluators = [
+      new JsonEvaluator(providerName, entityName),
+      new JsEvaluator(providerName, entityName),
+      new ManualEvaluator(providerName, entityName),
+    ]
   }
 
   /**
@@ -101,61 +99,6 @@ export default class RulesProvider implements Engine {
       curr = curr[segment]
     }
     return data
-  }
-
-  /**
-   * Prepare the mutations for the resources findings
-   * @param findings RuleFinding array
-   * @returns A formatted Entity array
-   */
-  private prepareEntitiesMutations = (
-    findings: RuleFinding[] = []
-  ): Entity[] => {
-    const mutations = []
-
-    // Group Findings by schema type
-    const findingsByType = groupBy(findings, 'typename')
-
-    for (const findingType in findingsByType) {
-      if (!isEmpty(findingType)) {
-        // Group Findings by resource
-        const findingsByResource = groupBy(
-          findingsByType[findingType],
-          'resourceId'
-        )
-
-        for (const resource in findingsByResource) {
-          if (resource) {
-            const data = (
-              (findingsByResource[resource] as RuleFinding[]) || []
-            ).map(({ typename, ...properties }) => properties)
-
-            // Create dynamically update mutations by resource
-            const updateMutation = {
-              name: `${this.providerName}${this.entityName}Findings`,
-              mutation: `mutation update${findingType}($input: Update${findingType}Input!) {
-                update${findingType}(input: $input) {
-                  numUids
-                }
-              }
-              `,
-              data: {
-                filter: {
-                  id: { eq: resource },
-                },
-                set: {
-                  [`${this.entityName}Findings`]: data,
-                },
-              },
-            }
-
-            mutations.push(updateMutation)
-          }
-        }
-      }
-    }
-
-    return mutations
   }
 
   /**
@@ -270,59 +213,16 @@ export default class RulesProvider implements Engine {
   }
 
   prepareMutations = (findings: RuleFinding[] = []): Entity[] => {
-    const processedFindings = findings
-      .filter(({ typename }) => typename !== 'manual')
-      .map(finding => {
-        if (finding.typename !== 'composite') {
-          const parentRule = findings.find(
-            f =>
-              f.rule?.relatedRules?.includes(finding.rule?.id) &&
-              f.typename === 'composite'
-          )
-
-          if (parentRule?.rule) {
-            const {
-              id,
-              rule: { relatedRules, ...ruleMetadata },
-            } = parentRule
-            return {
-              ...finding,
-              id: `${id}/${finding.id}`,
-              rule: ruleMetadata,
-            }
-          }
-
-          return finding
-        }
-        return undefined
-      })
-      .filter(Boolean)
-
-    const manualFindings = findings
-      .filter(({ typename }) => typename === 'manual')
-      .map(({ typename, ...filteredFinding }) => ({ ...filteredFinding }))
-
     // Prepare entities mutations
-    const entitiesData = this.prepareEntitiesMutations(processedFindings)
+    const entitiesData = []
+    for (const evaluator of this.evaluators) {
+      entitiesData.push(...evaluator.prepareMutations())
+    }
 
     // Prepare provider mutations
-    const providerData = this.prepareProviderMutations(processedFindings)
+    const providerData = this.prepareProviderMutations(findings)
 
-    return [
-      ...entitiesData,
-      ...providerData,
-      {
-        name: `${this.providerName}${this.entityName}Findings`,
-        mutation: `
-      mutation($input: [Add${this.providerName}${this.entityName}FindingsInput!]!) {
-        add${this.providerName}${this.entityName}Findings(input: $input, upsert: true) {
-          numUids
-        }
-      }
-      `,
-        data: manualFindings,
-      },
-    ]
+    return [...entitiesData, ...providerData]
   }
 
   processRule = async (rule: Rule, data: unknown): Promise<RuleFinding[]> => {
@@ -333,12 +233,6 @@ export default class RulesProvider implements Engine {
 
     if (isEmpty(data) && evaluator instanceof ManualEvaluator) {
       // Returned Manual Rule Response
-      res.push(await evaluator.evaluateSingleResource(rule))
-      return res
-    }
-
-    if (isEmpty(data) && evaluator instanceof CompositeEvaluator) {
-      // Returned Composite Rule Response
       res.push(await evaluator.evaluateSingleResource(rule))
       return res
     }

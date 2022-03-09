@@ -130,6 +130,55 @@ export default class PolicyPackPlugin extends Plugin {
     }
   }
 
+  private async executeRule({
+    rules,
+    policyPack,
+    storageEngine,
+  }: {
+    rules: Rule[]
+    policyPack: string
+    storageEngine: StorageEngine
+  }): Promise<RuleFinding[]> {
+    const findings: RuleFinding[] = []
+
+    // Run rules:
+    for (const rule of rules) {
+      try {
+        if (rule.queries?.length > 0) {
+          const { queries, ...ruleMetadata } = rule
+          const subRules = queries.map(q => ({
+            ...q,
+            ...ruleMetadata,
+          }))
+
+          findings.push(
+            ...(await this.executeRule({
+              rules: subRules,
+              policyPack,
+              storageEngine,
+            }))
+          )
+        } else {
+          const { data } = rule.gql
+            ? await storageEngine.query(rule.gql)
+            : { data: undefined }
+          const results = (await this.policyPacksPlugins[
+            policyPack
+          ]?.engine?.processRule(rule, data)) as RuleFinding[]
+
+          findings.push(...results)
+        }
+      } catch (error) {
+        this.logger.error(
+          `Error processing rule ${rule.id} for ${policyPack} policy pack`
+        )
+        this.logger.debug(error)
+      }
+    }
+
+    return findings
+  }
+
   async configure(
     pluginManager: PluginManager,
     plugins: ConfiguredPlugin[]
@@ -239,26 +288,11 @@ export default class PolicyPackPlugin extends Plugin {
           mergeSchemas(currentSchema, findingsSchema),
         ])
 
-        const findings: RuleFinding[] = []
-
-        // Run rules:
-        for (const rule of rules) {
-          try {
-            const { data } = rule.gql
-              ? await storageEngine.query(rule.gql)
-              : { data: undefined }
-            const results = (await this.policyPacksPlugins[
-              policyPack
-            ]?.engine?.processRule(rule, data)) as RuleFinding[]
-
-            findings.push(...results)
-          } catch (error) {
-            this.logger.error(
-              `Error processing rule ${rule.id} for ${policyPack} policy pack`
-            )
-            this.logger.debug(error)
-          }
-        }
+        const findings = await this.executeRule({
+          rules,
+          policyPack,
+          storageEngine,
+        })
 
         // Prepare mutations
         const mutations = engine?.prepareMutations(findings)
@@ -279,7 +313,6 @@ export default class PolicyPackPlugin extends Plugin {
         )
         this.logger.successSpinner('success')
 
-        // TODO: Use table to display results
         const results = findings.filter(
           finding => finding.result === Result.FAIL
         )

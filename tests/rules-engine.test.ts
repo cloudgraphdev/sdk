@@ -54,7 +54,7 @@ describe('RulesEngine', () => {
     })
   })
 
-  it('Should pass preparing the mutations to insert findings data given a RuleFindings array', () => {
+  it('Should pass preparing the mutations to insert findings data given a RuleFindings object', () => {
     const resourceId = cuid()
     const data = [
       {
@@ -71,7 +71,10 @@ describe('RulesEngine', () => {
       },
     ]
 
-    const [findingsData] = rulesEngine.prepareMutations(data)
+    const [findingsData] = rulesEngine.prepareMutations({
+      automatedFindings: data,
+      manualFindings: [],
+    })
 
     expect(findingsData).toBeDefined()
     expect(findingsData.name).toBe(`${providerName}${entityName}Findings`)
@@ -83,10 +86,13 @@ describe('RulesEngine', () => {
     )
   })
 
-  it('Should pass preparing the mutations to insert findings data given an empty RuleFindings array', () => {
+  it('Should pass preparing the mutations to insert findings data given a ProcessedFindings object without findings', () => {
     const data = []
 
-    const entities = rulesEngine.prepareMutations(data)
+    const entities = rulesEngine.prepareMutations({
+      automatedFindings: data,
+      manualFindings: [],
+    })
 
     expect(entities).toBeDefined()
     expect(entities.length).toBe(3)

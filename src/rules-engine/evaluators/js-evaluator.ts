@@ -1,3 +1,6 @@
+import groupBy from 'lodash/groupBy'
+import isEmpty from 'lodash/isEmpty'
+import { Entity } from '../../types'
 import {
   JsRule,
   ResourceData,
@@ -9,6 +12,17 @@ import {
 import { RuleEvaluator } from './rule-evaluator'
 
 export default class JsEvaluator implements RuleEvaluator<JsRule> {
+  private readonly findings: RuleFinding[] = []
+
+  private readonly providerName
+
+  private readonly entityName
+
+  constructor(providerName: string, entityName: string) {
+    this.entityName = entityName
+    this.providerName = providerName
+  }
+
   canEvaluate(rule: Rule | JsRule): boolean {
     return 'check' in rule
   }
@@ -31,5 +45,54 @@ export default class JsEvaluator implements RuleEvaluator<JsRule> {
     } as RuleFinding
 
     return finding
+  }
+
+  // TODO: Share logic with the JSON evaluator
+  prepareMutations(): Entity[] {
+    const mutations = []
+
+    // Group Findings by schema type
+    const findingsByType = groupBy(this.findings, 'typename')
+
+    for (const findingType in findingsByType) {
+      if (!isEmpty(findingType)) {
+        // Group Findings by resource
+        const findingsByResource = groupBy(
+          findingsByType[findingType],
+          'resourceId'
+        )
+
+        for (const resource in findingsByResource) {
+          if (resource) {
+            const data = (
+              (findingsByResource[resource] as RuleFinding[]) || []
+            ).map(({ typename, ...properties }) => properties)
+
+            // Create dynamically update mutations by resource
+            const updateMutation = {
+              name: `${this.providerName}${this.entityName}Findings`,
+              mutation: `mutation update${findingType}($input: Update${findingType}Input!) {
+                update${findingType}(input: $input) {
+                  numUids
+                }
+              }
+              `,
+              data: {
+                filter: {
+                  id: { eq: resource },
+                },
+                set: {
+                  [`${this.entityName}Findings`]: data,
+                },
+              },
+            }
+
+            mutations.push(updateMutation)
+          }
+        }
+      }
+    }
+
+    return mutations
   }
 }

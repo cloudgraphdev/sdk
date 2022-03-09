@@ -50,7 +50,7 @@ export interface Rule {
   severity: Severity
   gql: string
   resource: string
-  relatedRules?: string[]
+  queries?: { gql: string; conditions: Condition }[]
 }
 export interface Finding {
   id: string
@@ -61,6 +61,11 @@ export interface Finding {
 
 export interface RuleFinding extends Finding {
   rule?: Rule
+}
+
+export interface ProcessedFindings {
+  automatedFindings: RuleFinding[]
+  manualFindings: Omit<RuleFinding, 'typename'>[]
 }
 export interface JsonRule extends Rule {
   conditions: Condition
@@ -86,9 +91,17 @@ export interface Engine {
   processRule: (rule: Rule, data: any) => Promise<RuleFinding[]>
 
   /**
-   * Transforms RuleFinding array into a mutation array for GraphQL
+   * Process findings before convert them in mutations
    * @param findings resulted findings during rules execution
-   * @returns Array of generated mutations
+   * @returns {ProcessedFindings} processed findings object
+   */
+  // processFindings: (findings: RuleFinding[]) => ProcessedFindings
+
+  /**
+   * Transforms RuleFinding array into a mutation array for GraphQL
+   * @param processedFindings resulted findings for automated rules
+   * @param manualFindings resulted findings for manual rules
+   * @returns {Entity[]} Array of generated mutations
    */
   prepareMutations: (findings: RuleFinding[]) => Entity[]
 }
