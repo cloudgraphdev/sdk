@@ -1,3 +1,10 @@
+## [0.14.3](https://gitlab.com/auto-cloud/cloudgraph/sdk/compare/0.14.2...0.14.3) (2022-03-10)
+
+
+### Bug Fixes
+
+* Renamed array operators to common and validate empty objects as well ([064601c](https://gitlab.com/auto-cloud/cloudgraph/sdk/commit/064601c0efadfaf537bd2c14f8e8d955fd60ffb9))
+
 ## [0.14.2](https://gitlab.com/auto-cloud/cloudgraph/sdk/compare/0.14.1...0.14.2) (2022-03-01)
 
 
