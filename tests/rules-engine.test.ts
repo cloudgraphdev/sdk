@@ -1,7 +1,9 @@
 import cuid from 'cuid'
 
 import RulesProvider from '../src/rules-engine'
-import { Engine, Result, Severity } from '../src/rules-engine/types'
+import { Engine, Rule } from '../src/rules-engine/types'
+import ManualEvaluatorMock from './evaluators/manual-evaluator.test'
+import JSONEvaluatordMock from './evaluators/json-evaluator.test'
 
 const typenameToFieldMap = {
   resourceA: 'querySchemaA',
@@ -10,32 +12,9 @@ const typenameToFieldMap = {
 const providerName = 'aws'
 const entityName = 'CIS'
 
-const ruleMock = {
-  id: 'id',
-  description: 'none',
-  title: 'Mocked Rule',
-  rationale: "raison d'être",
-  audit: 'evaluate schemaA',
-  remediation: 'fix the schemaA',
-  references: [],
-  gql: `{
-    querySchemaA {
-      id
-      __typename
-      value
-    }
-  }`,
-  resource: 'querySchemaA[*]',
-  conditions: {
-    path: '@.value',
-    equal: false,
-  },
-  severity: Severity.HIGH,
-}
-
 describe('RulesEngine', () => {
   let rulesEngine: Engine
-  beforeAll(() => {
+  beforeEach(() => {
     rulesEngine = new RulesProvider({
       providerName,
       entityName,
@@ -54,45 +33,51 @@ describe('RulesEngine', () => {
     })
   })
 
-  it('Should pass preparing the mutations to insert findings data given a RuleFindings object', () => {
-    const resourceId = cuid()
-    const data = [
-      {
-        id: cuid(),
-        resourceId,
-        result: Result.FAIL,
-        typename: 'querySchemaA',
-      },
-      {
-        id: cuid(),
-        resourceId,
-        result: Result.PASS,
-        typename: 'querySchemaA',
-      },
-    ]
+  it('Should pass preparing the mutations to insert findings data given a RuleFindings array with Manual Rules', async () => {
+    await rulesEngine.processRule(
+      ManualEvaluatorMock.manualRule as Rule,
+      undefined
+    )
+    const findings = rulesEngine.prepareMutations([])
+    const [mutations] = findings
 
-    const [findingsData] = rulesEngine.prepareMutations({
-      automatedFindings: data,
-      manualFindings: [],
-    })
-
-    expect(findingsData).toBeDefined()
-    expect(findingsData.name).toBe(`${providerName}${entityName}Findings`)
-    expect(findingsData.mutation).toContain(typenameToFieldMap.resourceA)
-    expect(findingsData.data.filter).toBeDefined()
-    expect(findingsData.data.set).toBeDefined()
-    expect(findingsData.data.set[`${entityName}Findings`].length).toBe(
-      data.length
+    expect(findings.length).toBe(3)
+    expect(mutations).toBeDefined()
+    expect(mutations.data instanceof Array).toBeTruthy()
+    expect(mutations.data.length).toBe(1)
+    expect(mutations.name).toBe(`${providerName}${entityName}Findings`)
+    expect(mutations.mutation).toContain(
+      `add${providerName}${entityName}Findings`
     )
   })
 
-  it('Should pass preparing the mutations to insert findings data given a ProcessedFindings object without findings', () => {
+  it('Should pass preparing the mutations to insert findings data given a RuleFindings array with Automated Rules', async () => {
+    const resourceId = cuid()
+    const resourceType = 'schemaA'
+    await rulesEngine.processRule(JSONEvaluatordMock.jsonRule as Rule, {
+      querySchemaA: [
+        {
+          id: resourceId,
+          __typename: resourceType,
+          value: 'automated',
+        },
+      ],
+    })
+    const findings = rulesEngine.prepareMutations([])
+    const [mutations] = findings
+
+    expect(findings.length).toBe(4)
+    expect(mutations).toBeDefined()
+    expect(mutations.data instanceof Object).toBeTruthy()
+    expect(mutations.data.filter.id.eq).toBe(resourceId)
+    expect(mutations.name).toBe(`${providerName}${entityName}Findings`)
+    expect(mutations.mutation).toContain(`update${resourceType}`)
+  })
+
+  it('Should pass preparing the mutations to insert with an empty findings array', () => {
     const data = []
 
-    const entities = rulesEngine.prepareMutations({
-      automatedFindings: data,
-      manualFindings: [],
-    })
+    const entities = rulesEngine.prepareMutations(data)
 
     expect(entities).toBeDefined()
     expect(entities.length).toBe(3)
@@ -101,7 +86,10 @@ describe('RulesEngine', () => {
   it('Should return an empty array processing a rule with no data', async () => {
     const data = {}
 
-    const processedRule = await rulesEngine.processRule(ruleMock, data)
+    const processedRule = await rulesEngine.processRule(
+      JSONEvaluatordMock.jsonRule,
+      data
+    )
 
     expect(processedRule).toBeDefined()
     expect(processedRule instanceof Array).toBeTruthy()

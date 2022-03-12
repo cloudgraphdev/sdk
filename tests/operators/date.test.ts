@@ -5,7 +5,7 @@ import JsonEvaluator from '../../src/rules-engine/evaluators/json-evaluator'
 describe('Date Operators', () => {
   let evaluator
   beforeEach(() => {
-    evaluator = new JsonEvaluator()
+    evaluator = new JsonEvaluator('aws', 'CIS')
   })
 
   test('should process dates', async () => {

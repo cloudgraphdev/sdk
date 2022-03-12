@@ -91,16 +91,8 @@ export interface Engine {
   processRule: (rule: Rule, data: any) => Promise<RuleFinding[]>
 
   /**
-   * Process findings before convert them in mutations
-   * @param findings resulted findings during rules execution
-   * @returns {ProcessedFindings} processed findings object
-   */
-  // processFindings: (findings: RuleFinding[]) => ProcessedFindings
-
-  /**
    * Transforms RuleFinding array into a mutation array for GraphQL
-   * @param processedFindings resulted findings for automated rules
-   * @param manualFindings resulted findings for manual rules
+   * @param findings resulted findings during rules execution
    * @returns {Entity[]} Array of generated mutations
    */
   prepareMutations: (findings: RuleFinding[]) => Entity[]

@@ -48,7 +48,6 @@ export default class JsonEvaluator implements RuleEvaluator<JsonRule> {
       rule: ruleMetadata,
     } as RuleFinding
     this.findings.push(finding)
-
     return finding
   }
 
