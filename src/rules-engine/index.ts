@@ -35,9 +35,9 @@ export default class RulesProvider implements Engine {
     this.entityName = entityName
     this.providerName = providerName
     this.evaluators = [
-      new JsonEvaluator(providerName, entityName),
-      new JsEvaluator(providerName, entityName),
-      new ManualEvaluator(providerName, entityName),
+      new JsonEvaluator(),
+      new JsEvaluator(),
+      new ManualEvaluator(),
     ]
   }
 
@@ -99,51 +99,6 @@ export default class RulesProvider implements Engine {
       curr = curr[segment]
     }
     return data
-  }
-
-  /**
-   * Prepare the mutations for overall provider findings
-   * @param findings RuleFinding array
-   * @returns A formatted Entity array
-   */
-  private prepareProviderMutations = (
-    findings: RuleFinding[] = []
-  ): Entity[] => {
-    // Prepare provider schema connections
-    return [
-      {
-        name: `${this.providerName}Findings`,
-        mutation: `
-        mutation($input: [Add${this.providerName}FindingsInput!]!) {
-          add${this.providerName}Findings(input: $input, upsert: true) {
-            numUids
-          }
-        }
-        `,
-        data: {
-          id: `${this.providerName}-provider`,
-        },
-      },
-      {
-        name: `${this.providerName}Findings`,
-        mutation: `mutation update${this.providerName}Findings($input: Update${this.providerName}FindingsInput!) {
-            update${this.providerName}Findings(input: $input) {
-              numUids
-            }
-          }
-          `,
-        data: {
-          filter: {
-            id: { eq: `${this.providerName}-provider` },
-          },
-          set: {
-            [`${this.entityName}Findings`]: findings.map(
-              ({ typename, ...rest }) => ({ ...rest })
-            ),
-          },
-        },
-      },
-    ]
   }
 
   getSchema = (): string[] => {
@@ -210,19 +165,6 @@ export default class RulesProvider implements Engine {
       .join('\n')
 
     return [mainType, extensions]
-  }
-
-  prepareMutations = (findings: RuleFinding[] = []): Entity[] => {
-    // Prepare entities mutations
-    const entitiesData = []
-    for (const evaluator of this.evaluators) {
-      entitiesData.push(...evaluator.prepareMutations())
-    }
-
-    // Prepare provider mutations
-    const providerData = this.prepareProviderMutations(findings)
-
-    return [...entitiesData, ...providerData]
   }
 
   processRule = async (rule: Rule, data: unknown): Promise<RuleFinding[]> => {

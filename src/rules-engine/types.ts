@@ -63,10 +63,6 @@ export interface RuleFinding extends Finding {
   rule?: Rule
 }
 
-export interface ProcessedFindings {
-  automatedFindings: RuleFinding[]
-  manualFindings: Omit<RuleFinding, 'typename'>[]
-}
 export interface JsonRule extends Rule {
   conditions: Condition
 }

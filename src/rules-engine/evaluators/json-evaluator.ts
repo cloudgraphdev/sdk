@@ -1,4 +1,4 @@
-import lodash, { groupBy, isEmpty } from 'lodash'
+import lodash from 'lodash'
 import * as jqNode from 'node-jq'
 import {
   Condition,
@@ -10,23 +10,11 @@ import {
   RuleResult,
   _ResourceData,
 } from '../types'
-import { RuleEvaluator } from './rule-evaluator'
 import AdditionalOperators from '../operators'
 import ComparisonOperators from '../operators/comparison'
-import { Entity } from '../../types'
+import { RuleEvaluator } from './rule-evaluator'
 
 export default class JsonEvaluator implements RuleEvaluator<JsonRule> {
-  private readonly findings: RuleFinding[] = []
-
-  private readonly providerName
-
-  private readonly entityName
-
-  constructor(providerName: string, entityName: string) {
-    this.entityName = entityName
-    this.providerName = providerName
-  }
-
   canEvaluate(rule: JsonRule): boolean {
     return 'conditions' in rule
   }
@@ -47,7 +35,6 @@ export default class JsonEvaluator implements RuleEvaluator<JsonRule> {
       typename: data.resource?.__typename, // eslint-disable-line no-underscore-dangle
       rule: ruleMetadata,
     } as RuleFinding
-    this.findings.push(finding)
     return finding
   }
 
@@ -85,6 +72,13 @@ export default class JsonEvaluator implements RuleEvaluator<JsonRule> {
       return false
     },
     and: async (_, conditions: Condition[], data) => {
+      for (let i = 0; i < conditions.length; i++) {
+        // if 1 is false, it's false
+        if (!(await this.evaluateCondition(conditions[i], data))) return false
+      }
+      return true
+    },
+    compare: async (_, conditions: Condition[], data) => {
       for (let i = 0; i < conditions.length; i++) {
         // if 1 is false, it's false
         if (!(await this.evaluateCondition(conditions[i], data))) return false
@@ -185,53 +179,5 @@ export default class JsonEvaluator implements RuleEvaluator<JsonRule> {
     } catch (e) {
       return data
     }
-  }
-
-  prepareMutations(): Entity[] {
-    const mutations = []
-
-    // Group Findings by schema type
-    const findingsByType = groupBy(this.findings, 'typename')
-
-    for (const findingType in findingsByType) {
-      if (!isEmpty(findingType)) {
-        // Group Findings by resource
-        const findingsByResource = groupBy(
-          findingsByType[findingType],
-          'resourceId'
-        )
-
-        for (const resource in findingsByResource) {
-          if (resource) {
-            const data = (
-              (findingsByResource[resource] as RuleFinding[]) || []
-            ).map(({ typename, ...properties }) => properties)
-
-            // Create dynamically update mutations by resource
-            const updateMutation = {
-              name: `${this.providerName}${this.entityName}Findings`,
-              mutation: `mutation update${findingType}($input: Update${findingType}Input!) {
-                update${findingType}(input: $input) {
-                  numUids
-                }
-              }
-              `,
-              data: {
-                filter: {
-                  id: { eq: resource },
-                },
-                set: {
-                  [`${this.entityName}Findings`]: data,
-                },
-              },
-            }
-
-            mutations.push(updateMutation)
-          }
-        }
-      }
-    }
-
-    return mutations
   }
 }
