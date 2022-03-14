@@ -3,8 +3,6 @@ import { Result } from '../../src'
 import JsEvaluator from '../../src/rules-engine/evaluators/js-evaluator'
 import { Severity } from '../../src/rules-engine/types'
 
-const providerName = 'azure'
-const entityName = 'CIS'
 const jsRule = {
   id: cuid(),
   description: 'none',
@@ -32,7 +30,7 @@ export default {
 describe('JsEvaluator', () => {
   let evaluator
   beforeEach(() => {
-    evaluator = new JsEvaluator(providerName, entityName)
+    evaluator = new JsEvaluator()
   })
 
   it('should accept all rules that have a check field', () => {
@@ -67,26 +65,5 @@ describe('JsEvaluator', () => {
       { resource: { id: cuid() } } as never
     )
     expect(passedRule.result).toEqual(Result.PASS)
-  })
-
-  it('should return a processed rules mutations array', async () => {
-    const resourceId = cuid()
-    const resourceType = 'schemaA'
-    await evaluator.evaluateSingleResource(jsRule, {
-      resource: {
-        id: resourceId,
-        __typename: resourceType,
-        value: 'automated',
-      },
-    })
-    const mutations = evaluator.prepareMutations()
-    const [atuomatedMutation] = mutations
-
-    expect(mutations.length).toBe(1)
-    expect(atuomatedMutation).toBeDefined()
-    expect(atuomatedMutation.data instanceof Object).toBeTruthy()
-    expect(atuomatedMutation.data.filter.id.eq).toBe(resourceId)
-    expect(atuomatedMutation.name).toBe(`${providerName}${entityName}Findings`)
-    expect(atuomatedMutation.mutation).toContain(`update${resourceType}`)
   })
 })

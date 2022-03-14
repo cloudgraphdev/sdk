@@ -263,6 +263,8 @@ export default class PolicyPackPlugin extends Plugin {
       schemaMap?: SchemaMap
     }) => void
   }): Promise<any> {
+    console.log('storage type', typeof storageEngine, storageEngine)
+
     !isEmpty(this.policyPacksPlugins) &&
       this.logger.info(
         `Beginning ${chalk.italic.green('RULES')} for ${this.provider.name}`

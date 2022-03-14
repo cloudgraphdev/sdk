@@ -167,6 +167,8 @@ export default class RulesProvider implements Engine {
     return [mainType, extensions]
   }
 
+  prepareMutations: (findings: RuleFinding[]) => Entity[]
+
   processRule = async (rule: Rule, data: unknown): Promise<RuleFinding[]> => {
     const res: any[] = []
     const dedupeIds = {}

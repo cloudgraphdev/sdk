@@ -3,8 +3,6 @@ import { Result } from '../../src'
 import JsonEvaluator from '../../src/rules-engine/evaluators/json-evaluator'
 import { Severity } from '../../src/rules-engine/types'
 
-const providerName = 'aws'
-const entityName = 'CIS'
 const ruleMetadata = {
   id: cuid(),
   description: 'none',
@@ -73,7 +71,7 @@ export default {
 describe('JsonEvaluator', () => {
   let evaluator
   beforeEach(() => {
-    evaluator = new JsonEvaluator(providerName, entityName)
+    evaluator = new JsonEvaluator()
   })
 
   test('should accept all rules that have a conditions field', () => {
