@@ -138,10 +138,10 @@ export default class JsonEvaluator implements RuleEvaluator<JsonRule> {
       this.isCondition(otherArgs) &&
       otherArgs.path
     ) {
-      const otherData = { ..._data }
-      const elementPath = this.calculatePath(otherData, otherArgs.path)
-      otherData.elementPath = elementPath
-      otherArgs = this.resolvePath(otherData, elementPath)
+      const resourceData = { ..._data }
+      const elementPath = this.calculatePath(resourceData, otherArgs.path)
+      resourceData.elementPath = elementPath
+      otherArgs = this.resolvePath(resourceData, elementPath)
     }
 
     if (path) {
