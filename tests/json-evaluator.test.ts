@@ -421,4 +421,42 @@ describe('JsonEvaluator', () => {
 
     expect(finding.result).toBe(Result.PASS)
   })
+
+  test('Should passed using the same value for the equal operator with the same path', async () => {
+    const data = {
+      data: { a: { b: [0, { e: 'same value', d: 'same value' }] } },
+    }
+    const rule = { path: 'a.b[1].d', equal: { path: 'a.b[1].e' } }
+
+    const finding = await evaluator.evaluateSingleResource(
+      {
+        conditions: rule,
+        resource: {
+          id: cuid(),
+        },
+      } as any,
+      data
+    )
+
+    expect(finding.result).toBe(Result.PASS)
+  })
+
+  test('Should failed using two different values for the equal operator', async () => {
+    const data = {
+      data: { a: { b: [0, { e: 'not the same', d: 'value' }] } },
+    }
+    const rule = { path: 'a.b[1].d', equal: { path: 'a.b[1].e' } }
+
+    const finding = await evaluator.evaluateSingleResource(
+      {
+        conditions: rule,
+        resource: {
+          id: cuid(),
+        },
+      } as any,
+      data
+    )
+
+    expect(finding.result).toBe(Result.FAIL)
+  })
 })

@@ -12,6 +12,7 @@ import {
 } from '../types'
 import { RuleEvaluator } from './rule-evaluator'
 import AdditionalOperators from '../operators'
+import ComparisonOperators from '../operators/comparison'
 
 export default class JsonEvaluator implements RuleEvaluator<JsonRule> {
   canEvaluate(rule: JsonRule): boolean {
@@ -124,13 +125,24 @@ export default class JsonEvaluator implements RuleEvaluator<JsonRule> {
     // remaining field should be the op name
     const op = Object.keys(condition)[0] //
     const operator = this.operators[op]
-    const otherArgs = condition[op] // {[and]: xxx }
+    let otherArgs = condition[op] // {[and]: xxx }
     if (!op || !operator) {
       throw new Error(`unrecognized operation${JSON.stringify(condition)}`)
     }
 
     const data = { ..._data }
     let firstArg
+
+    if (
+      Object.keys(ComparisonOperators).includes(operator.name) &&
+      this.isCondition(otherArgs) &&
+      otherArgs.path
+    ) {
+      const otherData = { ..._data }
+      const elementPath = this.calculatePath(otherData, otherArgs.path)
+      otherData.elementPath = elementPath
+      otherArgs = this.resolvePath(otherData, elementPath)
+    }
 
     if (path) {
       const elementPath = this.calculatePath(data, path)
