@@ -78,13 +78,6 @@ export default class JsonEvaluator implements RuleEvaluator<JsonRule> {
       }
       return true
     },
-    compare: async (_, conditions: Condition[], data) => {
-      for (let i = 0; i < conditions.length; i++) {
-        // if 1 is false, it's false
-        if (!(await this.evaluateCondition(conditions[i], data))) return false
-      }
-      return true
-    },
     array_all: async (array = [], conditions: Condition, data) => {
       // an AND, but with every resource item
       const baseElementPath = data.elementPath

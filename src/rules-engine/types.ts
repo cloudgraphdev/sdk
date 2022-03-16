@@ -1,5 +1,3 @@
-import { Entity } from '..'
-
 export type ResourceData = {
   data: { [k: string]: any }
   resource: { id: string; [k: string]: any }
@@ -85,11 +83,4 @@ export interface Engine {
    * @returns An array of RuleFinding
    */
   processRule: (rule: Rule, data: any) => Promise<RuleFinding[]>
-
-  /**
-   * Transforms RuleFinding array into a mutation array for GraphQL
-   * @param findings resulted findings during rules execution
-   * @returns {Entity[]} Array of generated mutations
-   */
-  prepareMutations: (findings: RuleFinding[]) => Entity[]
 }

@@ -6,7 +6,6 @@ import ManualEvaluator from './evaluators/manual-evaluator'
 import JsEvaluator from './evaluators/js-evaluator'
 import { RuleEvaluator } from './evaluators/rule-evaluator'
 import { Engine, ResourceData, Rule, RuleFinding } from './types'
-import { Entity } from '../types'
 
 export default class RulesProvider implements Engine {
   evaluators: RuleEvaluator<any>[] = []
@@ -166,8 +165,6 @@ export default class RulesProvider implements Engine {
 
     return [mainType, extensions]
   }
-
-  prepareMutations: (findings: RuleFinding[]) => Entity[]
 
   processRule = async (rule: Rule, data: unknown): Promise<RuleFinding[]> => {
     const res: any[] = []

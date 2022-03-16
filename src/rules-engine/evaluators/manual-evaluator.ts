@@ -7,12 +7,11 @@ export default class ManualEvaluator implements RuleEvaluator<JsonRule> {
   }
 
   async evaluateSingleResource(rule: Rule): Promise<RuleFinding> {
-    const finding = {
+    return {
       id: `${rule.id}/manual`,
       result: Result.SKIPPED,
       typename: 'manual',
       rule,
     } as RuleFinding
-    return finding
   }
 }
