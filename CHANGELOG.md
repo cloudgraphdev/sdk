@@ -1,3 +1,10 @@
+# [0.15.0](https://gitlab.com/auto-cloud/cloudgraph/sdk/compare/0.14.3...0.15.0) (2022-03-16)
+
+
+### Features
+
+* First approach to compare two fields in the same object ([632ba76](https://gitlab.com/auto-cloud/cloudgraph/sdk/commit/632ba76725b0f4ac703a35c07d89d5489a8edb24))
+
 ## [0.14.3](https://gitlab.com/auto-cloud/cloudgraph/sdk/compare/0.14.2...0.14.3) (2022-03-10)
 
 
