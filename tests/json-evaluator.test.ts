@@ -421,4 +421,113 @@ describe('JsonEvaluator', () => {
 
     expect(finding.result).toBe(Result.PASS)
   })
+
+  test('Should pass using the same value for the equal operator with the same path', async () => {
+    const data = {
+      data: { a: { b: [0, { e: 'same value', d: 'same value' }] } },
+    }
+    const rule = { path: 'a.b[1].d', equal: { path: 'a.b[1].e' } }
+
+    const finding = await evaluator.evaluateSingleResource(
+      {
+        conditions: rule,
+        resource: {
+          id: cuid(),
+        },
+      } as any,
+      data
+    )
+
+    expect(finding.result).toBe(Result.PASS)
+  })
+
+  test('Should fail using two different values for the equal operator', async () => {
+    const data = {
+      data: { a: { b: [0, { e: 'not the same', d: 'values' }] } },
+    }
+    const rule = { path: 'a.b[1].d', equal: { path: 'a.b[1].e' } }
+
+    const finding = await evaluator.evaluateSingleResource(
+      {
+        conditions: rule,
+        resource: {
+          id: cuid(),
+        },
+      } as any,
+      data
+    )
+
+    expect(finding.result).toBe(Result.FAIL)
+  })
+
+  test('Should fail using the same value for the equal operator but using a wrong path', async () => {
+    const data = {
+      data: { a: { b: [0, { e: 'values', d: 'values' }] } },
+    }
+    const rule = { path: 'a.b[1].d', equal: { path: 'b[0].e' } }
+
+    const finding = await evaluator.evaluateSingleResource(
+      {
+        conditions: rule,
+        resource: {
+          id: cuid(),
+        },
+      } as any,
+      data
+    )
+
+    expect(finding.result).toBe(Result.FAIL)
+  })
+
+  test('Should pass comparing a date greater than other', async () => {
+    const data = {
+      data: {
+        a: {
+          b: [
+            0,
+            { e: '2022-03-14T20:42:58.510Z', d: '2022-03-15T20:42:58.510Z' },
+          ],
+        },
+      },
+    }
+    const rule = { path: 'a.b[1].d', greaterThan: { path: 'a.b[1].e' } }
+
+    const finding = await evaluator.evaluateSingleResource(
+      {
+        conditions: rule,
+        resource: {
+          id: cuid(),
+        },
+      } as any,
+      data
+    )
+
+    expect(finding.result).toBe(Result.PASS)
+  })
+
+  test('Should fail comparing a date after than other', async () => {
+    const data = {
+      data: {
+        a: {
+          b: [
+            0,
+            { e: '2022-03-15T20:42:58.510Z', d: new Date().toISOString() },
+          ],
+        },
+      },
+    }
+    const rule = { path: 'a.b[1].d', lessThan: { path: 'a.b[1].e' } }
+
+    const finding = await evaluator.evaluateSingleResource(
+      {
+        conditions: rule,
+        resource: {
+          id: cuid(),
+        },
+      } as any,
+      data
+    )
+
+    expect(finding.result).toBe(Result.FAIL)
+  })
 })
