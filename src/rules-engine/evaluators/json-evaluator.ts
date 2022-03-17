@@ -10,9 +10,9 @@ import {
   RuleResult,
   _ResourceData,
 } from '../types'
-import { RuleEvaluator } from './rule-evaluator'
 import AdditionalOperators from '../operators'
 import ComparisonOperators from '../operators/comparison'
+import { RuleEvaluator } from './rule-evaluator'
 
 export default class JsonEvaluator implements RuleEvaluator<JsonRule> {
   canEvaluate(rule: JsonRule): boolean {
@@ -35,7 +35,6 @@ export default class JsonEvaluator implements RuleEvaluator<JsonRule> {
       typename: data.resource?.__typename, // eslint-disable-line no-underscore-dangle
       rule: ruleMetadata,
     } as RuleFinding
-
     return finding
   }
 

@@ -29,7 +29,6 @@ export default class JsEvaluator implements RuleEvaluator<JsRule> {
       typename: data.resource?.__typename, // eslint-disable-line no-underscore-dangle
       rule: ruleMetadata,
     } as RuleFinding
-
     return finding
   }
 }

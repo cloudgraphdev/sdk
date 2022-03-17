@@ -13,6 +13,8 @@ import {
 import RulesEngine from '../../rules-engine'
 import { Result, Rule, Severity } from '../../rules-engine/types'
 import Plugin, { ConfiguredPlugin, PluginManager } from '../types'
+import DgraphDataProcessor from '../../rules-engine/data-processors/dgraph-data-processor'
+import DataProcessor from '../../rules-engine/data-processors/data-processor'
 
 export default class PolicyPackPlugin extends Plugin {
   constructor({
@@ -59,6 +61,10 @@ export default class PolicyPackPlugin extends Plugin {
       entity: string
       rules: Rule[]
     }
+  } = {}
+
+  private dataProcessors: {
+    [name: string]: DataProcessor
   } = {}
 
   private async getPolicyPackPackage({
@@ -128,6 +134,73 @@ export default class PolicyPackPlugin extends Plugin {
         )
       }
     }
+  }
+
+  private async executeRule({
+    rules,
+    policyPack,
+    storageEngine,
+  }: {
+    rules: Rule[]
+    policyPack: string
+    storageEngine: StorageEngine
+  }): Promise<RuleFinding[]> {
+    const findings: RuleFinding[] = []
+
+    // Run rules:
+    for (const rule of rules) {
+      try {
+        if (rule.queries?.length > 0) {
+          const { queries, ...ruleMetadata } = rule
+          const subRules = queries.map(q => ({
+            ...q,
+            ...ruleMetadata,
+          }))
+
+          findings.push(
+            ...(await this.executeRule({
+              rules: subRules,
+              policyPack,
+              storageEngine,
+            }))
+          )
+        } else {
+          const { data } = rule.gql
+            ? await storageEngine.query(rule.gql)
+            : { data: undefined }
+          const results = (await this.policyPacksPlugins[
+            policyPack
+          ]?.engine?.processRule(rule, data)) as RuleFinding[]
+
+          findings.push(...results)
+        }
+      } catch (error) {
+        this.logger.error(
+          `Error processing rule ${rule.id} for ${policyPack} policy pack`
+        )
+        this.logger.debug(error)
+      }
+    }
+
+    return findings
+  }
+
+  // TODO: Generalize data processor moving storage module to SDK with its interfaces
+  private getDataProcessor({
+    entity,
+    provider,
+  }: {
+    entity: string
+    provider: string
+  }): DataProcessor {
+    const dataProcessorKey = `${provider}${entity}`
+    if (this.dataProcessors[dataProcessorKey]) {
+      return this.dataProcessors[dataProcessorKey]
+    }
+
+    const dataProcessor = new DgraphDataProcessor(provider, entity)
+    this.dataProcessors[dataProcessorKey] = dataProcessor
+    return dataProcessor
   }
 
   async configure(
@@ -239,29 +312,20 @@ export default class PolicyPackPlugin extends Plugin {
           mergeSchemas(currentSchema, findingsSchema),
         ])
 
-        const findings: RuleFinding[] = []
+        const findings = await this.executeRule({
+          rules,
+          policyPack,
+          storageEngine,
+        })
 
-        // Run rules:
-        for (const rule of rules) {
-          try {
-            const { data } = rule.gql
-              ? await storageEngine.query(rule.gql)
-              : { data: undefined }
-            const results = (await this.policyPacksPlugins[
-              policyPack
-            ]?.engine?.processRule(rule, data)) as RuleFinding[]
-
-            findings.push(...results)
-          } catch (error) {
-            this.logger.error(
-              `Error processing rule ${rule.id} for ${policyPack} policy pack`
-            )
-            this.logger.debug(error)
-          }
-        }
+        // Data Processor
+        const dataProcessor = this.getDataProcessor({
+          entity,
+          provider: this.provider.name,
+        })
 
         // Prepare mutations
-        const mutations = engine?.prepareMutations(findings)
+        const mutations = dataProcessor.prepareMutations(findings)
 
         // Save connections
         processConnectionsBetweenEntities({
@@ -279,7 +343,6 @@ export default class PolicyPackPlugin extends Plugin {
         )
         this.logger.successSpinner('success')
 
-        // TODO: Use table to display results
         const results = findings.filter(
           finding => finding.result === Result.FAIL
         )

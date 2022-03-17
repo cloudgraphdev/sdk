@@ -1,7 +1,11 @@
 import cuid from 'cuid'
 
 import RulesProvider from '../src/rules-engine'
-import { Engine, Result, Severity } from '../src/rules-engine/types'
+import { Engine, Rule } from '../src/rules-engine/types'
+import ManualEvaluatorMock from './evaluators/manual-evaluator.test'
+import JSONEvaluatordMock from './evaluators/json-evaluator.test'
+import DgraphDataProcessor from '../src/rules-engine/data-processors/dgraph-data-processor'
+import DataProcessor from '../src/rules-engine/data-processors/data-processor'
 
 const typenameToFieldMap = {
   resourceA: 'querySchemaA',
@@ -10,37 +14,16 @@ const typenameToFieldMap = {
 const providerName = 'aws'
 const entityName = 'CIS'
 
-const ruleMock = {
-  id: 'id',
-  description: 'none',
-  title: 'Mocked Rule',
-  rationale: "raison d'être",
-  audit: 'evaluate schemaA',
-  remediation: 'fix the schemaA',
-  references: [],
-  gql: `{
-    querySchemaA {
-      id
-      __typename
-      value
-    }
-  }`,
-  resource: 'querySchemaA[*]',
-  conditions: {
-    path: '@.value',
-    equal: false,
-  },
-  severity: Severity.HIGH,
-}
-
 describe('RulesEngine', () => {
   let rulesEngine: Engine
-  beforeAll(() => {
+  let dataProcessor: DataProcessor
+  beforeEach(() => {
     rulesEngine = new RulesProvider({
       providerName,
       entityName,
       typenameToFieldMap,
     })
+    dataProcessor = new DgraphDataProcessor(providerName, entityName)
   })
   it('Should pass getting the updated schema created dynamically using schemaTypeName and typenameToFieldMap fields', () => {
     const schema = rulesEngine.getSchema()
@@ -54,48 +37,64 @@ describe('RulesEngine', () => {
     })
   })
 
-  it('Should pass preparing the mutations to insert findings data given a RuleFindings array', () => {
-    const resourceId = cuid()
-    const data = [
-      {
-        id: cuid(),
-        resourceId,
-        result: Result.FAIL,
-        typename: 'querySchemaA',
-      },
-      {
-        id: cuid(),
-        resourceId,
-        result: Result.PASS,
-        typename: 'querySchemaA',
-      },
-    ]
+  it('Should pass preparing the mutations to insert findings data given a RuleFindings array with Manual Rules', async () => {
+    const findings = await rulesEngine.processRule(
+      ManualEvaluatorMock.manualRule as Rule,
+      undefined
+    )
+    const [mutations] = dataProcessor.prepareMutations(findings)
 
-    const [findingsData] = rulesEngine.prepareMutations(data)
-
-    expect(findingsData).toBeDefined()
-    expect(findingsData.name).toBe(`${providerName}${entityName}Findings`)
-    expect(findingsData.mutation).toContain(typenameToFieldMap.resourceA)
-    expect(findingsData.data.filter).toBeDefined()
-    expect(findingsData.data.set).toBeDefined()
-    expect(findingsData.data.set[`${entityName}Findings`].length).toBe(
-      data.length
+    expect(findings.length).toBe(1)
+    expect(mutations).toBeDefined()
+    expect(mutations.data instanceof Array).toBeTruthy()
+    expect(mutations.data.length).toBe(1)
+    expect(mutations.name).toBe(`${providerName}${entityName}Findings`)
+    expect(mutations.mutation).toContain(
+      `add${providerName}${entityName}Findings`
     )
   })
 
-  it('Should pass preparing the mutations to insert findings data given an empty RuleFindings array', () => {
+  it('Should pass preparing the mutations to insert findings data given a RuleFindings array with Automated Rules', async () => {
+    const resourceId = cuid()
+    const resourceType = 'schemaA'
+    const findings = await rulesEngine.processRule(
+      JSONEvaluatordMock.jsonRule as Rule,
+      {
+        querySchemaA: [
+          {
+            id: resourceId,
+            __typename: resourceType,
+            value: 'automated',
+          },
+        ],
+      }
+    )
+    const [mutations] = dataProcessor.prepareMutations(findings)
+
+    expect(findings.length).toBe(1)
+    expect(mutations).toBeDefined()
+    expect(mutations.data instanceof Object).toBeTruthy()
+    expect(mutations.data.filter.id.eq).toBe(resourceId)
+    expect(mutations.name).toBe(`${providerName}${entityName}Findings`)
+    expect(mutations.mutation).toContain(`update${resourceType}`)
+  })
+
+  it('Should pass preparing the mutations to insert with an empty findings array', () => {
     const data = []
 
-    const entities = rulesEngine.prepareMutations(data)
+    const entities = dataProcessor.prepareMutations(data)
 
     expect(entities).toBeDefined()
-    expect(entities.length).toBe(3)
+    expect(entities.length).toBe(2)
   })
 
   it('Should return an empty array processing a rule with no data', async () => {
     const data = {}
 
-    const processedRule = await rulesEngine.processRule(ruleMock, data)
+    const processedRule = await rulesEngine.processRule(
+      JSONEvaluatordMock.jsonRule,
+      data
+    )
 
     expect(processedRule).toBeDefined()
     expect(processedRule instanceof Array).toBeTruthy()

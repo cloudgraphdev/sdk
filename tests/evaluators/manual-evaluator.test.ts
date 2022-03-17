@@ -1,25 +1,30 @@
 import cuid from 'cuid'
-import { Result } from '../src'
-import ManualEvaluator from '../src/rules-engine/evaluators/manual-evaluator'
+import { Result } from '../../src'
+import ManualEvaluator from '../../src/rules-engine/evaluators/manual-evaluator'
+import { Severity } from '../../src/rules-engine/types'
+
+const manualRule = {
+  id: cuid(),
+  description: 'none',
+  title: 'Mocked Manual Rule',
+  rationale: 'Ikigai',
+  audit: 'evaluate schemaA',
+  remediation: 'fix the schemaA',
+  references: [],
+  severity: Severity.HIGH,
+}
+export default {
+  manualRule,
+}
 
 describe('ManualEvaluator', () => {
   let evaluator
-  beforeAll(() => {
+  beforeEach(() => {
     evaluator = new ManualEvaluator()
   })
 
   it('should pass when it does not contain gql, conditions, check, and resource fields', () => {
-    expect(
-      evaluator.canEvaluate({
-        id: '',
-        description: '',
-        rationale: '',
-        autid: '',
-        remediation: '',
-        references: [],
-        severity: '',
-      } as never)
-    ).toBe(true)
+    expect(evaluator.canEvaluate(manualRule)).toBe(true)
   })
 
   it('should fail when it contains gql, conditions, check, or resource fields', () => {
