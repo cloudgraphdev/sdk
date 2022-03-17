@@ -1,3 +1,15 @@
+# [0.16.0](https://gitlab.com/auto-cloud/cloudgraph/sdk/compare/0.15.0...0.16.0) (2022-03-17)
+
+
+### Features
+
+* Added DataProcessors to handle mutations depending on the StorageEngine ([e061c80](https://gitlab.com/auto-cloud/cloudgraph/sdk/commit/e061c80cd55a75816dfff9286b5757cc70d594dd))
+* Composed related rules during prepare mutations method ([6ff9f9f](https://gitlab.com/auto-cloud/cloudgraph/sdk/commit/6ff9f9fb1b5912a04d9b587f9d207be2f2297ec7))
+* Created CompositeEvaluator for composite rules ([b9b51a1](https://gitlab.com/auto-cloud/cloudgraph/sdk/commit/b9b51a1872eb2b23f07d04e24117de6bbcc8d2ce))
+* Moved prepareMutations logic to DgraphDataProcessor ([6c7c5f5](https://gitlab.com/auto-cloud/cloudgraph/sdk/commit/6c7c5f5ee7ea15c19208e9abda9525bea6cfaa5f))
+* Refactored RulesEngine to allow composite rules ([659e5b0](https://gitlab.com/auto-cloud/cloudgraph/sdk/commit/659e5b091cebe4ca2092f44e94a17bab22a82bca))
+* Reused data for Automated Rules and created policyPackPlugin unit test ([cdc6226](https://gitlab.com/auto-cloud/cloudgraph/sdk/commit/cdc6226f80a81df814d5fa7b6976a935a11ed10b))
+
 # [0.15.0](https://gitlab.com/auto-cloud/cloudgraph/sdk/compare/0.14.3...0.15.0) (2022-03-16)
 
 
