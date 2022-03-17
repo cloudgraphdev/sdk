@@ -8,7 +8,7 @@ export default {
     }
 
     // Verify empty/filled objects
-    if (typeof data === 'object') {
+    if (typeof data === 'object' && data !== null) {
       const hasKeys = Object.keys(data).length
       return shouldBeEmpty ? hasKeys === 0 : hasKeys > 0
     }
