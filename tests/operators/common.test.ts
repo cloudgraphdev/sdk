@@ -26,5 +26,20 @@ describe('Common Operators', () => {
     test('Should fail given a filled object', () => {
       expect(CommonOperators.isEmpty({ key: 'one' }, true)).toBeFalsy()
     })
+    test('Should fail given a null value', () => {
+      expect(CommonOperators.isEmpty(null, true)).toBeFalsy()
+    })
+    test('Should fail given an undefined value', () => {
+      expect(CommonOperators.isEmpty(undefined, true)).toBeFalsy()
+    })
+    test('Should fail given an integer', () => {
+      expect(CommonOperators.isEmpty(33, true)).toBeFalsy()
+    })
+    test('Should fail given a string', () => {
+      expect(CommonOperators.isEmpty('string', true)).toBeFalsy()
+    })
+    test('Should fail given a boolean', () => {
+      expect(CommonOperators.isEmpty(true, true)).toBeFalsy()
+    })
   })
 })
