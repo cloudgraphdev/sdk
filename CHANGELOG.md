@@ -1,3 +1,10 @@
+# [0.17.0](https://gitlab.com/auto-cloud/cloudgraph/sdk/compare/0.16.0...0.17.0) (2022-03-18)
+
+
+### Features
+
+* Validated null cases for isEmpty operator ([d142342](https://gitlab.com/auto-cloud/cloudgraph/sdk/commit/d142342f266595bd15318e1d10f5564180d3b835))
+
 # [0.16.0](https://gitlab.com/auto-cloud/cloudgraph/sdk/compare/0.15.0...0.16.0) (2022-03-17)
 
 
