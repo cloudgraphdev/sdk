@@ -28,4 +28,28 @@ describe('Array Operators', () => {
       expect(ArrayOperators.notIn('rule', [])).toBeTruthy()
     })
   })
+
+  describe('Contains Operator', () => {
+    test('Should pass given a filled array with the searched element', () => {
+      expect(ArrayOperators.contains(['*', 'rule'], '*')).toBeTruthy()
+    })
+
+    test('Should fail given a filled array without the searched element', () => {
+      expect(ArrayOperators.contains(['*', 'rule'], 'x')).toBeFalsy()
+    })
+
+    test('Should fail given an empty array', () => {
+      expect(ArrayOperators.contains([], 'x')).toBeFalsy()
+    })
+  })
+
+  describe('DoesNotContain Operator', () => {
+    test('Should fail given a filled array with the searched element', () => {
+      expect(ArrayOperators.doesNotContain(['rule'], 'rule')).toBeFalsy()
+    })
+
+    test('Should pass given a filled array without the searched element', () => {
+      expect(ArrayOperators.doesNotContain(['*'], 'rule')).toBeTruthy()
+    })
+  })
 })

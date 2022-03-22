@@ -33,4 +33,50 @@ describe('Regex Operators', () => {
       ).toBeFalsy()
     })
   })
+
+  describe('matchAny Operator', () => {
+    test('Should fail given an invalid array', () => {
+      expect(
+        RegexOperators.matchAny('john.doe', /[\w\d.-]+@[\w\d.-]+\.[\w\d.-]+/)
+      ).toBeFalsy()
+    })
+
+    test('Should fail given an array with invalid emails', () => {
+      expect(
+        RegexOperators.matchAny(['john.doe'], /[\w\d.-]+@[\w\d.-]+\.[\w\d.-]+/)
+      ).toBeFalsy()
+    })
+
+    test('Should pass given at least one valid email', () => {
+      expect(
+        RegexOperators.matchAny(
+          ['john.doe', 'matt.dAvella@autocloud.dev'],
+          /[\w\d.-]+@[\w\d.-]+\.[\w\d.-]+/
+        )
+      ).toBeTruthy()
+    })
+  })
+
+  describe('matchAll Operator', () => {
+    test('Should fail given an invalid array', () => {
+      expect(
+        RegexOperators.matchAll('john.doe', /[\w\d.-]+@[\w\d.-]+\.[\w\d.-]+/)
+      ).toBeFalsy()
+    })
+
+    test('Should fail given an array with invalid emails', () => {
+      expect(
+        RegexOperators.matchAll(['john.doe'], /[\w\d.-]+@[\w\d.-]+\.[\w\d.-]+/)
+      ).toBeFalsy()
+    })
+
+    test('Should fail given an array of valid emails', () => {
+      expect(
+        RegexOperators.matchAll(
+          ['john.doe@autocloud.dev', 'matt.dAvella@autocloud.dev'],
+          /[\w\d.-]+@[\w\d.-]+\.[\w\d.-]+/
+        )
+      ).toBeTruthy()
+    })
+  })
 })
