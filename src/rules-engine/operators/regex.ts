@@ -6,7 +6,7 @@ export default {
     if (Array.isArray(a)) {
       const result = a
         .map(value =>
-          typeof value === 'string' ? !new RegExp(b).test(value) : undefined
+          typeof value === 'string' ? new RegExp(b).test(value) : undefined
         )
         .some(v => v)
       return result
@@ -18,7 +18,7 @@ export default {
     if (Array.isArray(a)) {
       const result = a
         .map(value =>
-          typeof value === 'string' ? !new RegExp(b).test(value) : undefined
+          typeof value === 'string' ? new RegExp(b).test(value) : undefined
         )
         .every(v => v)
       return result
