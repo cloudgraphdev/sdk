@@ -1,3 +1,11 @@
+# [0.18.0](https://gitlab.com/auto-cloud/cloudgraph/sdk/compare/0.17.0...0.18.0) (2022-03-22)
+
+
+### Features
+
+* Included matchAll for regex operators ([6ff42ca](https://gitlab.com/auto-cloud/cloudgraph/sdk/commit/6ff42cab1e511f7948648642ca4bd350c4207dde))
+* Included matchAny for regex operators ([b22971c](https://gitlab.com/auto-cloud/cloudgraph/sdk/commit/b22971c1425a24d41ce15f9f8f2cf9a0fddf7726))
+
 # [0.17.0](https://gitlab.com/auto-cloud/cloudgraph/sdk/compare/0.16.0...0.17.0) (2022-03-18)
 
 
