@@ -14,4 +14,16 @@ export default {
 
     return false
   },
+  matchAll: (a, b) => {
+    if (Array.isArray(a)) {
+      const result = a
+        .map(value =>
+          typeof value === 'string' ? !new RegExp(b).test(value) : undefined
+        )
+        .every(v => v)
+      return result
+    }
+
+    return false
+  },
 }
