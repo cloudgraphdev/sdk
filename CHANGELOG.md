@@ -1,3 +1,10 @@
+## [0.18.1](https://gitlab.com/auto-cloud/cloudgraph/sdk/compare/0.18.0...0.18.1) (2022-03-23)
+
+
+### Bug Fixes
+
+* Fixed node-jq version to 2.1.0 ([23ae96f](https://gitlab.com/auto-cloud/cloudgraph/sdk/commit/23ae96f07277a0460e9aa9e6a4d7761a9a969081))
+
 # [0.18.0](https://gitlab.com/auto-cloud/cloudgraph/sdk/compare/0.17.0...0.18.0) (2022-03-22)
 
 
