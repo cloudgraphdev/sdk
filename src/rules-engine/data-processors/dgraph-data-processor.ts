@@ -105,52 +105,57 @@ export default class DgraphDataProcessor implements DataProcessor {
     findings: RuleFinding[] = []
   ): Entity[] => {
     // Prepare provider schema connections
-    return [
-      {
-        name: `${this.providerName}Findings`,
-        mutation: `
+    return findings?.length > 0
+      ? [
+          {
+            name: `${this.providerName}Findings`,
+            mutation: `
         mutation($input: [Add${this.providerName}FindingsInput!]!) {
           add${this.providerName}Findings(input: $input, upsert: true) {
             numUids
           }
         }
         `,
-        data: {
-          id: `${this.providerName}-provider`,
-        },
-      },
-      {
-        name: `${this.providerName}Findings`,
-        mutation: `mutation update${this.providerName}Findings($input: Update${this.providerName}FindingsInput!) {
+            data: {
+              id: `${this.providerName}-provider`,
+            },
+          },
+          {
+            name: `${this.providerName}Findings`,
+            mutation: `mutation update${this.providerName}Findings($input: Update${this.providerName}FindingsInput!) {
             update${this.providerName}Findings(input: $input) {
               numUids
             }
           }
           `,
-        data: {
-          filter: {
-            id: { eq: `${this.providerName}-provider` },
+            data: {
+              filter: {
+                id: { eq: `${this.providerName}-provider` },
+              },
+              set: {
+                [`${this.entityName}Findings`]: findings.map(
+                  ({ typename, ...rest }) => ({ ...rest })
+                ),
+              },
+            },
           },
-          set: {
-            [`${this.entityName}Findings`]: findings.map(
-              ({ typename, ...rest }) => ({ ...rest })
-            ),
-          },
-        },
-      },
-    ]
+        ]
+      : []
   }
 
-  private prepareProcessedMutations(findingsByType: {
-    [resource: string]: RuleFinding[]
-  }): RuleFinding[] {
-    const mutations = []
+  private prepareEntitiesMutations(findings: RuleFinding[]): RuleFinding[] {
+    // Group Findings by schema type
+    const { manual: manualData = [], ...processedRules } = groupBy(
+      findings,
+      'typename'
+    )
 
-    for (const findingType in findingsByType) {
+    const mutations = [...manualData]
+    for (const findingType in processedRules) {
       if (!isEmpty(findingType)) {
         // Group Findings by resource
         const findingsByResource = groupBy(
-          findingsByType[findingType],
+          processedRules[findingType],
           'resourceId'
         )
 
@@ -181,14 +186,17 @@ export default class DgraphDataProcessor implements DataProcessor {
   }
 
   prepareMutations = (findings: RuleFinding[] = []): Entity[] => {
-    // Group Findings by schema type
-    const { manual: manualData = [], ...processedRules } = groupBy(
-      findings,
-      'typename'
-    )
+    // Return an empty array if there are no findings
+    if (isEmpty(findings)) {
+      return []
+    }
 
-    // Prepare processed rules mutations
-    const processedRulesData = this.prepareProcessedMutations(processedRules)
+    // Prepare entities mutations
+    const entitiesData = this.prepareEntitiesMutations(findings).map(
+      ({ typename, ...finding }) => ({
+        ...finding,
+      })
+    )
 
     // Prepare provider mutations
     const providerData = this.prepareProviderMutations(findings)
@@ -203,11 +211,7 @@ mutation($input: [Add${this.providerName}${this.entityName}FindingsInput!]!) {
   }
 }
 `,
-        data: [...manualData, ...processedRulesData].map(
-          ({ typename, ...finding }) => ({
-            ...finding,
-          })
-        ),
+        data: entitiesData,
       },
       ...providerData,
     ]
