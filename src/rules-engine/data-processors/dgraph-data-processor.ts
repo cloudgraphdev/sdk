@@ -1,7 +1,7 @@
 import groupBy from 'lodash/groupBy'
 import isEmpty from 'lodash/isEmpty'
 import { Entity } from '../../types'
-import { RuleFinding } from '../types'
+import { Rule, RuleFinding } from '../types'
 import DataProcessor from './data-processor'
 
 export default class DgraphDataProcessor implements DataProcessor {
@@ -48,7 +48,7 @@ export default class DgraphDataProcessor implements DataProcessor {
 
     type ruleMetadata @key(fields: "id") {
       id: String! @id @search(by: [hash, regexp])
-      severity: String! @search(by: [hash, regexp])
+      severity: String @search(by: [hash, regexp])
       description: String! @search(by: [hash, regexp])
       title: String @search(by: [hash, regexp])
       audit: String @search(by: [hash, regexp])
@@ -185,7 +185,44 @@ export default class DgraphDataProcessor implements DataProcessor {
     return mutations
   }
 
-  prepareMutations = (findings: RuleFinding[] = []): Entity[] => {
+  prepareRulesMetadataMutations = (rules: Rule[] = []): Entity[] => {
+    return [
+      {
+        name: 'ruleMetadata',
+        mutation: `
+mutation($input: [AddruleMetadataInput!]!) {
+addruleMetadata(input: $input, upsert: true) {
+  numUids
+}
+}
+
+`,
+        data: rules.map(
+          ({
+            id,
+            title,
+            description,
+            references,
+            rationale,
+            audit,
+            remediation,
+            severity,
+          }) => ({
+            id,
+            title,
+            description,
+            references,
+            rationale,
+            audit,
+            remediation,
+            severity,
+          })
+        ),
+      },
+    ]
+  }
+
+  prepareFindingsMutations = (findings: RuleFinding[] = []): Entity[] => {
     // Return an empty array if there are no findings
     if (isEmpty(findings)) {
       return []

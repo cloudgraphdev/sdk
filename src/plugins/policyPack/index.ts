@@ -321,7 +321,7 @@ export default class PolicyPackPlugin extends Plugin {
         })
 
         // Prepare mutations
-        const mutations = engine.prepareMutations(findings)
+        const mutations = engine.prepareMutations(findings, rules)
 
         // Save connections
         processConnectionsBetweenEntities({

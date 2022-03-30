@@ -1,5 +1,5 @@
 import { Entity } from '../../types'
-import { RuleFinding } from '../types'
+import { Rule, RuleFinding } from '../types'
 
 export default interface DataProcessor {
   readonly typenameToFieldMap: { [typeName: string]: string }
@@ -17,5 +17,12 @@ export default interface DataProcessor {
    * @param findings resulted findings during rules execution
    * @returns {Entity[]} Array of generated mutations
    */
-  prepareMutations: (findings: RuleFinding[]) => Entity[]
+  prepareFindingsMutations: (findings: RuleFinding[]) => Entity[]
+
+  /**
+   * Transforms Rules array into a mutation array for GraphQL
+   * @param rules rules metadata
+   * @returns {Entity[]} Array of generated mutations
+   */
+  prepareRulesMetadataMutations: (rules: Rule[]) => Entity[]
 }

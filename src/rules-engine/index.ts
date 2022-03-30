@@ -135,6 +135,8 @@ export default class RulesProvider implements Engine {
     return res
   }
 
-  prepareMutations = (findings: RuleFinding[]): Entity[] =>
-    this.dataProcessor.prepareMutations(findings)
+  prepareMutations = (findings: RuleFinding[], rules: Rule[]): Entity[] => [
+    ...this.dataProcessor.prepareRulesMetadataMutations(rules),
+    ...this.dataProcessor.prepareFindingsMutations(findings),
+  ]
 }

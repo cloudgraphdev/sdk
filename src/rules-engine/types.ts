@@ -89,7 +89,8 @@ export interface Engine {
   /**
    * Transforms RuleFinding array into a mutation array for GraphQL
    * @param findings resulted findings during rules execution
+   * @param rules rules metadata
    * @returns {Entity[]} Array of generated mutations
    */
-  prepareMutations: (findings: RuleFinding[]) => Entity[]
+  prepareMutations: (findings: RuleFinding[], rules: Rule[]) => Entity[]
 }

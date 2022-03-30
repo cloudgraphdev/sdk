@@ -38,7 +38,7 @@ describe('RulesEngine', () => {
       ManualEvaluatorMock.manualRule as Rule,
       undefined
     )
-    const [mutations] = rulesEngine.prepareMutations(findings)
+    const [mutations] = rulesEngine.prepareMutations(findings, [])
 
     expect(findings.length).toBe(1)
     expect(mutations).toBeDefined()
@@ -66,7 +66,7 @@ describe('RulesEngine', () => {
   it('Should return empty mutations array given an empty findings array', () => {
     const data = []
 
-    const entities = rulesEngine.prepareMutations(data)
+    const entities = rulesEngine.prepareMutations(data, [])
 
     expect(entities).toBeDefined()
     expect(entities.length).toBe(0)
