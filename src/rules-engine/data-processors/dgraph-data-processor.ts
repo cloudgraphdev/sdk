@@ -9,9 +9,91 @@ export default class DgraphDataProcessor implements DataProcessor {
 
   private readonly entityName
 
-  constructor(providerName: string, entityName: string) {
+  readonly typenameToFieldMap: { [typeName: string]: string }
+
+  readonly extraFields: string[]
+
+  constructor({
+    providerName,
+    entityName,
+    typenameToFieldMap,
+    extraFields,
+  }: {
+    providerName: string
+    entityName: string
+    typenameToFieldMap?: { [tn: string]: string }
+    extraFields?: string[]
+  }) {
     this.providerName = providerName
     this.entityName = entityName
+    this.extraFields = extraFields ?? []
+    this.typenameToFieldMap = typenameToFieldMap ?? {}
+  }
+
+  getSchema = (): string[] => {
+    const mainType = `
+    enum FindingsResult {
+      PASS
+      FAIL
+      MISSING
+      SKIPPED
+    }
+
+    type ${this.providerName}Findings @key(fields: "id") {
+      id: String! @id
+      ${this.entityName}Findings: [${this.providerName}${
+      this.entityName
+    }Findings]
+    }
+
+    type ruleMetadata @key(fields: "id") {
+      id: String! @id @search(by: [hash, regexp])
+      severity: String! @search(by: [hash, regexp])
+      description: String! @search(by: [hash, regexp])
+      title: String @search(by: [hash, regexp])
+      audit: String @search(by: [hash, regexp])
+      rationale: String @search(by: [hash, regexp])
+      remediation: String @search(by: [hash, regexp])
+      references: [String] @search(by: [hash, regexp])
+      findings: [baseFinding] @hasInverse(field: rule)
+    }
+
+    interface baseFinding {
+      id: String! @id
+      resourceId: String @search(by: [hash, regexp])
+      rule: [ruleMetadata] @hasInverse(field: findings)
+      result: FindingsResult @search
+    }
+
+    type ${this.providerName}${
+      this.entityName
+    }Findings implements baseFinding @key(fields: "id") {
+      findings: ${this.providerName}Findings  @hasInverse(field: ${
+      this.entityName
+    }Findings)
+      # extra fields
+      ${this.extraFields.map(
+        field => `${field}: String @search(by: [hash, regexp])`
+      )}
+      # connections
+       ${Object.keys(this.typenameToFieldMap)
+         .map(
+           (tn: string) =>
+             `${tn}: [${this.typenameToFieldMap[tn]}] @hasInverse(field: ${this.entityName}Findings)`
+         )
+         .join(' ')}
+    }
+      `
+    const extensions = Object.keys(this.typenameToFieldMap)
+      .map(
+        (tn: string) =>
+          `extend type ${this.typenameToFieldMap[tn]} {
+   ${this.entityName}Findings: [${this.providerName}${this.entityName}Findings] @hasInverse(field: ${tn})
+}`
+      )
+      .join('\n')
+
+    return [mainType, extensions]
   }
 
   /**
@@ -61,7 +143,7 @@ export default class DgraphDataProcessor implements DataProcessor {
 
   private prepareProcessedMutations(findingsByType: {
     [resource: string]: RuleFinding[]
-  }): Entity[] {
+  }): RuleFinding[] {
     const mutations = []
 
     for (const findingType in findingsByType) {
@@ -76,28 +158,20 @@ export default class DgraphDataProcessor implements DataProcessor {
           if (resource) {
             const data = (
               (findingsByResource[resource] as RuleFinding[]) || []
-            ).map(({ typename, ...properties }) => properties)
+            ).map(finding => {
+              const resourceType = Object.keys(this.typenameToFieldMap).find(
+                key => this.typenameToFieldMap[key] === finding.typename
+              )
 
-            // Create dynamically update mutations by resource
-            const updateMutation = {
-              name: `${this.providerName}${this.entityName}Findings`,
-              mutation: `mutation update${findingType}($input: Update${findingType}Input!) {
-                update${findingType}(input: $input) {
-                  numUids
-                }
+              return {
+                ...finding,
+                [resourceType]: {
+                  id: resource,
+                },
               }
-              `,
-              data: {
-                filter: {
-                  id: { eq: resource },
-                },
-                set: {
-                  [`${this.entityName}Findings`]: data,
-                },
-              },
-            }
+            })
 
-            mutations.push(updateMutation)
+            mutations.push(...data)
           }
         }
       }
@@ -106,41 +180,36 @@ export default class DgraphDataProcessor implements DataProcessor {
     return mutations
   }
 
-  private prepareManualMutations(findings: RuleFinding[] = []): Entity[] {
-    const manualFindings = findings.map(({ typename, ...finding }) => ({
-      ...finding,
-    }))
-    return manualFindings.length > 0
-      ? [
-          {
-            name: `${this.providerName}${this.entityName}Findings`,
-            mutation: `
-      mutation($input: [Add${this.providerName}${this.entityName}FindingsInput!]!) {
-        add${this.providerName}${this.entityName}Findings(input: $input, upsert: true) {
-          numUids
-        }
-      }
-      `,
-            data: manualFindings,
-          },
-        ]
-      : []
-  }
-
-  // TODO: Optimize generated mutations number
   prepareMutations = (findings: RuleFinding[] = []): Entity[] => {
     // Group Findings by schema type
-    const { manual, ...processedRules } = groupBy(findings, 'typename')
+    const { manual: manualData = [], ...processedRules } = groupBy(
+      findings,
+      'typename'
+    )
 
     // Prepare processed rules mutations
     const processedRulesData = this.prepareProcessedMutations(processedRules)
 
-    // Prepare manual mutations
-    const manualRulesData = this.prepareManualMutations(manual)
-
     // Prepare provider mutations
     const providerData = this.prepareProviderMutations(findings)
 
-    return [...manualRulesData, ...processedRulesData, ...providerData]
+    return [
+      {
+        name: `${this.providerName}${this.entityName}Findings`,
+        mutation: `
+mutation($input: [Add${this.providerName}${this.entityName}FindingsInput!]!) {
+  add${this.providerName}${this.entityName}Findings(input: $input, upsert: true) {
+    numUids
+  }
+}
+`,
+        data: [...manualData, ...processedRulesData].map(
+          ({ typename, ...finding }) => ({
+            ...finding,
+          })
+        ),
+      },
+      ...providerData,
+    ]
   }
 }
