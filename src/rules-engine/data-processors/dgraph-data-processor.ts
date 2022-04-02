@@ -168,10 +168,22 @@ export default class DgraphDataProcessor implements DataProcessor {
                 key => this.typenameToFieldMap[key] === finding.typename
               )
 
+              // Set required fields to allow resource insertion
+              const requiredFields = !isEmpty(this.extraFields)
+                ? this.extraFields.reduce(
+                    (acc, current) => ({
+                      ...acc,
+                      [current]: finding[current],
+                    }),
+                    {}
+                  )
+                : {}
+
               return {
                 ...finding,
                 [resourceType]: {
                   id: resource,
+                  ...requiredFields,
                 },
               }
             })
