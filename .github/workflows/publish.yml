@@ -41,6 +41,9 @@ jobs:
         # See https://github.com/actions/setup-node/blob/main/docs/advanced-usage.md#use-private-packages
         run: yarn install --frozen-lockfile --prefer-offline --ignore-scripts
 
+      - name: Install jq for tests
+        run: npm explore node-jq && npm run install-binary
+
       - name: Build
         run: yarn prepack
 
