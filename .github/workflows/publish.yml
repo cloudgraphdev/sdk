@@ -42,7 +42,7 @@ jobs:
         run: yarn install --frozen-lockfile --prefer-offline --ignore-scripts
 
       - name: Install jq for tests
-        run: npm explore node-jq && npm run install-binary
+        run: node -r node-jq/scripts/install-binary.js
 
       - name: Build
         run: yarn prepack
