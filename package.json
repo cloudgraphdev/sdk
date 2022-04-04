@@ -13,8 +13,8 @@
   "repository": "github:cloudgraphdev/sdk",
   "bugs": "https://github.com/cloudgraphdev/sdk/issues",
   "scripts": {
-    "build": "yarn prepublish",
-    "prepublish": "npx tsc",
+    "build": "yarn prepack",
+    "prepack": "rm -rf dist && npx tsc",
     "test": "NODE_ENV=test jest",
     "lint": "eslint --config .eslintrc.json --ext .js,.ts ./",
     "lint:fix": "eslint --fix --config .eslintrc.json --ext .js,.ts ./"
