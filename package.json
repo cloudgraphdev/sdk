@@ -6,15 +6,14 @@
   "types": "dist/src/index.d.ts",
   "publishConfig": {
     "registry": "https://registry.npmjs.org/",
-    "tag": "latest",
     "access": "public"
   },
   "homepage": "https://www.cloudgraph.dev/",
   "repository": "github:cloudgraphdev/sdk",
   "bugs": "https://github.com/cloudgraphdev/sdk/issues",
   "scripts": {
-    "build": "yarn prepublish",
-    "prepublish": "npx tsc",
+    "build": "yarn prepack",
+    "prepack": "rm -rf dist && npx tsc",
     "test": "NODE_ENV=test jest",
     "lint": "eslint --config .eslintrc.json --ext .js,.ts ./",
     "lint:fix": "eslint --fix --config .eslintrc.json --ext .js,.ts ./"
@@ -37,8 +36,8 @@
     "@autocloud/eslint-config": "^0.1.0",
     "@semantic-release/changelog": "^6.0.1",
     "@semantic-release/git": "^10.0.1",
-    "@semantic-release/gitlab": "^8.0.0",
-    "@semantic-release/npm": "^7.1.3",
+    "@semantic-release/github": "^8.0.1",
+    "@semantic-release/npm": "^9.0.1",
     "@types/jest": "^26.0.24",
     "@types/node": "^16.4.12",
     "@typescript-eslint/eslint-plugin": "^4.28.5",
