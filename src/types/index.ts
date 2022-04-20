@@ -41,12 +41,14 @@ export interface Service {
     opts,
     account,
     rawData,
+    params,
   }: {
     regions?: string
     config: any
     opts: Opts
     account?: string
     rawData: any
+    params?: { [field: string]: any }
   }) => any
 }
 export interface Entity {
