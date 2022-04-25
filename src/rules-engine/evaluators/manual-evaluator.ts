@@ -6,12 +6,15 @@ export default class ManualEvaluator implements RuleEvaluator<JsonRule> {
     return !('gql' in rule) && !('conditions' in rule) && !('resource' in rule)
   }
 
-  async evaluateSingleResource(rule: Rule): Promise<RuleFinding> {
+  async evaluateSingleResource({ id, severity }: Rule): Promise<RuleFinding> {
     return {
-      id: `${rule.id}/manual`,
+      id: `${id}/manual`,
       result: Result.SKIPPED,
       typename: 'manual',
-      rule,
+      rule: {
+        id,
+        severity,
+      },
     } as RuleFinding
   }
 }

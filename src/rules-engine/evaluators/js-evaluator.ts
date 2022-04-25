@@ -14,20 +14,20 @@ export default class JsEvaluator implements RuleEvaluator<JsRule> {
   }
 
   async evaluateSingleResource(
-    rule: JsRule,
+    { id, check, severity }: JsRule,
     data: ResourceData
   ): Promise<RuleFinding> {
-    const { gql, check, resource, ...ruleMetadata } = rule
-    const result = rule.check!(data)
-      ? RuleResult.MATCHES
-      : RuleResult.DOESNT_MATCH
+    const result = check!(data) ? RuleResult.MATCHES : RuleResult.DOESNT_MATCH
 
     const finding = {
-      id: `${rule.id}/${data.resource?.id}`,
+      id: `${id}/${data.resource?.id}`,
       resourceId: data.resource?.id,
       result: result !== RuleResult.MATCHES ? Result.FAIL : Result.PASS,
       typename: data.resource?.__typename, // eslint-disable-line no-underscore-dangle
-      rule: ruleMetadata,
+      rule: {
+        id,
+        severity,
+      },
     } as RuleFinding
     return finding
   }

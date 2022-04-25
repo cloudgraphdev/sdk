@@ -6,33 +6,16 @@ import ManualEvaluator from './evaluators/manual-evaluator'
 import JsEvaluator from './evaluators/js-evaluator'
 import { RuleEvaluator } from './evaluators/rule-evaluator'
 import { Engine, ResourceData, Rule, RuleFinding } from './types'
+import DataProcessor from './data-processors/data-processor'
+import { Entity } from '../types'
 
 export default class RulesProvider implements Engine {
   evaluators: RuleEvaluator<any>[] = []
 
-  private readonly typenameToFieldMap: { [typeName: string]: string }
+  private readonly dataProcessor: DataProcessor
 
-  private readonly extraFields: string[]
-
-  private readonly providerName
-
-  private readonly entityName
-
-  constructor({
-    providerName,
-    entityName,
-    typenameToFieldMap,
-    extraFields,
-  }: {
-    providerName: string
-    entityName: string
-    typenameToFieldMap?: { [tn: string]: string }
-    extraFields?: string[]
-  }) {
-    this.extraFields = extraFields ?? []
-    this.typenameToFieldMap = typenameToFieldMap ?? {}
-    this.entityName = entityName
-    this.providerName = providerName
+  constructor(dataProcessor: DataProcessor) {
+    this.dataProcessor = dataProcessor
     this.evaluators = [
       new JsonEvaluator(),
       new JsEvaluator(),
@@ -69,13 +52,13 @@ export default class RulesProvider implements Engine {
     const finding = await evaluator.evaluateSingleResource(rule, data)
 
     // Inject extra fields
-    for (const field of this.extraFields) {
+    for (const field of this.dataProcessor.extraFields) {
       finding[field] = data.resource[field]
     }
 
     const connField =
       data.resource.__typename && // eslint-disable-line no-underscore-dangle
-      this.typenameToFieldMap[data.resource.__typename] // eslint-disable-line no-underscore-dangle
+      this.dataProcessor.typenameToFieldMap[data.resource.__typename] // eslint-disable-line no-underscore-dangle
 
     if (connField) {
       finding[connField] = [{ id: data.resource.id }]
@@ -100,71 +83,7 @@ export default class RulesProvider implements Engine {
     return data
   }
 
-  getSchema = (): string[] => {
-    const mainType = `
-    enum FindingsResult {
-      PASS
-      FAIL
-      MISSING
-      SKIPPED
-    }
-
-    type ${this.providerName}Findings @key(fields: "id") {
-      id: String! @id
-      ${this.entityName}Findings: [${this.providerName}${
-      this.entityName
-    }Findings]
-    }
-
-    type ruleMetadata @key(fields: "id") {
-      id: String! @id @search(by: [hash, regexp])
-      severity: String! @search(by: [hash, regexp])
-      description: String! @search(by: [hash, regexp])
-      title: String @search(by: [hash, regexp])
-      audit: String @search(by: [hash, regexp])
-      rationale: String @search(by: [hash, regexp])
-      remediation: String @search(by: [hash, regexp])
-      references: [String] @search(by: [hash, regexp])
-      findings: [baseFinding] @hasInverse(field: rule)
-    }
-
-    interface baseFinding {
-      id: String! @id
-      resourceId: String @search(by: [hash, regexp])
-      rule: [ruleMetadata] @hasInverse(field: findings)
-      result: FindingsResult @search
-    }
-
-    type ${this.providerName}${
-      this.entityName
-    }Findings implements baseFinding @key(fields: "id") {
-      findings: ${this.providerName}Findings  @hasInverse(field: ${
-      this.entityName
-    }Findings)
-      # extra fields
-      ${this.extraFields.map(
-        field => `${field}: String @search(by: [hash, regexp])`
-      )}
-      # connections
-       ${Object.keys(this.typenameToFieldMap)
-         .map(
-           (tn: string) =>
-             `${tn}: [${this.typenameToFieldMap[tn]}] @hasInverse(field: ${this.entityName}Findings)`
-         )
-         .join(' ')}
-    }
-      `
-    const extensions = Object.keys(this.typenameToFieldMap)
-      .map(
-        (tn: string) =>
-          `extend type ${this.typenameToFieldMap[tn]} {
-   ${this.entityName}Findings: [${this.providerName}${this.entityName}Findings] @hasInverse(field: ${tn})
-}`
-      )
-      .join('\n')
-
-    return [mainType, extensions]
-  }
+  getSchema = (): string[] => this.dataProcessor.getSchema()
 
   processRule = async (rule: Rule, data: unknown): Promise<RuleFinding[]> => {
     const res: any[] = []
@@ -215,4 +134,9 @@ export default class RulesProvider implements Engine {
     }
     return res
   }
+
+  prepareMutations = (findings: RuleFinding[], rules: Rule[]): Entity[] => [
+    ...this.dataProcessor.prepareRulesMetadataMutations(rules),
+    ...this.dataProcessor.prepareFindingsMutations(findings),
+  ]
 }
