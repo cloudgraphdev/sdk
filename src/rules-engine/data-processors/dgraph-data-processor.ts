@@ -198,6 +198,11 @@ export default class DgraphDataProcessor implements DataProcessor {
   }
 
   prepareRulesMetadataMutations = (rules: Rule[] = []): Entity[] => {
+    // Return an empty array if there are no rules
+    if (isEmpty(rules)) {
+      return []
+    }
+
     return [
       {
         name: 'ruleMetadata',
