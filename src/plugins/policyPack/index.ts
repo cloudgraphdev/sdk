@@ -186,19 +186,18 @@ export default class PolicyPackPlugin extends Plugin {
   }
 
   // TODO: Generalize data processor moving storage module to SDK with its interfaces
-  private getDataProcessor({
-    entity,
-    provider,
-  }: {
-    entity: string
-    provider: string
+  private getDataProcessor(config: {
+    providerName: string
+    entityName: string
+    typenameToFieldMap?: { [tn: string]: string }
+    extraFields?: string[]
   }): DataProcessor {
-    const dataProcessorKey = `${provider}${entity}`
+    const dataProcessorKey = `${config.providerName}${config.entityName}`
     if (this.dataProcessors[dataProcessorKey]) {
       return this.dataProcessors[dataProcessorKey]
     }
 
-    const dataProcessor = new DgraphDataProcessor(provider, entity)
+    const dataProcessor = new DgraphDataProcessor(config)
     this.dataProcessors[dataProcessorKey] = dataProcessor
     return dataProcessor
   }
@@ -256,13 +255,16 @@ export default class PolicyPackPlugin extends Plugin {
         continue // eslint-disable-line no-continue
       }
 
-      // Initialize RulesEngine
-      const rulesEngine = new RulesEngine({
+      // Initialize Data Processor
+      const dataProcessor = this.getDataProcessor({
         providerName: this.provider.name,
         entityName: policyPackPlugin.entity,
         typenameToFieldMap: resourceTypeNamesToFieldsMap,
         extraFields: policyPackPlugin.extraFields,
       })
+
+      // Initialize RulesEngine
+      const rulesEngine = new RulesEngine(dataProcessor)
 
       this.policyPacksPlugins[policyPack] = {
         engine: rulesEngine,
@@ -318,14 +320,8 @@ export default class PolicyPackPlugin extends Plugin {
           storageEngine,
         })
 
-        // Data Processor
-        const dataProcessor = this.getDataProcessor({
-          entity,
-          provider: this.provider.name,
-        })
-
         // Prepare mutations
-        const mutations = dataProcessor.prepareMutations(findings)
+        const mutations = engine.prepareMutations(findings, rules)
 
         // Save connections
         processConnectionsBetweenEntities({
