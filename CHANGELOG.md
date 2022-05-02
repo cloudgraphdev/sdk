@@ -1,3 +1,17 @@
+# [0.19.0-beta.1](https://github.com/cloudgraphdev/sdk/compare/0.18.1...0.19.0-beta.1) (2022-05-02)
+
+
+### Bug Fixes
+
+* Fixed empty rules edge case ([4953a6c](https://github.com/cloudgraphdev/sdk/commit/4953a6ce10b9e41d5f569f80fcdbed6db88be0b8))
+
+
+### Features
+
+* Considered edge cases for aws provider extra fields ([ab75afa](https://github.com/cloudgraphdev/sdk/commit/ab75afa8bfeb0949e053bb38440cae5ce1628ded))
+* Reduced mutations payload ([f931f91](https://github.com/cloudgraphdev/sdk/commit/f931f91c8df7a856f68d631bf801666a4f0a7ab6))
+* Refactored RulesEngine to improve mutations performance ([af20dea](https://github.com/cloudgraphdev/sdk/commit/af20dea938b83e79c714114747ebd08b0284ba38))
+
 # [0.19.0-alpha.1](https://github.com/cloudgraphdev/sdk/compare/0.18.1...0.19.0-alpha.1) (2022-04-25)
 
 
