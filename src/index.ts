@@ -14,6 +14,7 @@ import {
   ServiceConnection,
   ProviderData,
   Entity,
+  EntityMutations,
   SchemaMap,
 } from './types'
 import {
@@ -41,6 +42,7 @@ import {
   mergeSchemas,
   getSchemaFromFolder,
   generateSchemaMapDynamically,
+  generateEntityMutations,
 } from './utils/schema'
 
 // Export Utils
@@ -52,6 +54,7 @@ export {
   mergeSchemas,
   getSchemaFromFolder,
   generateSchemaMapDynamically,
+  generateEntityMutations,
 }
 
 export { PluginModule, PluginType, Result, pluginMap }
@@ -69,6 +72,7 @@ export type {
   JsRule,
   JsonRule,
   Entity,
+  EntityMutations,
   StorageEngineConnectionConfig,
   StorageEngineConfig,
   StorageEngine,
