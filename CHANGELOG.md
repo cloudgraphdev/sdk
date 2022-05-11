@@ -1,3 +1,10 @@
+# [0.20.0-alpha.1](https://github.com/cloudgraphdev/sdk/compare/0.19.0...0.20.0-alpha.1) (2022-05-11)
+
+
+### Features
+
+* Adding utils to generate mutations dynamically ([c1d6fa3](https://github.com/cloudgraphdev/sdk/commit/c1d6fa3d2dec99bc25d9454b0c7801340650cffe))
+
 # [0.19.0](https://github.com/cloudgraphdev/sdk/compare/0.18.1...0.19.0) (2022-05-02)
 
 
