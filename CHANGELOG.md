@@ -1,3 +1,10 @@
+# [0.20.0-alpha.2](https://github.com/cloudgraphdev/sdk/compare/0.20.0-alpha.1...0.20.0-alpha.2) (2022-06-09)
+
+
+### Features
+
+* Added util function to generate unique ids ([8d8fc11](https://github.com/cloudgraphdev/sdk/commit/8d8fc11e0a1678ce47ce0f32f296009de253b8da))
+
 # [0.20.0-alpha.1](https://github.com/cloudgraphdev/sdk/compare/0.19.0...0.20.0-alpha.1) (2022-05-11)
 
 
