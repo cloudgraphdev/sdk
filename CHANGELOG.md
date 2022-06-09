@@ -1,3 +1,31 @@
+# [0.20.0-alpha.2](https://github.com/cloudgraphdev/sdk/compare/0.20.0-alpha.1...0.20.0-alpha.2) (2022-06-09)
+
+
+### Features
+
+* Added util function to generate unique ids ([8d8fc11](https://github.com/cloudgraphdev/sdk/commit/8d8fc11e0a1678ce47ce0f32f296009de253b8da))
+
+# [0.20.0-alpha.1](https://github.com/cloudgraphdev/sdk/compare/0.19.0...0.20.0-alpha.1) (2022-05-11)
+
+
+### Features
+
+* Adding utils to generate mutations dynamically ([c1d6fa3](https://github.com/cloudgraphdev/sdk/commit/c1d6fa3d2dec99bc25d9454b0c7801340650cffe))
+
+# [0.19.0](https://github.com/cloudgraphdev/sdk/compare/0.18.1...0.19.0) (2022-05-02)
+
+
+### Bug Fixes
+
+* Fixed empty rules edge case ([4953a6c](https://github.com/cloudgraphdev/sdk/commit/4953a6ce10b9e41d5f569f80fcdbed6db88be0b8))
+
+
+### Features
+
+* Considered edge cases for aws provider extra fields ([ab75afa](https://github.com/cloudgraphdev/sdk/commit/ab75afa8bfeb0949e053bb38440cae5ce1628ded))
+* Reduced mutations payload ([f931f91](https://github.com/cloudgraphdev/sdk/commit/f931f91c8df7a856f68d631bf801666a4f0a7ab6))
+* Refactored RulesEngine to improve mutations performance ([af20dea](https://github.com/cloudgraphdev/sdk/commit/af20dea938b83e79c714114747ebd08b0284ba38))
+
 # [0.19.0-beta.1](https://github.com/cloudgraphdev/sdk/compare/0.18.1...0.19.0-beta.1) (2022-05-02)
 
 
