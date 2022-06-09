@@ -37,6 +37,7 @@ import {
   intersectStringArrays,
   getKeyByValue,
   toCamel,
+  generateUniqueId,
 } from './utils'
 import {
   mergeSchemas,
@@ -55,6 +56,7 @@ export {
   getSchemaFromFolder,
   generateSchemaMapDynamically,
   generateEntityMutations,
+  generateUniqueId,
 }
 
 export { PluginModule, PluginType, Result, pluginMap }

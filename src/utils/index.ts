@@ -1,3 +1,4 @@
+import crypto from 'crypto'
 import camelCase from 'lodash/camelCase'
 
 export const toCamel = (o: any): any => {
@@ -67,3 +68,11 @@ export const sortResourcesDependencies = (
     }
     return 0
   })
+
+/**
+ * Create an unique hash identifier
+ * @param entity entire entity to create identifier
+ * @returns unique identifier
+ */
+export const generateUniqueId = (entity: any): string =>
+  crypto.createHash('md5').update(JSON.stringify(entity)).digest('hex')
