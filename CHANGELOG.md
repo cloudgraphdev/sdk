@@ -1,3 +1,11 @@
+# [0.20.0](https://github.com/cloudgraphdev/sdk/compare/0.19.0...0.20.0) (2022-06-09)
+
+
+### Features
+
+* Added util function to generate unique ids ([8d8fc11](https://github.com/cloudgraphdev/sdk/commit/8d8fc11e0a1678ce47ce0f32f296009de253b8da))
+* Adding utils to generate mutations dynamically ([c1d6fa3](https://github.com/cloudgraphdev/sdk/commit/c1d6fa3d2dec99bc25d9454b0c7801340650cffe))
+
 # [0.20.0-beta.1](https://github.com/cloudgraphdev/sdk/compare/0.19.0...0.20.0-beta.1) (2022-06-09)
 
 
