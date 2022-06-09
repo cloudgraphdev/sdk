@@ -49,10 +49,17 @@ export interface Service {
     rawData: any
   }) => any
 }
+
+export interface EntityMutations {
+  query?: string
+  upsert: string
+  delete: string
+}
+
 export interface Entity {
   className?: string
   name: string
-  mutation: string
+  mutation: EntityMutations | string
   data: any[] | any
 }
 

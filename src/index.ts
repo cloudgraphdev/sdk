@@ -14,6 +14,7 @@ import {
   ServiceConnection,
   ProviderData,
   Entity,
+  EntityMutations,
   SchemaMap,
 } from './types'
 import {
@@ -36,11 +37,13 @@ import {
   intersectStringArrays,
   getKeyByValue,
   toCamel,
+  generateUniqueId,
 } from './utils'
 import {
   mergeSchemas,
   getSchemaFromFolder,
   generateSchemaMapDynamically,
+  generateEntityMutations,
 } from './utils/schema'
 
 // Export Utils
@@ -52,6 +55,8 @@ export {
   mergeSchemas,
   getSchemaFromFolder,
   generateSchemaMapDynamically,
+  generateEntityMutations,
+  generateUniqueId,
 }
 
 export { PluginModule, PluginType, Result, pluginMap }
@@ -69,6 +74,7 @@ export type {
   JsRule,
   JsonRule,
   Entity,
+  EntityMutations,
   StorageEngineConnectionConfig,
   StorageEngineConfig,
   StorageEngine,
