@@ -8,7 +8,7 @@ export default abstract class BaseEvaluator<K extends Rule> implements RuleEvalu
 
   abstract evaluateSingleResource(rule: K, data?: ResourceData): Promise<RuleFinding>
 
-  async evaluateMissingResource({ id, severity, resource }: K): Promise<RuleFinding> {
+  async evaluateMissingResource({ id, severity, resource }: Rule): Promise<RuleFinding> {
     return {
       id: `${id}/missing/${cuid()}`,
       resourceId: resource?.replace('[*]', ''),

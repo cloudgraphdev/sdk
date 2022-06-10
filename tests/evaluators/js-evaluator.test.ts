@@ -66,4 +66,25 @@ describe('JsEvaluator', () => {
     )
     expect(passedRule.result).toEqual(Result.PASS)
   })
+
+  test('should return missing as result', async () => {
+    const finding = await evaluator.evaluateMissingResource(
+      { id: cuid() } as never
+    )
+    expect(finding.result).toEqual(Result.MISSING)
+  })
+
+  test('should contain "missing" at the id', async () => {
+    const finding = await evaluator.evaluateMissingResource(
+      { id: cuid() } as any
+    )
+    expect(finding.id.includes('missing')).toEqual(true)
+  })
+
+  test('should return the resource path at the resourceId', async () => {
+    const finding = await evaluator.evaluateMissingResource(
+      { id: cuid(), resource: 'resourcePath[*]'} as any
+    )
+    expect(finding.resourceId).toEqual('resourcePath')
+  })
 })
