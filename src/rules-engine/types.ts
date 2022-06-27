@@ -63,6 +63,7 @@ export interface RuleFinding extends Finding {
 
 export interface JsonRule extends Rule {
   conditions: Condition
+  exclude?: Condition
 }
 
 export interface JsRule extends Rule {
