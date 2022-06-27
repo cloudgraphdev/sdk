@@ -23,7 +23,11 @@ export default class JsonEvaluator implements RuleEvaluator<JsonRule> {
     { id, conditions, severity }: JsonRule,
     data: ResourceData
   ): Promise<RuleFinding> {
-    const result = (await this.evaluateCondition(conditions, data))
+    const { gql, conditions, resource, exclude, ...ruleMetadata } = rule
+    if (exclude && (await this.evaluateCondition(exclude, data))) {
+      return
+    }
+    const result = (await this.evaluateCondition(rule.conditions, data))
       ? RuleResult.MATCHES
       : RuleResult.DOESNT_MATCH
 
@@ -157,6 +161,7 @@ export default class JsonEvaluator implements RuleEvaluator<JsonRule> {
 
     if (firstArg && jqQuery) {
       firstArg = await this.runJq(firstArg, jqQuery)
+      data.data = lodash.cloneDeep(data.data)
       lodash.set(data.data, data.elementPath, firstArg)
     }
 

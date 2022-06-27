@@ -13,6 +13,8 @@ export default {
       return shouldBeEmpty ? hasKeys === 0 : hasKeys > 0
     }
 
-    return false
+    return (
+      (data === null || data === undefined || data === '') === shouldBeEmpty
+    )
   },
 }
