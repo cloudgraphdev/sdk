@@ -6,5 +6,4 @@ export default {
   lessThanInclusive: (a, b) => a <= b,
   greaterThan: (a, b) => a > b,
   greaterThanInclusive: (a, b) => a >= b,
-  regExp: (a, b) => new RegExp(a).test(b),
 }
