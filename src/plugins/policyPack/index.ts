@@ -140,12 +140,10 @@ export default class PolicyPackPlugin extends Plugin {
     data,
     rules,
     policyPack,
-    storageEngine,
   }: {
     data: any,
     rules: Rule[]
     policyPack: string
-    storageEngine: StorageEngine
   }): Promise<RuleFinding[]> {
     const findings: RuleFinding[] = []
 
@@ -164,7 +162,6 @@ export default class PolicyPackPlugin extends Plugin {
               data,
               rules: subRules,
               policyPack,
-              storageEngine,
             }))
           )
         } else {
@@ -377,7 +374,6 @@ export default class PolicyPackPlugin extends Plugin {
           data: linkedData,
           rules,
           policyPack,
-          storageEngine,
         })
 
         // Prepare mutations
