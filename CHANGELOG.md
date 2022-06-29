@@ -1,3 +1,11 @@
+# [0.21.0-alpha.1](https://github.com/cloudgraphdev/sdk/compare/0.20.0...0.21.0-alpha.1) (2022-06-29)
+
+
+### Features
+
+* Added unit tests ([0d14267](https://github.com/cloudgraphdev/sdk/commit/0d14267c357307b8812d4d35faa2a50bc73437a7))
+* Extend rule engine to include missing checks when the resource does not exist ([79f8dd3](https://github.com/cloudgraphdev/sdk/commit/79f8dd3c9ffa149c431feb09f9b087a8b92e5250))
+
 # [0.20.0](https://github.com/cloudgraphdev/sdk/compare/0.19.0...0.20.0) (2022-06-09)
 
 
