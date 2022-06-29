@@ -1,7 +1,7 @@
 import { JsonRule, Result, Rule, RuleFinding } from '../types'
-import { RuleEvaluator } from './rule-evaluator'
+import BaseEvaluator from './base-evaluator'
 
-export default class ManualEvaluator implements RuleEvaluator<JsonRule> {
+export default class ManualEvaluator extends BaseEvaluator<JsonRule> {
   canEvaluate(rule: Rule): boolean {
     return !('gql' in rule) && !('conditions' in rule) && !('resource' in rule)
   }
