@@ -51,6 +51,8 @@ export default class RulesProvider implements Engine {
   ): Promise<RuleFinding> => {
     const finding = await evaluator.evaluateSingleResource(rule, data)
 
+    if (!finding) return
+    
     // Inject extra fields
     for (const field of this.dataProcessor.extraFields) {
       finding[field] = data.resource[field]
