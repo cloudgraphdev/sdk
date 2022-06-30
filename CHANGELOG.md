@@ -1,3 +1,17 @@
+# [0.21.0-alpha.2](https://github.com/cloudgraphdev/sdk/compare/0.21.0-alpha.1...0.21.0-alpha.2) (2022-06-30)
+
+
+### Bug Fixes
+
+* adapt CLI to pass data instead of queries ([dbaa7ce](https://github.com/cloudgraphdev/sdk/commit/dbaa7ced67870863792cedaaf80b965c6d11cbf0))
+
+
+### Features
+
+* adapt CLI to pass data instead of queries ([1d73587](https://github.com/cloudgraphdev/sdk/commit/1d735872a6703e3880b26df8ee8d33982d56c3f1))
+* Move getLinkedData method to utils folder ([171d937](https://github.com/cloudgraphdev/sdk/commit/171d937ba7d4f1b6b9c0f878bd58288724ba138e))
+* remove unused storageEngine param ([a9a4ccb](https://github.com/cloudgraphdev/sdk/commit/a9a4ccb3613e7cf3dbc08a1e74bddef9d082fbc4))
+
 # [0.21.0-alpha.1](https://github.com/cloudgraphdev/sdk/compare/0.20.0...0.21.0-alpha.1) (2022-06-29)
 
 
