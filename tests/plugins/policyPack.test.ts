@@ -36,6 +36,11 @@ const storageEngine = {
   run: jest.fn(),
 }
 
+const providerData = {
+  entities: [],
+  connections: {}
+}
+
 describe('PolicyPack Plugin', () => {
   let plugin
   beforeEach(() => {
@@ -71,12 +76,13 @@ describe('PolicyPack Plugin', () => {
     await plugin.execute({
       storageRunning: true,
       storageEngine,
+      providerData,
       processConnectionsBetweenEntities: jest.fn(),
     })
 
     expect(storageEngine.getSchema).toHaveBeenCalled()
     expect(storageEngine.setSchema).toHaveBeenCalled()
-    expect(storageEngine.query).toHaveBeenCalledTimes(1)
+    expect(storageEngine.query).toHaveBeenCalledTimes(0)
     expect(storageEngine.run).toHaveBeenCalledTimes(1)
   })
 
@@ -96,12 +102,13 @@ describe('PolicyPack Plugin', () => {
     await plugin.execute({
       storageRunning: true,
       storageEngine,
+      providerData,
       processConnectionsBetweenEntities: jest.fn(),
     })
 
     expect(storageEngine.getSchema).toHaveBeenCalled()
     expect(storageEngine.setSchema).toHaveBeenCalled()
-    expect(storageEngine.query).toHaveBeenCalledTimes(3)
+    expect(storageEngine.query).toHaveBeenCalledTimes(0)
     expect(storageEngine.run).toHaveBeenCalledTimes(1)
   })
 })

@@ -27,10 +27,10 @@ describe('Common Operators', () => {
       expect(CommonOperators.isEmpty({ key: 'one' }, true)).toBeFalsy()
     })
     test('Should fail given a null value', () => {
-      expect(CommonOperators.isEmpty(null, true)).toBeFalsy()
+      expect(CommonOperators.isEmpty(null, false)).toBeFalsy()
     })
     test('Should fail given an undefined value', () => {
-      expect(CommonOperators.isEmpty(undefined, true)).toBeFalsy()
+      expect(CommonOperators.isEmpty(undefined, false)).toBeFalsy()
     })
     test('Should fail given an integer', () => {
       expect(CommonOperators.isEmpty(33, true)).toBeFalsy()
