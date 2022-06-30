@@ -145,12 +145,12 @@ export default class DgraphDataProcessor implements DataProcessor {
 
   private prepareEntitiesMutations(findings: RuleFinding[]): RuleFinding[] {
     // Group Findings by schema type
-    const { manual: manualData = [], missing: missingData = [], ...processedRules } = groupBy(
+    const { manual: manualData = [], ...processedRules } = groupBy(
       findings,
       'typename'
     )
 
-    const mutations = [...manualData, ...missingData]
+    const mutations = [...manualData]
     for (const findingType in processedRules) {
       if (!isEmpty(findingType)) {
         // Group Findings by resource

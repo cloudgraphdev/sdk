@@ -103,12 +103,6 @@ export default class RulesProvider implements Engine {
       return res
     }
 
-    if (isEmpty(resourcePaths)) {
-      // Returned Missing Resource Rule Response   
-      res.push(await evaluator.evaluateMissingResource(rule))
-      return res
-    }
-
     // @NOTE: here we can evaluate things such as Data being empty (may imply rule to pass)
     // or if we have no resources, or none pass, we can decide on that rule (+ some rule field)
     for (let i = 0; i < resourcePaths.length; i++) {

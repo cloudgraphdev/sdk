@@ -1,9 +1,8 @@
 import RulesProvider from '../src/rules-engine'
-import { Engine, Result, Rule } from '../src/rules-engine/types'
+import { Engine, Rule } from '../src/rules-engine/types'
 import ManualEvaluatorMock from './evaluators/manual-evaluator.test'
 import JSONEvaluatordMock from './evaluators/json-evaluator.test'
 import DgraphDataProcessor from '../src/rules-engine/data-processors/dgraph-data-processor'
-import { RuleFinding } from '../src'
 
 const typenameToFieldMap = {
   resourceA: 'querySchemaA',
@@ -51,17 +50,17 @@ describe('RulesEngine', () => {
     )
   })
 
-  it('Should return a missing finding type processing a rule with no data', async () => {
+  it('Should return an empty array processing a rule with no data', async () => {
     const data = {}
 
     const processedRule = await rulesEngine.processRule(
       JSONEvaluatordMock.jsonRule,
       data
-    ) as RuleFinding[]
+    )
 
     expect(processedRule).toBeDefined()
-    expect(processedRule.length).toBe(1)
-    expect(processedRule[0].result).toBe(Result.MISSING)
+    expect(processedRule instanceof Array).toBeTruthy()
+    expect(processedRule.length).toBe(0)
   })
 
   it('Should return empty mutations array given an empty findings array', () => {
