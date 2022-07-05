@@ -1,6 +1,6 @@
-import { ProviderData } from '../types'
+import { ProviderData, SchemaMap } from '../types'
 
-const getLinkedData = (providerData: ProviderData): any => {
+const getLinkedData = (providerData: ProviderData, schemasMap?: SchemaMap): any => {
   const linkedData = {}
   const allEntities = providerData?.entities || []
   const allConnections = providerData?.connections || {}
@@ -42,11 +42,12 @@ const getLinkedData = (providerData: ProviderData): any => {
         }
         entity[conn.field].push(targetEntity)
         // inverse relation
-        // const inverseConnField = this.schemasMap[entity.__typename] || 'account' // @TODO: account doesn't have a name
-        // if (!targetEntity[inverseConnField]) {
-        //   targetEntity[inverseConnField] = []
-        // }
-        // targetEntity[inverseConnField].push(entity)
+        // eslint-disable-next-line no-underscore-dangle
+        const inverseConnField = schemasMap && schemasMap[entity.__typename] || 'account' // @TODO: account doesn't have a name
+        if (!targetEntity[inverseConnField]) {
+          targetEntity[inverseConnField] = []
+        }
+        targetEntity[inverseConnField].push(entity)
       } // else parent relation.. is not used atm
     }
   }
