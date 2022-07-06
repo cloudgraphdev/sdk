@@ -1,3 +1,11 @@
+# [0.21.0-alpha.3](https://github.com/cloudgraphdev/sdk/compare/0.21.0-alpha.2...0.21.0-alpha.3) (2022-07-06)
+
+
+### Bug Fixes
+
+* remove node-jq implementation ([c614842](https://github.com/cloudgraphdev/sdk/commit/c6148429e056cd64cc3055f861b597e2dbcdbb09))
+* Rollback missing resources status feature ([5eb10e9](https://github.com/cloudgraphdev/sdk/commit/5eb10e9c610e92ec608acbac1fdefb4a84ea109c))
+
 # [0.21.0-alpha.2](https://github.com/cloudgraphdev/sdk/compare/0.21.0-alpha.1...0.21.0-alpha.2) (2022-06-30)
 
 
