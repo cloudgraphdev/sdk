@@ -1,3 +1,21 @@
+# [0.21.0](https://github.com/cloudgraphdev/sdk/compare/0.20.0...0.21.0) (2022-07-06)
+
+
+### Bug Fixes
+
+* adapt CLI to pass data instead of queries ([dbaa7ce](https://github.com/cloudgraphdev/sdk/commit/dbaa7ced67870863792cedaaf80b965c6d11cbf0))
+* remove node-jq implementation ([c614842](https://github.com/cloudgraphdev/sdk/commit/c6148429e056cd64cc3055f861b597e2dbcdbb09))
+* Rollback missing resources status feature ([5eb10e9](https://github.com/cloudgraphdev/sdk/commit/5eb10e9c610e92ec608acbac1fdefb4a84ea109c))
+
+
+### Features
+
+* adapt CLI to pass data instead of queries ([1d73587](https://github.com/cloudgraphdev/sdk/commit/1d735872a6703e3880b26df8ee8d33982d56c3f1))
+* Added unit tests ([0d14267](https://github.com/cloudgraphdev/sdk/commit/0d14267c357307b8812d4d35faa2a50bc73437a7))
+* Extend rule engine to include missing checks when the resource does not exist ([79f8dd3](https://github.com/cloudgraphdev/sdk/commit/79f8dd3c9ffa149c431feb09f9b087a8b92e5250))
+* Move getLinkedData method to utils folder ([171d937](https://github.com/cloudgraphdev/sdk/commit/171d937ba7d4f1b6b9c0f878bd58288724ba138e))
+* remove unused storageEngine param ([a9a4ccb](https://github.com/cloudgraphdev/sdk/commit/a9a4ccb3613e7cf3dbc08a1e74bddef9d082fbc4))
+
 # [0.21.0-beta.1](https://github.com/cloudgraphdev/sdk/compare/0.20.0...0.21.0-beta.1) (2022-07-06)
 
 
