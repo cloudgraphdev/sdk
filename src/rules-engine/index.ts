@@ -51,6 +51,8 @@ export default class RulesProvider implements Engine {
   ): Promise<RuleFinding> => {
     const finding = await evaluator.evaluateSingleResource(rule, data)
 
+    if (!finding) return
+    
     // Inject extra fields
     for (const field of this.dataProcessor.extraFields) {
       finding[field] = data.resource[field]
@@ -91,14 +93,14 @@ export default class RulesProvider implements Engine {
     const resourcePaths = data ? jsonpath.nodes(data, rule.resource) : []
     const evaluator = this.getRuleEvaluator(rule)
 
+    if (!evaluator) {
+      return []
+    }
+
     if (isEmpty(data) && evaluator instanceof ManualEvaluator) {
       // Returned Manual Rule Response
       res.push(await evaluator.evaluateSingleResource(rule))
       return res
-    }
-
-    if (!evaluator) {
-      return []
     }
 
     // @NOTE: here we can evaluate things such as Data being empty (may imply rule to pass)

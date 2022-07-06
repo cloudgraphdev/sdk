@@ -9,7 +9,6 @@ export type ResourceData = {
 export type Condition = {
   path?: string
   value?: string | number | Condition | (string | number)[]
-  jq?: string
   [operationId: string]: any
 }
 
@@ -65,6 +64,7 @@ export interface RuleFinding extends Finding {
 
 export interface JsonRule extends Rule {
   conditions: Condition
+  exclude?: Condition
 }
 
 export interface JsRule extends Rule {
