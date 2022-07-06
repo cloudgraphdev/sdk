@@ -1,6 +1,6 @@
 {
   "name": "@cloudgraph/sdk",
-  "version": "0.20.0",
+  "version": "0.21.0-beta.1",
   "description": "SDK for cloud graph providers and cli",
   "main": "dist/src/index.js",
   "types": "dist/src/index.d.ts",
@@ -29,7 +29,6 @@
     "inquirer": "^8.1.2",
     "jsonpath": "^1.1.1",
     "lodash": "^4.17.21",
-    "node-jq": "^2.3.0",
     "ora": "^5.4.1"
   },
   "devDependencies": {

@@ -15,6 +15,7 @@ import { Result, Rule, Severity } from '../../rules-engine/types'
 import Plugin, { ConfiguredPlugin, PluginManager } from '../types'
 import DgraphDataProcessor from '../../rules-engine/data-processors/dgraph-data-processor'
 import DataProcessor from '../../rules-engine/data-processors/data-processor'
+import getLinkedData from '../../utils/data'
 
 export default class PolicyPackPlugin extends Plugin {
   constructor({
@@ -137,13 +138,13 @@ export default class PolicyPackPlugin extends Plugin {
   }
 
   private async executeRule({
+    data,
     rules,
     policyPack,
-    storageEngine,
   }: {
+    data: any,
     rules: Rule[]
     policyPack: string
-    storageEngine: StorageEngine
   }): Promise<RuleFinding[]> {
     const findings: RuleFinding[] = []
 
@@ -159,18 +160,16 @@ export default class PolicyPackPlugin extends Plugin {
 
           findings.push(
             ...(await this.executeRule({
+              data,
               rules: subRules,
               policyPack,
-              storageEngine,
             }))
           )
         } else {
-          const { data } = rule.gql
-            ? await storageEngine.query(rule.gql)
-            : { data: undefined }
+          const ruleData = rule.gql ? data : undefined
           const results = (await this.policyPacksPlugins[
             policyPack
-          ]?.engine?.processRule(rule, data)) as RuleFinding[]
+          ]?.engine?.processRule(rule, ruleData)) as RuleFinding[]
 
           findings.push(...results)
         }
@@ -277,10 +276,12 @@ export default class PolicyPackPlugin extends Plugin {
   async execute({
     storageRunning,
     storageEngine,
+    providerData,
     processConnectionsBetweenEntities,
   }: {
     storageRunning: boolean
     storageEngine: StorageEngine
+    providerData: ProviderData
     processConnectionsBetweenEntities: (props: {
       provider?: string
       providerData: ProviderData
@@ -314,10 +315,13 @@ export default class PolicyPackPlugin extends Plugin {
           mergeSchemas(currentSchema, findingsSchema),
         ])
 
+        // Format metadata and link connections
+        const linkedData = getLinkedData(providerData, this.provider.schemasMap)
+
         const findings = await this.executeRule({
+          data: linkedData,
           rules,
           policyPack,
-          storageEngine,
         })
 
         // Prepare mutations
