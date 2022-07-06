@@ -1,5 +1,5 @@
 import lodash from 'lodash'
-import * as jqNode from 'node-jq'
+
 import {
   Condition,
   JsonRule,
@@ -122,10 +122,9 @@ export default class JsonEvaluator implements RuleEvaluator<JsonRule> {
     _data: _ResourceData
   ): Promise<number | boolean> {
     const condition = { ..._condition }
-    const { path, value, jq: jqQuery } = condition
+    const { path, value } = condition
     delete condition.path
     delete condition.value
-    delete condition.jq
     // remaining field should be the op name
     const op = Object.keys(condition)[0] //
     const operator = this.operators[op]
@@ -158,25 +157,6 @@ export default class JsonEvaluator implements RuleEvaluator<JsonRule> {
       firstArg = value
     }
 
-    if (firstArg && jqQuery) {
-      firstArg = await this.runJq(firstArg, jqQuery)
-      data.data = lodash.cloneDeep(data.data)
-      lodash.set(data.data, data.elementPath, firstArg)
-    }
-
     return operator(firstArg, otherArgs, data)
-  }
-
-  async runJq(data: unknown, jqQuery: string): Promise<unknown> {
-    try {
-      const json = (await jqNode.run(jqQuery, data, {
-        input: 'json',
-        output: 'json',
-      })) as unknown
-
-      return json || data
-    } catch (e) {
-      return data
-    }
   }
 }

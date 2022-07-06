@@ -9,7 +9,6 @@ export type ResourceData = {
 export type Condition = {
   path?: string
   value?: string | number | Condition | (string | number)[]
-  jq?: string
   [operationId: string]: any
 }
 

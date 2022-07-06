@@ -316,7 +316,7 @@ export default class PolicyPackPlugin extends Plugin {
         ])
 
         // Format metadata and link connections
-        const linkedData = getLinkedData(providerData)
+        const linkedData = getLinkedData(providerData, this.provider.schemasMap)
 
         const findings = await this.executeRule({
           data: linkedData,
