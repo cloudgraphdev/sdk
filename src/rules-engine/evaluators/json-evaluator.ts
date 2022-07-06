@@ -12,9 +12,9 @@ import {
 } from '../types'
 import AdditionalOperators from '../operators'
 import ComparisonOperators from '../operators/comparison'
-import BaseEvaluator from './base-evaluator'
+import { RuleEvaluator } from './rule-evaluator'
 
-export default class JsonEvaluator extends BaseEvaluator<JsonRule> {
+export default class JsonEvaluator implements RuleEvaluator<JsonRule> {
   canEvaluate(rule: JsonRule): boolean {
     return 'conditions' in rule
   }

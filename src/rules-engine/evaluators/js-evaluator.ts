@@ -6,9 +6,9 @@ import {
   RuleFinding,
   Result,
 } from '../types'
-import BaseEvaluator from './base-evaluator'
+import { RuleEvaluator } from './rule-evaluator'
 
-export default class JsEvaluator extends BaseEvaluator<JsRule> {
+export default class JsEvaluator implements RuleEvaluator<JsRule> {
   canEvaluate(rule: Rule | JsRule): boolean {
     return 'check' in rule
   }
