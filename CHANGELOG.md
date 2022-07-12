@@ -1,3 +1,10 @@
+## [0.21.1-beta.1](https://github.com/cloudgraphdev/sdk/compare/0.21.0...0.21.1-beta.1) (2022-07-12)
+
+
+### Bug Fixes
+
+* Added validations for null arrays ([32ad697](https://github.com/cloudgraphdev/sdk/commit/32ad697c8206590e4b036d34dea678c8992610b6))
+
 ## [0.21.1-alpha.1](https://github.com/cloudgraphdev/sdk/compare/0.21.0...0.21.1-alpha.1) (2022-07-12)
 
 
