@@ -20,7 +20,7 @@ export default abstract class Provider {
     throw new Error('Function configure has not been defined')
   }
 
-  getSchema(): string {
+  getSchema(): any {
     throw new Error('Function getSchema has not been defined')
   }
 
