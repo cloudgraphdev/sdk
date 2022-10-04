@@ -1,3 +1,4 @@
+import { DocumentNode } from 'graphql'
 import inquirer from 'inquirer'
 
 import { Logger } from '../logger'
@@ -20,7 +21,7 @@ export default abstract class Provider {
     throw new Error('Function configure has not been defined')
   }
 
-  getSchema(): string {
+  getSchema(): DocumentNode {
     throw new Error('Function getSchema has not been defined')
   }
 

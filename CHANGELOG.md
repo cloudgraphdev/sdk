@@ -1,3 +1,22 @@
+# [0.22.0-alpha.1](https://github.com/cloudgraphdev/sdk/compare/0.21.1...0.22.0-alpha.1) (2022-10-04)
+
+
+### Bug Fixes
+
+* **sdk:** change type any to DocumentNode ([f85bc9c](https://github.com/cloudgraphdev/sdk/commit/f85bc9c9ef00d81e99450c714fe1d8f8c5e27753))
+
+
+### Features
+
+* **sdk:** return raw schemas instead of strings ([2990e7b](https://github.com/cloudgraphdev/sdk/commit/2990e7b6ec6784b08ebb1c4ad8c00300ae98f520))
+
+## [0.21.1](https://github.com/cloudgraphdev/sdk/compare/0.21.0...0.21.1) (2022-07-12)
+
+
+### Bug Fixes
+
+* Added validations for null arrays ([32ad697](https://github.com/cloudgraphdev/sdk/commit/32ad697c8206590e4b036d34dea678c8992610b6))
+
 ## [0.21.1-beta.1](https://github.com/cloudgraphdev/sdk/compare/0.21.0...0.21.1-beta.1) (2022-07-12)
 
 
