@@ -63,9 +63,16 @@ export interface Entity {
   data: any[] | any
 }
 
+export interface ProviderError {
+  service: string
+  function: string
+  message: string
+}
+
 export interface ProviderData {
   entities: Entity[]
   connections: { [key: string]: ServiceConnection[] }
+  errors?: ProviderError[]
 }
 
 export type LoggerInput = string | { [key: string]: any } | unknown
