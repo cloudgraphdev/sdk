@@ -1,3 +1,17 @@
+# [0.23.0-beta.1](https://github.com/cloudgraphdev/sdk/compare/0.22.1...0.23.0-beta.1) (2023-07-18)
+
+
+### Features
+
+* **api:** add errors to result interface ([6b66fce](https://github.com/cloudgraphdev/sdk/commit/6b66fcefc6a6f237ea07b8e66d5a7583191e4b2e))
+
+# [0.23.0-alpha.1](https://github.com/cloudgraphdev/sdk/compare/0.22.1...0.23.0-alpha.1) (2023-07-18)
+
+
+### Features
+
+* **api:** add errors to result interface ([6b66fce](https://github.com/cloudgraphdev/sdk/commit/6b66fcefc6a6f237ea07b8e66d5a7583191e4b2e))
+
 ## [0.22.1](https://github.com/cloudgraphdev/sdk/compare/0.22.0...0.22.1) (2022-11-25)
 
 
