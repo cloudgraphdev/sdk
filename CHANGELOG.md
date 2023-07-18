@@ -1,3 +1,18 @@
+# [0.23.0-alpha.1](https://github.com/cloudgraphdev/sdk/compare/0.22.1...0.23.0-alpha.1) (2023-07-18)
+
+
+### Features
+
+* **api:** add errors to result interface ([6b66fce](https://github.com/cloudgraphdev/sdk/commit/6b66fcefc6a6f237ea07b8e66d5a7583191e4b2e))
+
+## [0.22.1](https://github.com/cloudgraphdev/sdk/compare/0.22.0...0.22.1) (2022-11-25)
+
+
+### Bug Fixes
+
+* add uri-js to resolutions to fix cve vulnerability ([5290e0a](https://github.com/cloudgraphdev/sdk/commit/5290e0a828f1302e3fc16e5dddded36fb013d08d))
+* cve vulnerabilities remediations ([c0c6200](https://github.com/cloudgraphdev/sdk/commit/c0c620079958ec562797bbf76561c028754fcfa1))
+
 ## [0.22.1-beta.1](https://github.com/cloudgraphdev/sdk/compare/0.22.0...0.22.1-beta.1) (2022-11-25)
 
 
