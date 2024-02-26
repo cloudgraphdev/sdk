@@ -119,6 +119,7 @@ export default class DgraphDataProcessor implements DataProcessor {
             data: {
               id: `${this.providerName}-provider`,
             },
+            rawData: {},
           },
           {
             name: `${this.providerName}Findings`,
@@ -138,6 +139,7 @@ export default class DgraphDataProcessor implements DataProcessor {
                 ),
               },
             },
+            rawData: {},
           },
         ]
       : []
@@ -235,6 +237,7 @@ addruleMetadata(input: $input, upsert: true) {
             severity,
           })
         ),
+        rawData: {}
       },
     ]
   }
@@ -266,6 +269,7 @@ mutation($input: [Add${this.providerName}${this.entityName}FindingsInput!]!) {
 }
 `,
         data: entitiesData,
+        rawData: {}
       },
       ...providerData,
     ]

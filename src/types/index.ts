@@ -61,6 +61,7 @@ export interface Entity {
   name: string
   mutation: EntityMutations | string
   data: any[] | any
+  rawData: any[] | any;
 }
 
 export interface ProviderError {
